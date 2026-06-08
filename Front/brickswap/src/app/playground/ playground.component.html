@@ -1,0 +1,73 @@
+<h1>Design System</h1>
+
+<section class="playground-section">
+  <h2>Logo</h2>
+
+  <ui-logo />
+</section>
+
+<section class="playground-section playground-section--full">
+  <h2>Hero Banner</h2>
+
+  <app-hero-banner
+    title="Encuentra tu próximo set LEGO"
+    description="Compra y vende sets, minifiguras y piezas nuevas o usadas de cualquier colección."
+    imageUrl="https://images.unsplash.com/photo-1518770660439-4636190af475?w=1400&q=80"
+  />
+</section>
+
+<section class="playground-section">
+  <h2>Buttons</h2>
+
+  <ui-button
+    label="Iniciar sesión"
+    variant="primary"
+    [showArrow]="true"
+    (clicked)="login()"
+  />
+
+  <div class="playground-dark-strip">
+    <ui-button
+      label="Guardar borrador"
+      variant="secondary"
+      [showArrow]="false"
+      (clicked)="save()"
+    />
+  </div>
+
+  <br><br>
+
+  <ui-button
+    label="Deshabilitado"
+    [disabled]="true"
+  />
+</section>
+
+<section class="playground-section">
+  <h2>Category Card</h2>
+
+  <ui-category-card
+    icon="📦"
+    color="linear-gradient(135deg, #21c4df 0%, #3478f6 100%)"
+    text="Piezas sueltas"
+  />
+</section>
+
+<section class="playground-section playground-section--full">
+  <h2>Carrousel</h2>
+
+  <ui-carrousel [items]="categoryItems" />
+</section>
+
+<section class="playground-section">
+  <h2>Product Card</h2>
+
+  <ui-product-card
+    imageUrl="https://images.unsplash.com/photo-1581235720704-06d3acfcb36f?w=400&h=400&fit=crop"
+    title="Set LEGO Classic"
+    [price]="24.99"
+    location="Madrid"
+    publishedAt="Hoy"
+    [showBadge]="true"
+  />
+</section>

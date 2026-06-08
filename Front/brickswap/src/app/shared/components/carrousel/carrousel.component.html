@@ -1,0 +1,32 @@
+<div class="carrousel">
+  <button
+    type="button"
+    class="carrousel__control"
+    aria-label="Anterior"
+    (click)="scrollBy(-1)"
+  >
+    ‹
+  </button>
+
+  <div
+    #track
+    class="carrousel__track"
+  >
+    @for (item of items(); track item.text) {
+      <ui-category-card
+        [icon]="item.icon"
+        [color]="item.color"
+        [text]="item.text"
+      />
+    }
+  </div>
+
+  <button
+    type="button"
+    class="carrousel__control"
+    aria-label="Siguiente"
+    (click)="scrollBy(1)"
+  >
+    ›
+  </button>
+</div>

@@ -1,0 +1,58 @@
+.carrousel {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.carrousel__track {
+  display: flex;
+  gap: 14px;
+  min-width: 0;
+  overflow-x: auto;
+  padding: 4px 2px 14px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.carrousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.carrousel__track ui-category-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+}
+
+.carrousel__control {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  background: #fff;
+  color: #111827;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(17, 24, 39, .08);
+  transition:
+    background-color .2s ease,
+    transform .2s ease;
+}
+
+.carrousel__control:hover {
+  background: #f3f4f6;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 560px) {
+  .carrousel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .carrousel__control {
+    display: none;
+  }
+}
