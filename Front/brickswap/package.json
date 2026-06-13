@@ -1,12 +1,19 @@
 {
   "name": "brickswap",
   "version": "0.0.0",
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0",
+    "npm": ">=10"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "storybook": "npm run storybook:clean && ng run brickswap:storybook",
+    "storybook:clean": "node -e \"const fs=require('node:fs'); for (const path of ['node_modules/.cache/storybook', '.angular/cache']) fs.rmSync(path,{recursive:true,force:true});\"",
+    "build-storybook": "ng run brickswap:build-storybook"
   },
   "prettier": {
     "printWidth": 100,
@@ -33,10 +40,14 @@
     "tslib": "^2.3.0"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^21.2.14",
     "@angular/build": "^21.1.2",
     "@angular/cli": "^21.1.2",
     "@angular/compiler-cli": "^21.1.0",
+    "@storybook/addon-docs": "^10.4.3",
+    "@storybook/angular": "^10.4.3",
     "jsdom": "^27.1.0",
+    "storybook": "^10.4.3",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
   }
