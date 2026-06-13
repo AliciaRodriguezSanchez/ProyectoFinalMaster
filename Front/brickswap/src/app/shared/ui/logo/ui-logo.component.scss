@@ -1,0 +1,46 @@
+.ui-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #111827;
+  font-family: Arial, sans-serif;
+}
+
+.ui-logo__image,
+.ui-logo__mark {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+}
+
+.ui-logo__image {
+  display: block;
+  object-fit: contain;
+}
+
+.ui-logo__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid #fff;
+  border-radius: 6px;
+  background: #e3000b;
+  color: #fff;
+  box-shadow:
+    0 0 0 1px #f8c000,
+    0 2px 4px rgba(17, 24, 39, .2);
+
+  font-size: 7px;
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1;
+  text-shadow: 0 1px 0 #111827;
+}
+
+.ui-logo__text {
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0;
+}

@@ -1,0 +1,34 @@
+<div class="product-card">
+
+  <div class="product-card__image-wrapper">
+
+    @if (showBadge()) {
+      <span class="product-card__badge">
+        {{ badgeText() }}
+      </span>
+    }
+
+    <img
+      class="product-card__image"
+      [src]="imageUrl()"
+      [alt]="title()"
+    />
+  </div>
+
+  <div class="product-card__content">
+
+    <h3 class="product-card__title">
+      {{ title() }}
+    </h3>
+
+    <div class="product-card__price">
+      {{ price() | number:'1.2-2' }} €
+    </div>
+
+    <div class="product-card__meta">
+      {{ location() }} • {{ publishedAt() }}
+    </div>
+
+  </div>
+
+</div>

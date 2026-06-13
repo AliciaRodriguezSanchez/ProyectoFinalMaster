@@ -1,0 +1,20 @@
+<div class="ui-logo">
+  @if (imageUrl()) {
+    <img
+      class="ui-logo__image"
+      [src]="imageUrl()"
+      [alt]="text()"
+    />
+  } @else {
+    <span
+      class="ui-logo__mark"
+      aria-hidden="true"
+    >
+      LEGO
+    </span>
+  }
+
+  <span class="ui-logo__text">
+    {{ text() }}
+  </span>
+</div>

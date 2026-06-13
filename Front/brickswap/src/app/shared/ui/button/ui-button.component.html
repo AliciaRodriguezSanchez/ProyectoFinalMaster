@@ -1,0 +1,37 @@
+<button
+  type="button"
+  class="ui-button"
+  [class.ui-button--primary]="variant() === 'primary'"
+  [class.ui-button--secondary]="variant() === 'secondary'"
+  [class.ui-button--sm]="size() === 'sm'"
+  [class.ui-button--md]="size() === 'md'"
+  [class.ui-button--lg]="size() === 'lg'"
+  [disabled]="disabled()"
+  (click)="onClick()"
+>
+  <span>{{ label() }}</span>
+
+  @if (showArrow()) {
+    <svg
+      class="ui-button__icon"
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <path
+        d="M5 12H19"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        d="M13 6L19 12L13 18"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  }
+</button>

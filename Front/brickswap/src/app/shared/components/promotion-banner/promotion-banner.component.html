@@ -1,0 +1,44 @@
+<section
+  class="hero"
+  [style.background-image]="'url(' + imageUrl() + ')'"
+>
+  <div class="hero__overlay"></div>
+
+  <div class="hero__content">
+
+    <h1 class="hero__title">
+      {{ title() }}
+    </h1>
+
+    <p class="hero__description">
+      {{ description() }}
+    </p>
+
+    <div class="hero__actions">
+
+      <ui-button
+        label="Explorar sets"
+        variant="primary"
+        size="sm"
+      />
+
+      <ui-button
+        label="Ver novedades"
+        variant="secondary"
+        size="sm"
+      />
+
+    </div>
+
+    <div class="hero__features">
+
+      <span>🛡️ Envíos seguros</span>
+
+      <span>💳 Pago protegido</span>
+
+      <span>👥 Comunidad LEGO</span>
+
+    </div>
+
+  </div>
+</section>
