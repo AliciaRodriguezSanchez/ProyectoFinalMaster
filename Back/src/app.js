@@ -1,7 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 
-const routes = require('./routes/index.routes');
+const articleRoutes = require('./routes/article.routes');
+const categoryRoutes = require('./routes/category.routes');
+const reviewRoutes = require('./routes/review.routes');
+const favoriteRoutes = require('./routes/favorite.routes');
+const messageRoutes = require('./routes/message.routes');
+const reportRoutes = require('./routes/report.routes');
 
 const app = express();
 
@@ -20,7 +25,12 @@ app.get('/api/test', (req, res) => {
 });
 
 // CONEXIÓN DE ENDPOINTS
-app.use('/api', routes);
+app.use('/api/articles', articleRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/favorites', favoriteRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/reports', reportRoutes);
 
 // RUTA NO ENCONTRADA
 app.use((req, res) => {
