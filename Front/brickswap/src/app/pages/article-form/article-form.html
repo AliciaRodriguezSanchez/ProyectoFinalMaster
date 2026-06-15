@@ -1,0 +1,105 @@
+<app-form-template 
+  title="Sube tu set de LEGO®" 
+  subtitle="Completa los detalles a continuación para listar tu brick set en BrickSwap.">
+
+  <form [formGroup]="articleForm" novalidate>
+    
+    <div class="mb-3">
+      <label class="form-label fw-semibold text-dark">Title</label>
+      <input type="text" 
+             class="form-control" 
+             placeholder="e.g., Star Wars Millennium Falcon"
+             formControlName="titulo"
+             [class.is-invalid]="articleForm.get('titulo')?.touched && articleForm.get('titulo')?.invalid">
+      <div class="invalid-feedback">
+        Por favor introduce un título válido (mínimo 5 caracteres).
+      </div>
+    </div>
+
+    <div class="row">
+      
+      <div class="col-12 col-md-6 mb-3">
+        <label class="form-label fw-semibold text-dark">Category</label>
+        <select class="form-select" 
+                formControlName="categoria_id"
+                [class.is-invalid]="articleForm.get('categoria_id')?.touched && articleForm.get('categoria_id')?.invalid">
+          <option value="">Selecciona tu categoría...</option>
+          <option value="1">Star Wars</option>
+          <option value="2">Technic</option>
+          <option value="3">City</option>
+          <option value="4">Harry Potter</option>
+          <option value="5">Creator Expert</option>
+          <option value="6">Minifiguras</option>
+          <option value="7">Ideas</option>
+          <option value="8">Speed Champions</option>
+          <option value="9">Ninjago</option>
+          <option value="10">Marvel</option>
+        </select>
+        <div class="invalid-feedback">Por favor selecciona una categoría válida.</div>
+      </div>
+
+      <div class="col-12 col-md-6 mb-3">
+        <label class="form-label fw-semibold text-dark">Condición</label>
+        <select class="form-select" 
+                formControlName="estado_articulo"
+                [class.is-invalid]="articleForm.get('estado_articulo')?.touched && articleForm.get('estado_articulo')?.invalid">
+          <option value="">Selecciona tu condición...</option>
+          <option value="Nuevo">Nuevo</option>
+          <option value="Como nuevo">Como nuevo</option>
+          <option value="Buen estado">Buen estado</option>
+          <option value="Aceptable">Aceptable</option>
+        </select>
+        <div class="invalid-feedback">Por favor marca un estado de cómo está tu artículo</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold text-dark">Precio (€)</label>
+      <div class="input-group">
+        <span class="input-group-text">€</span>
+        <input type="number" 
+               class="form-control" 
+               placeholder="0.00" 
+               step="0.01"
+               formControlName="precio"
+               [class.is-invalid]="articleForm.get('precio')?.touched && articleForm.get('precio')?.invalid">
+        <div class="invalid-feedback">Por favor introduce un precio mayor que 0.</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-semibold text-dark">Description</label>
+      <textarea class="form-control" 
+                rows="4" 
+                placeholder="Describe your set: included minifigures, instructions, box status..."
+                formControlName="descripcion"
+                [class.is-invalid]="articleForm.get('descripcion')?.touched && articleForm.get('descripcion')?.invalid"></textarea>
+      <div class="invalid-feedback">
+        Por favor proporciona una breve descripción (mínimo 15 caracteres).
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label fw-semibold text-dark">Foto del Lego</label>
+      <input type="text"
+      class="form-control" 
+         placeholder="https://ejemplo.com/lego-set.jpg"
+         formControlName="foto">
+    </div>
+
+    <div class="d-flex gap-3 mt-4">
+      <button type="button" 
+              class="btn btn-outline-secondary w-50 fw-bold py-2 shadow-sm" 
+              (click)="submitForm('Borrador')">
+        📁 Guardar como borrador
+      </button>
+      
+      <button type="button" 
+              class="btn btn-danger w-50 fw-bold py-2 shadow-sm" 
+              (click)="submitForm('Publicado')">
+        🚀 ¡Publicar set de LEGO!
+      </button>
+    </div>
+
+  </form>
+</app-form-template>

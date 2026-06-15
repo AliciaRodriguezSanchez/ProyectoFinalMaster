@@ -1,0 +1,25 @@
+<div class="avatar-uploader-container text-center my-3">
+  
+  <div class="avatar-preview-wrapper position-relative d-inline-block rounded-circle shadow-sm overflow-hidden" 
+       (click)="fileInput.click()">
+    
+    <img [src]="avatarImage" 
+         class="img-fluid rounded-circle object-fit-cover" 
+         alt="User Avatar" 
+         style="width: 130px; height: 130px;">
+
+    <div class="avatar-overlay position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-white">
+      <span class="small fw-bold">Change</span>
+      <span class="x-small">Photo</span>
+    </div>
+
+  </div>
+
+  <input type="file" 
+         #fileInput 
+         class="d-none" 
+         accept="image/*" 
+         (change)="onFileChange($event)">
+         
+  <p class="text-muted small mt-2 mb-0">Click en la imagen que deseas subir como Avatar</p>
+</div>
