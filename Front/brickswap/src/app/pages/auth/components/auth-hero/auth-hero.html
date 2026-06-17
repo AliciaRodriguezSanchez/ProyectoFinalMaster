@@ -1,0 +1,31 @@
+<section
+  class="auth-hero"
+  [attr.aria-label]="ariaLabel()"
+  [style.background-image]="'url(' + backgroundImage() + ')'"
+>
+  <div class="auth-hero__shade"></div>
+
+  <ui-logo class="auth-hero__logo" [text]="logoText()"></ui-logo>
+
+  <div class="auth-hero__content">
+    <span class="auth-hero__line"></span>
+
+    <h1>
+      {{ title() }}
+      <strong>{{ highlightedTitle() }}</strong>
+    </h1>
+
+    <p>{{ description() }}</p>
+
+    @if (stats().length > 0) {
+      <dl class="auth-stats">
+        @for (stat of stats(); track stat.label) {
+          <div>
+            <dt>{{ stat.value }}</dt>
+            <dd>{{ stat.label }}</dd>
+          </div>
+        }
+      </dl>
+    }
+  </div>
+</section>

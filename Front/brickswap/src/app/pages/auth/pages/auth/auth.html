@@ -1,0 +1,28 @@
+<main class="auth-page">
+  <app-auth-hero
+    title="Construye tu colección"
+    highlightedTitle="pieza a pieza."
+    description="Compra, vende e intercambia sets de LEGO de segunda mano con la comunidad."
+    [stats]="heroStats"
+  ></app-auth-hero>
+
+  <app-auth-login-panel
+    [formGroup]="loginForm"
+    [title]="passwordRecoveryMode ? 'Restablecer contraseña' : 'Bienvenido de nuevo'"
+    [subtitle]="passwordRecoveryMode ? 'Introduce tu email para recibir el enlace de recuperación.' : 'Inicia sesión para continuar'"
+    [submitLabel]="passwordRecoveryMode ? 'Reset password' : 'Iniciar sesión'"
+    [showSubmitArrow]="!passwordRecoveryMode"
+    [emailActionText]="''"
+    [emailActionLink]="''"
+    [footerText]="passwordRecoveryMode ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'"
+    [footerLinkText]="passwordRecoveryMode ? 'Inicia sesión' : 'Regístrate gratis'"
+    [footerLink]="passwordRecoveryMode ? '' : '/auth/register'"
+    [forgotPasswordLink]="''"
+    [showPassword]="!passwordRecoveryMode"
+    [successMessage]="recoverySuccessMessage"
+    [submitted]="loginSubmitted"
+    (forgotPasswordClicked)="showPasswordRecovery()"
+    (footerClicked)="showLogin()"
+    (formSubmitted)="submitAuthForm()"
+  ></app-auth-login-panel>
+</main>

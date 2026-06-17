@@ -1,5 +1,5 @@
 /* COLOR ACTIVO PARA ENLACE */
 .nav-link.active {
-    color: #ffc107 !important;
+    color: var(--brick-color-brand-soft) !important;
     font-weight: 600;
 }

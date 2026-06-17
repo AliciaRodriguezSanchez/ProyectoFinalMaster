@@ -2,7 +2,6 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-avatar-uploader',
-  standalone: true,
   imports: [],
   templateUrl: './avatar-uploader.html',
   styleUrl: './avatar-uploader.css',

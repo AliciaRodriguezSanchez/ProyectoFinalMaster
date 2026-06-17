@@ -1,15 +1,15 @@
 .x-small {
-  font-size: 0.75rem;
+  font-size: var(--brick-font-size-helper);
 }
 
 .form-range::-webkit-slider-thumb {
-  background-color: #ffc107;
+  background-color: var(--brick-color-brand-soft);
 }
 
 .form-range::-moz-range-thumb {
-  background-color: #ffc107;
+  background-color: var(--brick-color-brand-soft);
 }
 
 .form-range:focus::-webkit-slider-thumb {
-  box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+  box-shadow: var(--brick-shadow-focus-brand-ring);
 }

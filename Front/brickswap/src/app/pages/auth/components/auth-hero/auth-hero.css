@@ -1,0 +1,173 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.auth-hero {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  padding: 44px 40px 46px;
+  background-position: center;
+  background-size: cover;
+}
+
+.auth-hero__shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, var(--brick-color-dark-08) 0%, var(--brick-color-dark-30) 42%, var(--brick-color-dark-82) 100%),
+    linear-gradient(90deg, var(--brick-color-dark-22), var(--brick-color-dark-02));
+}
+
+.auth-hero__logo {
+  position: absolute;
+  top: 42px;
+  left: 42px;
+  z-index: 1;
+}
+
+:host ::ng-deep .auth-hero__logo .ui-logo {
+  color: var(--brick-color-white);
+}
+
+:host ::ng-deep .auth-hero__logo .ui-logo__text {
+  font-size: var(--brick-font-size-5xl);
+  letter-spacing: var(--brick-letter-spacing-none);
+}
+
+.auth-hero__content {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+}
+
+.auth-hero__line {
+  display: block;
+  width: 48px;
+  height: 4px;
+  margin-bottom: 18px;
+  border-radius: var(--brick-radius-pill);
+  background: var(--brick-color-brand);
+}
+
+.auth-hero h1 {
+  margin: 0;
+  color: var(--brick-color-white);
+  font-size: var(--brick-font-size-auth-hero);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: var(--brick-letter-spacing-none);
+}
+
+.auth-hero h1 strong {
+  display: block;
+  color: var(--brick-color-brand);
+  font: inherit;
+}
+
+.auth-hero p {
+  max-width: 430px;
+  margin: 18px 0 28px;
+  color: var(--brick-color-white-82);
+  font-size: var(--brick-font-size-lg);
+  line-height: 1.55;
+}
+
+.auth-stats {
+  display: flex;
+  gap: 28px;
+  margin: 0;
+}
+
+.auth-stats div,
+.auth-stats dt,
+.auth-stats dd {
+  margin: 0;
+}
+
+.auth-stats dt {
+  color: var(--brick-color-brand);
+  font-size: var(--brick-font-size-3xl);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.auth-stats dd {
+  margin-top: 8px;
+  color: var(--brick-color-white-74);
+  font-size: var(--brick-font-size-sm);
+  font-weight: 800;
+  letter-spacing: var(--brick-letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  :host,
+  .auth-hero {
+    min-height: auto;
+  }
+
+  .auth-hero {
+    display: block;
+    padding: 34px 24px 0;
+    overflow: visible;
+    background-image: none !important;
+  }
+
+  .auth-hero__shade,
+  .auth-hero__content {
+    display: none;
+  }
+
+  .auth-hero__logo {
+    position: static;
+    display: inline-flex;
+  }
+
+  :host ::ng-deep .auth-hero__logo .ui-logo {
+    color: var(--brick-color-brand-dark);
+  }
+}
+
+@media (max-width: 520px) {
+  .auth-stats {
+    gap: 18px;
+  }
+
+  .auth-stats dt {
+    font-size: var(--brick-font-size-2xl);
+  }
+
+  .auth-stats dd {
+    font-size: var(--brick-font-size-xs);
+  }
+}
+
+@media (max-width: 640px) {
+  :host,
+  .auth-hero {
+    min-height: auto;
+  }
+
+  .auth-hero {
+    padding: 0;
+  }
+
+  .auth-hero__logo {
+    display: inline-flex;
+  }
+
+  :host ::ng-deep .auth-hero__logo .ui-logo__image,
+  :host ::ng-deep .auth-hero__logo .ui-logo__mark {
+    width: var(--brick-logo-size-mobile);
+    height: var(--brick-logo-size-mobile);
+    flex-basis: var(--brick-logo-size-mobile);
+  }
+
+  :host ::ng-deep .auth-hero__logo .ui-logo__text {
+    font-size: var(--brick-font-size-4xl);
+  }
+}

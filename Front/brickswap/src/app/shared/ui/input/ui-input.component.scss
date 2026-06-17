@@ -1,0 +1,95 @@
+.ui-input {
+  display: block;
+  margin-bottom: 18px;
+}
+
+.ui-input__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+  color: var(--brick-color-label);
+  font-size: var(--brick-font-size-sm);
+  font-weight: 900;
+  letter-spacing: var(--brick-letter-spacing-label);
+  text-transform: uppercase;
+}
+
+.ui-input__top a,
+.ui-input__top button {
+  color: var(--brick-color-brand-dark);
+  border: 0;
+  padding: 0;
+  background: transparent;
+  font-size: var(--brick-font-size-sm);
+  font-weight: 800;
+  letter-spacing: var(--brick-letter-spacing-none);
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: none;
+}
+
+.ui-input__required {
+  color: var(--brick-color-danger);
+}
+
+.ui-input__control {
+  height: var(--brick-control-height-md);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+  border: 1px solid var(--brick-color-border-strong);
+  border-radius: var(--brick-radius-md);
+  background: var(--brick-color-white);
+  box-shadow: var(--brick-shadow-md);
+}
+
+.ui-input__control:focus-within {
+  border-color: var(--brick-color-brand);
+  box-shadow: var(--brick-shadow-focus-input);
+}
+
+.ui-input__control--invalid {
+  border-color: var(--brick-color-danger);
+  box-shadow: var(--brick-shadow-focus-danger);
+}
+
+.ui-input__control--invalid:focus-within {
+  border-color: var(--brick-color-danger);
+  box-shadow: var(--brick-shadow-focus-danger);
+}
+
+.ui-input svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  fill: none;
+  stroke: var(--brick-color-icon-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ui-input input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  color: var(--brick-color-text);
+  background: transparent;
+  font-size: var(--brick-font-size-base);
+}
+
+.ui-input input::placeholder {
+  color: var(--brick-color-muted);
+  opacity: 1;
+}
+
+.ui-input input:disabled {
+  cursor: not-allowed;
+}
+
+.ui-input:has(input:disabled) {
+  opacity: .62;
+}

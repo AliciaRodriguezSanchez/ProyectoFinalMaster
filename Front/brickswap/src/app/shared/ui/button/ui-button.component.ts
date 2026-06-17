@@ -14,25 +14,31 @@ export type ButtonSize =
   | 'md'
   | 'lg';
 
+export type ButtonType =
+  | 'button'
+  | 'submit'
+  | 'reset';
+
 @Component({
   selector: 'ui-button',
-  standalone: true,
   templateUrl: './ui-button.component.html',
   styleUrl: './ui-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiButtonComponent {
-  readonly label = input.required<string>();
+  label = input.required<string>();
 
-  readonly variant = input<ButtonVariant>('primary');
+  variant = input<ButtonVariant>('primary');
 
-  readonly size = input<ButtonSize>('md');
+  size = input<ButtonSize>('md');
 
-  readonly disabled = input(false);
+  type = input<ButtonType>('button');
 
-  readonly showArrow = input(false);
+  disabled = input(false);
 
-  readonly clicked = output<void>();
+  showArrow = input(false);
+
+  clicked = output<void>();
 
   onClick(): void {
     if (this.disabled()) {

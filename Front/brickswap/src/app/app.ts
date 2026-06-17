@@ -1,15 +1,7 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet, RouterModule } from '@angular/router';
+import { Router, RouterOutlet, RouterModule, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs';
 import { Navbar } from './shared/components/navbar/navbar';
-import { ArticleCard } from './shared/components/article-card/article-card';
-import { Article } from './core/models/article/article.model';
-import { FormTemplate } from './shared/components/form-template/form-template';
-import { FilterSidebar } from './shared/components/filter-sidebar/filter-sidebar';
-import { AvatarUploader } from './shared/components/avatar-uploader/avatar-uploader';
-import { CatalogList } from './pages/catalog-list/catalog-list'; 
-import { ArticleForm } from './pages/article-form/article-form';
-import { ArticleDetail } from './pages/article-detail/article-detail';
-
 
 @Component({
   selector: 'app-root',
@@ -23,6 +15,19 @@ import { ArticleDetail } from './pages/article-detail/article-detail';
   styleUrl: './app.css'
 })
 export class App {
-  title = 'BrickSwap'
+  title = 'BrickSwap';
 
+  readonly isAuthLayout = signal(false);
+
+  constructor(private router: Router) {
+    this.updateLayout(this.router.url);
+
+    this.router.events
+      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .subscribe((event) => this.updateLayout(event.urlAfterRedirects));
+  }
+
+  private updateLayout(url: string): void {
+    this.isAuthLayout.set(url.startsWith('/login') || url.startsWith('/auth/'));
+  }
 }
