@@ -1,0 +1,62 @@
+<section class="auth-panel" [attr.aria-labelledby]="titleId()">
+  <form class="auth-form" [formGroup]="formGroup()" (ngSubmit)="onSubmit()">
+    <div class="auth-form__header">
+      <h2 [id]="titleId()">{{ title() }}</h2>
+      <p>{{ subtitle() }}</p>
+    </div>
+
+    <ui-input
+      formControlName="username"
+      [label]="emailLabel()"
+      type="email"
+      icon="email"
+      [placeholder]="emailPlaceholder()"
+      autocomplete="email"
+      [actionText]="emailActionText()"
+      [actionLink]="emailActionLink()"
+      [required]="true"
+      [invalid]="showRequiredError('username')"
+      (actionClicked)="onEmailAction()"
+    ></ui-input>
+
+    @if (showPassword()) {
+      <ui-input
+        formControlName="password"
+        [label]="passwordLabel()"
+        type="password"
+        icon="lock"
+        [placeholder]="passwordPlaceholder()"
+        autocomplete="current-password"
+        [actionText]="forgotPasswordText()"
+        [actionLink]="forgotPasswordLink()"
+        [required]="true"
+        [invalid]="showRequiredError('password')"
+        (actionClicked)="onForgotPassword()"
+      ></ui-input>
+    }
+
+    <ui-button
+      [label]="submitLabel()"
+      type="submit"
+      size="md"
+      [showArrow]="showSubmitArrow()"
+    ></ui-button>
+
+    @if (successMessage()) {
+      <p class="auth-form__success" role="status">{{ successMessage() }}</p>
+    }
+
+    <p class="auth-form__footer">
+      {{ footerText() }}
+      @if (footerLink()) {
+        <a [routerLink]="footerLink()">{{ footerLinkText() }}</a>
+      }
+
+      @if (!footerLink()) {
+        <button type="button" class="auth-form__link" (click)="onFooterClick()">
+          {{ footerLinkText() }}
+        </button>
+      }
+    </p>
+  </form>
+</section>

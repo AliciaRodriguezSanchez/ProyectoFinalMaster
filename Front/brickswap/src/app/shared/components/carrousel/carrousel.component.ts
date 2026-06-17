@@ -16,17 +16,16 @@ export interface UiCarrouselItem {
 
 @Component({
   selector: 'ui-carrousel',
-  standalone: true,
   imports: [UiCategoryCardComponent],
   templateUrl: './carrousel.component.html',
   styleUrl: './carrousel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiCarrouselComponent {
-  readonly items = input.required<UiCarrouselItem[]>();
+  items = input.required<UiCarrouselItem[]>();
 
   @ViewChild('track')
-  private readonly track?: ElementRef<HTMLElement>;
+  private track?: ElementRef<HTMLElement>;
 
   scrollBy(direction: -1 | 1): void {
     this.track?.nativeElement.scrollBy({

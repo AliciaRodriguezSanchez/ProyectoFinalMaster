@@ -1,6 +1,6 @@
 .ui-button {
   width: 100%;
-  min-height: 48px;
+  min-height: var(--brick-control-height-md);
 
   display: flex;
   align-items: center;
@@ -10,12 +10,12 @@
   padding: 0 24px;
 
   border: none;
-  border-radius: 12px;
+  border-radius: var(--brick-radius-xl);
 
-  background: #f8c000;
-  color: #000;
+  background: var(--brick-color-brand);
+  color: var(--brick-color-black);
 
-  font-size: 18px;
+  font-size: var(--brick-font-size-xl);
   font-weight: 700;
   line-height: 1;
 
@@ -24,32 +24,32 @@
   transition: all .2s ease;
 
   &--primary {
-    background: #f8c000;
-    color: #000;
+    background: var(--brick-color-brand);
+    color: var(--brick-color-black);
   }
 
   &--secondary {
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, .42);
-    color: #fff;
+    border: 1px solid var(--brick-color-white-42);
+    color: var(--brick-color-white);
   }
 
   &--sm {
-    min-height: 40px;
+    min-height: var(--brick-control-height-sm);
     padding: 0 16px;
-    font-size: 14px;
+    font-size: var(--brick-font-size-md);
   }
 
   &--md {
-    min-height: 48px;
+    min-height: var(--brick-control-height-md);
     padding: 0 24px;
-    font-size: 18px;
+    font-size: var(--brick-font-size-xl);
   }
 
   &--lg {
-    min-height: 56px;
+    min-height: var(--brick-control-height-lg);
     padding: 0 28px;
-    font-size: 20px;
+    font-size: var(--brick-font-size-2xl);
   }
 
   &:hover:not(:disabled) {
@@ -57,8 +57,8 @@
   }
 
   &--secondary:hover:not(:disabled) {
-    background: rgba(255, 255, 255, .12);
-    border-color: rgba(255, 255, 255, .7);
+    background: var(--brick-color-white-12);
+    border-color: var(--brick-color-white-70);
   }
 
   &:active:not(:disabled) {

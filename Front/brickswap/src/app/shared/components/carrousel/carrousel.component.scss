@@ -29,21 +29,21 @@
 .carrousel__control {
   width: 36px;
   height: 36px;
-  border: 1px solid #e5e7eb;
-  border-radius: 999px;
-  background: #fff;
-  color: #111827;
-  font-size: 28px;
+  border: 1px solid var(--brick-color-border);
+  border-radius: var(--brick-radius-pill);
+  background: var(--brick-color-white);
+  color: var(--brick-color-text-strong);
+  font-size: var(--brick-font-size-6xl);
   line-height: 1;
   cursor: pointer;
-  box-shadow: 0 8px 18px rgba(17, 24, 39, .08);
+  box-shadow: var(--brick-shadow-sm);
   transition:
     background-color .2s ease,
     transform .2s ease;
 }
 
 .carrousel__control:hover {
-  background: #f3f4f6;
+  background: var(--brick-color-surface-muted);
   transform: translateY(-1px);
 }
 

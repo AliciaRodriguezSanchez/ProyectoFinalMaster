@@ -1,16 +1,16 @@
 .avatar-preview-wrapper {
   cursor: pointer;
-  border: 3px solid #ffffff;
-  outline: 2px solid #dee2e6;
+  border: 3px solid var(--brick-color-white);
+  outline: 2px solid var(--brick-color-border-muted);
   transition: outline-color 0.2s ease;
 }
 
 .avatar-preview-wrapper:hover {
-  outline-color: #ffc107;
+  outline-color: var(--brick-color-brand-soft);
 }
 
 .avatar-overlay {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: var(--brick-color-black-60);
   opacity: 0;
   transition: opacity 0.2s ease;
 }
@@ -20,5 +20,5 @@
 }
 
 .x-small {
-  font-size: 0.7rem;
+  font-size: var(--brick-font-size-avatar-helper);
 }

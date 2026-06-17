@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-filter-sidebar',
-  standalone: true,
   imports: [FormsModule],
   templateUrl: './filter-sidebar.html',
   styleUrl: './filter-sidebar.css'

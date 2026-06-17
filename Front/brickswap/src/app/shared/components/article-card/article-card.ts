@@ -5,7 +5,6 @@ import { Article } from '../../../core/models/article/article.model';
 
 @Component({
   selector: 'app-article-card',
-  standalone: true,
   imports: [RouterLink, CurrencyPipe],
   templateUrl: './article-card.html',
   styleUrl: './article-card.css',

@@ -1,0 +1,49 @@
+<label class="ui-input">
+  <span class="ui-input__top">
+    <span>
+      {{ label() }}
+      @if (required()) {
+        <span class="ui-input__required" aria-hidden="true">*</span>
+      }
+    </span>
+
+    @if (actionText() && actionLink()) {
+      <a [routerLink]="actionLink()">{{ actionText() }}</a>
+    }
+
+    @if (actionText() && !actionLink()) {
+      <button type="button" (click)="onActionClick()">{{ actionText() }}</button>
+    }
+  </span>
+
+  <span
+    class="ui-input__control"
+    [class.ui-input__control--invalid]="invalid()"
+  >
+    @if (icon() === 'email') {
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M4 7.5h16v9H4z" />
+        <path d="m4 8 8 5 8-5" />
+      </svg>
+    }
+
+    @if (icon() === 'lock') {
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <rect x="5" y="10" width="14" height="10" rx="2" />
+        <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+      </svg>
+    }
+
+    <input
+      [type]="type()"
+      [value]="value"
+      [placeholder]="placeholder()"
+      [autocomplete]="autocomplete()"
+      [disabled]="disabled"
+      [required]="required()"
+      [attr.aria-required]="required()"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+    />
+  </span>
+</label>

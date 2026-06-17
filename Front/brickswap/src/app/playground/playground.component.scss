@@ -11,8 +11,8 @@
 .playground-dark-strip {
   margin: 1.5rem 0;
   padding: 1rem;
-  border-radius: 12px;
-  background: #1f2937;
+  border-radius: var(--brick-radius-xl);
+  background: var(--brick-color-playground-dark);
 }
 
 .playground-section--full {
