@@ -1,0 +1,15 @@
+.x-small {
+  font-size: 0.75rem;
+}
+
+.form-range::-webkit-slider-thumb {
+  background-color: #ffc107;
+}
+
+.form-range::-moz-range-thumb {
+  background-color: #ffc107;
+}
+
+.form-range:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}

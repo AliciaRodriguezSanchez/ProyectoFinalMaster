@@ -1,0 +1,46 @@
+aside {
+  position: sticky;
+  top: 20px; /* Se queda fijo al hacer scroll en pantallas grandes */
+  z-index: 10;
+}
+
+.form-range::-webkit-slider-thumb {
+  background: #ffc107; /* Amarillo corporativo LEGO/BrickSwap */
+}
+
+.form-range::-webkit-slider-thumb:active {
+  background: #dc3545; /* Rojo cuando lo arrastras */
+}
+
+.form-range:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 1px #fff, 0 0 0 0.25rem rgba(255, 193, 7, 0.35);
+}
+
+.row-cols-1 .col {
+  animation: fadeInGrid 0.25s ease-in-out forwards;
+}
+
+@keyframes fadeInGrid {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+app-article-card {
+  display: block;
+  height: 100%;
+}
+
+h4 {
+  letter-spacing: -0.5px;
+}
+
+.badge {
+  font-size: 0.85rem;
+  padding: 0.4em 0.65em;
+}
