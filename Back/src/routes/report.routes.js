@@ -5,4 +5,4 @@ const reportController = require('../controllers/report.controller');
 // POST /api/reports
 router.post('/', reportController.createReport);
 
-module.exports = router
+module.exports = router;

@@ -6,8 +6,6 @@ const articleController = require('../controllers/article.controller');
 // GET
 // RUTA BASE PARA CATÁLOGO GET /api/articles
 router.get('/', articleController.getAllArticles);
-// RUTA PARA DETALLE ARTÍCULO POR ID GET /api/articles/:id
-router.get('/:id', articleController.getArticleById);
 
 
 // POST
@@ -21,5 +19,7 @@ router.put('/:id/buy', articleController.buyArticle);
 // RUTA BASE PARA RESERVAR ARTÍCULO PUT /api/articles/:id/reserve
 router.put('/:id/reserve', articleController.reserveArticle);
 
-module.exports = router;
+// RUTA PARA DETALLE ARTÍCULO POR ID GET /api/articles/:id
+router.get('/:id', articleController.getArticleById);
 
+module.exports = router;
