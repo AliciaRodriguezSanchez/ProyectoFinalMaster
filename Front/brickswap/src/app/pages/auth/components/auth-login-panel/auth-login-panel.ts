@@ -32,6 +32,7 @@ export class AuthLoginPanel {
   submitted = input(false);
   showPassword = input(true);
   successMessage = input('');
+  errorMessage = input('');
 
   formSubmitted = output<void>();
   emailActionClicked = output<void>();

@@ -4,6 +4,10 @@ import { ArticleDetail } from './pages/article-detail/article-detail';
 import { ArticleForm } from './pages/article-form/article-form';
 import { AuthPage } from './pages/auth/pages/auth/auth';
 import { Home } from './pages/home/home';
+import { ModeradorPage } from './pages/moderador/moderador';
+import { AdminPage } from './pages/admin/admin';
+import { roleGuard } from './core/guards/role.guard';
+import { UserRole } from './core/constants/user-role';
 
 export const routes: Routes = [
     //1. RUTA POR DEFECTO
@@ -24,6 +28,24 @@ export const routes: Routes = [
     // 6. LOGIN
     { path: 'login', component: AuthPage },
 
-    // 7. RUTA COMÚN PARA REDIRIGIR
+    // 7. MODERADOR
+    { path: 'moderador',
+        canActivate: [roleGuard],
+        data: {
+            roles: [UserRole.MODERATOR]
+        },
+        component: ModeradorPage,  
+    },
+
+    // 8. ADMINISTRACION
+    { path: 'administration',  
+        canActivate: [roleGuard],
+        data: {
+            roles: [UserRole.ADMIN]
+        },
+        component: AdminPage 
+    },
+
+    // 9. RUTA COMÚN PARA REDIRIGIR
     { path: '**', redirectTo: 'home' }
 ];

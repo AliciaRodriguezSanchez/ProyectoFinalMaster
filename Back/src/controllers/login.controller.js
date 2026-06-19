@@ -33,7 +33,7 @@ const login = async (req, res) => {
 
         res.json({
             message: "Login correcto!",
-            token: jwt.sign({ userId: user.id }, process.env.JWT_SECRET_KET)
+            token: jwt.sign({ userId: user.id , role: user.rol_id}, process.env.JWT_SECRET_KET)
         });
     } catch (error) {
         res.status(500).json({ message: error.message });

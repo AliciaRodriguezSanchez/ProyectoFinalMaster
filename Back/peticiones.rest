@@ -131,12 +131,12 @@ POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
-  "username": "username1",
-  "name" : "name1",
-  "surname": "surname1",
-  "email": "username1@gmail.com",
+  "username": "moderatoruser",
+  "name" : "moderatoruser",
+  "surname": "moderatoruser",
+  "email": "moderatoruser@gmail.com",
   "password": "12345678",
-  "rol":1
+  "rol":2
 }
 
 ### Login usuario

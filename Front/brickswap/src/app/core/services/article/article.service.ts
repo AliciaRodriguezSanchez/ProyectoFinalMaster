@@ -2,25 +2,22 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { Article, Category } from "../../models/article/article.model";
+import { API_URL } from "../../../../config/api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArticleService {
-
-  // URL BASE DE NODE
-  private apiUrl = 'http://localhost:3000/api';
-
   constructor(private http: HttpClient) { }
 
   // 1. GET /api/categories
   getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${this.apiUrl}/categories`);
+    return this.http.get<Category[]>(`${API_URL}/categories`);
   }
 
   // 2. GET /api/articles
   getArticles(search?: string, categoryId?: number): Observable<Article[]> {
-    let url = `${this.apiUrl}/articles`;
+    let url = `${API_URL}/articles`;
 
     const params: string[] = [];
     if (search) params.push(`search=${search}`);
@@ -35,27 +32,27 @@ export class ArticleService {
 
   // 3. GET /api/articles/:id
   getArticleById(id: number): Observable<Article> {
-    return this.http.get<Article>(`${this.apiUrl}/articles/${id}`);
+    return this.http.get<Article>(`${API_URL}/articles/${id}`);
   }
 
   // 4. POST /api/articles
   createArticle(article: Article): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/articles`, article);
+    return this.http.post<any>(`${API_URL}/articles`, article);
   }
 
   // 5. PUT /api/articles/:id/reserve
   reserveArticle(id: number): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/articles/${id}/reserve`, {});
+    return this.http.put<any>(`${API_URL}/articles/${id}/reserve`, {});
   }
 
   // 6. PUT /api/articles/:id/buy
   buyArticle(id: number): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/articles/${id}/buy`, {});
+    return this.http.put<any>(`${API_URL}/articles/${id}/buy`, {});
   }
 
   // 7. POST /api/articles/:id/favorites
   addToFavorites(articuloId: number, perfilId: number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/favorites`, { 
+    return this.http.post<any>(`${API_URL}/favorites`, { 
       articulo_id: articuloId, 
       perfil_id: perfilId 
     });
