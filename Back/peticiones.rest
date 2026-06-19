@@ -3,7 +3,7 @@
 ########################################
 
 @baseUrl = http://localhost:3000/api
-
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIzLCJpYXQiOjE3ODE4NDIwODZ9.qPLt9NVatG9kV-7WwatJRxqDQYRLA6gRSpJ4OsthGWM
 
 ########################################
 # TEST SERVER
@@ -120,3 +120,35 @@ Content-Type: application/json
   "receptor_id": 2,
   "articulo_id": 1
 }
+
+
+########################################
+# REVIEWS
+########################################
+
+### Crear usuario
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "username": "username1",
+  "name" : "name1",
+  "surname": "surname1",
+  "email": "username1@gmail.com",
+  "password": "12345678",
+  "rol":1
+}
+
+### Login usuario
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "username1@gmail.com",
+  "password": "12345678"
+
+}
+
+### autorization
+GET {{baseUrl}}/categories
+Authorization: {{TOKEN}}

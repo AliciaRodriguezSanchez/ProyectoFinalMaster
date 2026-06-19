@@ -1,0 +1,26 @@
+<header class="app-header">
+  <a class="app-header__brand" routerLink="/home" aria-label="Ir a Home">
+    <ui-logo text="BrickSwap"></ui-logo>
+  </a>
+
+  <nav class="app-header__nav" aria-label="Navegacion principal">
+    <a
+      class="app-header__catalog"
+      routerLink="/catalog"
+      routerLinkActive="app-header__catalog--active"
+    >
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7" />
+        <path d="m16 16 4 4" />
+      </svg>
+      <span>Catalogo</span>
+    </a>
+
+    <a class="app-header__user" routerLink="/login" aria-label="Iniciar sesion">
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M5 20a7 7 0 0 1 14 0" />
+      </svg>
+    </a>
+  </nav>
+</header>
