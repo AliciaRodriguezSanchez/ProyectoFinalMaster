@@ -6,6 +6,9 @@ import { AuthPage } from './pages/auth/pages/auth/auth';
 import { Home } from './pages/home/home';
 import { ModeradorPage } from './pages/moderador/moderador';
 import { AdminPage } from './pages/admin/admin';
+import { UserPanelPage } from './pages/user-panel/user-panel';
+import { MessagesPage } from './pages/messages/messages';
+import { ProfilePage } from './pages/profile/profile';
 import { roleGuard } from './core/guards/role.guard';
 import { UserRole } from './core/constants/user-role';
 
@@ -28,7 +31,37 @@ export const routes: Routes = [
     // 6. LOGIN
     { path: 'login', component: AuthPage },
 
-    // 7. MODERADOR
+    // 7. MI PANEL
+    {
+        path: 'my-panel',
+        canActivate: [roleGuard],
+        data: {
+            roles: [UserRole.USER]
+        },
+        component: UserPanelPage
+    },
+
+    // 8. MENSAJES
+    {
+        path: 'messages',
+        canActivate: [roleGuard],
+        data: {
+            roles: [UserRole.USER, UserRole.MODERATOR, UserRole.ADMIN]
+        },
+        component: MessagesPage
+    },
+
+    // 9. PERFIL
+    {
+        path: 'profile',
+        canActivate: [roleGuard],
+        data: {
+            roles: [UserRole.USER, UserRole.MODERATOR, UserRole.ADMIN]
+        },
+        component: ProfilePage
+    },
+
+    // 10. MODERADOR
     { path: 'moderador',
         canActivate: [roleGuard],
         data: {
@@ -37,7 +70,7 @@ export const routes: Routes = [
         component: ModeradorPage,  
     },
 
-    // 8. ADMINISTRACION
+    // 11. ADMINISTRACION
     { path: 'administration',  
         canActivate: [roleGuard],
         data: {
@@ -46,6 +79,6 @@ export const routes: Routes = [
         component: AdminPage 
     },
 
-    // 9. RUTA COMÚN PARA REDIRIGIR
+    // 12. RUTA COMÚN PARA REDIRIGIR
     { path: '**', redirectTo: 'home' }
 ];

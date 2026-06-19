@@ -1,0 +1,14 @@
+:host {
+  display: block;
+}
+
+.user-panel-page {
+  padding: 32px;
+}
+
+.user-panel-page h1 {
+  margin: 0;
+  color: var(--brick-color-title);
+  font-size: var(--brick-font-size-8xl);
+  font-weight: 900;
+}

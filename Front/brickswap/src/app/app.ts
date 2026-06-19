@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { Router, RouterOutlet, RouterModule, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
-import { Navbar } from './shared/components/navbar/navbar';
+import { Header } from './shared/components/header/header';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +9,7 @@ import { Navbar } from './shared/components/navbar/navbar';
   imports: [
     RouterOutlet,
     RouterModule,
-    Navbar
+    Header
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'

@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Header } from '../../shared/components/header/header';
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, Header],
+  imports: [RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

@@ -49,7 +49,7 @@
   background: var(--brick-color-border);
 }
 
-.app-header__catalog {
+.app-header__link {
   min-height: 42px;
   display: inline-flex;
   align-items: center;
@@ -61,8 +61,9 @@
   text-decoration: none;
 }
 
-.app-header__catalog svg,
-.app-header__user svg {
+.app-header__link svg,
+.app-header__user svg,
+.app-header__logout svg {
   width: 20px;
   height: 20px;
   fill: none;
@@ -72,7 +73,7 @@
   stroke-width: 2;
 }
 
-.app-header__catalog--active {
+.app-header__link--active {
   color: var(--brick-color-brand-dark);
 }
 
@@ -88,11 +89,33 @@
   text-decoration: none;
 }
 
+.app-header__logout {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--brick-color-border);
+  border-radius: var(--brick-radius-pill);
+  color: var(--brick-color-text);
+  background: var(--brick-color-white);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--brick-font-size-sm);
+  font-weight: 800;
+}
+
+.app-header__logout:hover {
+  color: var(--brick-color-danger);
+  border-color: var(--brick-color-danger);
+}
+
 @media (max-width: 560px) {
   .app-header {
     height: auto;
     min-height: 64px;
     padding: 12px 18px;
+    overflow-x: auto;
   }
 
   :host ::ng-deep .app-header__brand .ui-logo__text {
@@ -101,9 +124,10 @@
 
   .app-header__nav {
     gap: 12px;
+    flex: 0 0 auto;
   }
 
-  .app-header__catalog span {
+  .app-header__logout span {
     display: none;
   }
 }

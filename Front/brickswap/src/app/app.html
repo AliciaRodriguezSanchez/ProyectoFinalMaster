@@ -1,5 +1,5 @@
-@if (!isAuthLayout() && !isHomeLayout()) {
-  <app-navbar></app-navbar>
+@if (!isAuthLayout()) {
+  <app-header></app-header>
 }
 
 <div [class.container]="!isAuthLayout() && !isHomeLayout()" [class.my-4]="!isAuthLayout() && !isHomeLayout()">
