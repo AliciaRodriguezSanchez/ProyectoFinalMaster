@@ -1,0 +1,52 @@
+<main class="home-page">
+  <section class="home-hero">
+    <div class="home-hero__content">
+      <div class="home-hero__copy">
+        <p class="home-hero__eyebrow">Marketplace LEGO de segunda mano</p>
+        <h1>Compra, vende e intercambia piezas con la comunidad.</h1>
+        <p>
+          Encuentra sets, piezas y minifiguras para completar tu coleccion o
+          da una nueva vida a lo que ya no usas.
+        </p>
+      </div>
+
+      <div class="home-hero__actions" aria-label="Acciones principales">
+        <a routerLink="/catalog" class="home-button home-button--primary">
+          Ver catalogo
+        </a>
+        <a routerLink="/sell-article" class="home-button home-button--secondary">
+          Vender articulo
+        </a>
+      </div>
+
+      <dl class="home-stats">
+        @for (stat of stats; track stat.label) {
+          <div>
+            <dt>{{ stat.value }}</dt>
+            <dd>{{ stat.label }}</dd>
+          </div>
+        }
+      </dl>
+    </div>
+
+    <div class="home-hero__media" aria-hidden="true">
+      <img src="/assets/auth/login-bricks.png" alt="" />
+    </div>
+  </section>
+
+  <section class="home-section" aria-labelledby="home-categories-title">
+    <div class="home-section__header">
+      <h2 id="home-categories-title">Explora BrickSwap</h2>
+      <a routerLink="/login">Iniciar sesion</a>
+    </div>
+
+    <div class="home-categories">
+      @for (category of categories; track category) {
+        <a routerLink="/catalog" class="home-category">
+          <span>{{ category }}</span>
+          <span aria-hidden="true">-></span>
+        </a>
+      }
+    </div>
+  </section>
+</main>

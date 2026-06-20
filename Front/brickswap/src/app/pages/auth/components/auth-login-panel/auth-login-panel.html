@@ -6,7 +6,7 @@
     </div>
 
     <ui-input
-      formControlName="username"
+      formControlName="email"
       [label]="emailLabel()"
       type="email"
       icon="email"
@@ -15,7 +15,7 @@
       [actionText]="emailActionText()"
       [actionLink]="emailActionLink()"
       [required]="true"
-      [invalid]="showRequiredError('username')"
+      [invalid]="showRequiredError('email')"
       (actionClicked)="onEmailAction()"
     ></ui-input>
 
@@ -33,6 +33,10 @@
         [invalid]="showRequiredError('password')"
         (actionClicked)="onForgotPassword()"
       ></ui-input>
+
+      @if (errorMessage()) {
+        <p class="auth-form__error" role="alert">{{ errorMessage() }}</p>
+      }
     }
 
     <ui-button

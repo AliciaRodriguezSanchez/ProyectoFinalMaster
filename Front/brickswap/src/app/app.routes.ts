@@ -3,23 +3,82 @@ import { CatalogList } from './pages/catalog-list/catalog-list';
 import { ArticleDetail } from './pages/article-detail/article-detail';
 import { ArticleForm } from './pages/article-form/article-form';
 import { AuthPage } from './pages/auth/pages/auth/auth';
+import { Home } from './pages/home/home';
+import { ModeradorPage } from './pages/moderador/moderador';
+import { AdminPage } from './pages/admin/admin';
+import { UserPanelPage } from './pages/user-panel/user-panel';
+import { MessagesPage } from './pages/messages/messages';
+import { ProfilePage } from './pages/profile/profile';
+import { roleGuard } from './core/guards/role.guard';
+import { UserRole } from './core/constants/user-role';
 
 export const routes: Routes = [
     //1. RUTA POR DEFECTO
-    { path: '', redirectTo: 'catalog', pathMatch: 'full' },
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
 
-    // 2. CATÁLOGO GENERAL
+    // 2. HOME
+    { path: 'home', component: Home },
+
+    // 3. CATÁLOGO GENERAL
     { path: 'catalog', component: CatalogList },
 
-    // 3. DETALLE DE ARTÍCULO POR ID DINÁMICO
+    // 4. DETALLE DE ARTÍCULO POR ID DINÁMICO
     { path: 'article/:id', component: ArticleDetail },
 
-    // 4. FORMULARIO SUBIR ARTÍCULO
+    // 5. FORMULARIO SUBIR ARTÍCULO
     { path: 'sell-article', component: ArticleForm },
 
-    // 5. LOGIN
+    // 6. LOGIN
     { path: 'login', component: AuthPage },
 
-    // 6. RUTA COMÚN PARA REDIRIGIR
-    { path: '**', redirectTo: 'catalog' }
+    // 7. MI PANEL
+    {
+        path: 'my-panel',
+        canActivate: [roleGuard],
+        data: {
+            roles: [UserRole.USER]
+        },
+        component: UserPanelPage
+    },
+
+    // 8. MENSAJES
+    {
+        path: 'messages',
+        canActivate: [roleGuard],
+        data: {
+            roles: [UserRole.USER, UserRole.MODERATOR, UserRole.ADMIN]
+        },
+        component: MessagesPage
+    },
+
+    // 9. PERFIL
+    {
+        path: 'profile',
+        canActivate: [roleGuard],
+        data: {
+            roles: [UserRole.USER, UserRole.MODERATOR, UserRole.ADMIN]
+        },
+        component: ProfilePage
+    },
+
+    // 10. MODERADOR
+    { path: 'moderador',
+        canActivate: [roleGuard],
+        data: {
+            roles: [UserRole.MODERATOR]
+        },
+        component: ModeradorPage,  
+    },
+
+    // 11. ADMINISTRACION
+    { path: 'administration',  
+        canActivate: [roleGuard],
+        data: {
+            roles: [UserRole.ADMIN]
+        },
+        component: AdminPage 
+    },
+
+    // 12. RUTA COMÚN PARA REDIRIGIR
+    { path: '**', redirectTo: 'home' }
 ];

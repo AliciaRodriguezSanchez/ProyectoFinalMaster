@@ -21,6 +21,5 @@ export class FilterSidebar {
   resetFilters() {
     this.searchText = '';
     this.onReset.emit();
-    this.applyFilters();
   }
 }
