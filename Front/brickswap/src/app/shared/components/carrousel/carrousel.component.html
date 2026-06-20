@@ -5,19 +5,24 @@
     aria-label="Anterior"
     (click)="scrollBy(-1)"
   >
-    ‹
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path d="m15 18-6-6 6-6" />
+    </svg>
   </button>
 
   <div
     #track
     class="carrousel__track"
   >
-    @for (item of items(); track item.text) {
-      <ui-category-card
-        [icon]="item.icon"
-        [color]="item.color"
-        [text]="item.text"
-      />
+    @if (isLoading()) {
+      @for (item of [].constructor(skeletonItems()); track $index) {
+        <article class="carrousel__skeleton" aria-hidden="true">
+          <span class="carrousel__skeleton-icon"></span>
+          <span class="carrousel__skeleton-text"></span>
+        </article>
+      }
+    } @else {
+      <ng-content></ng-content>
     }
   </div>
 
@@ -27,6 +32,8 @@
     aria-label="Siguiente"
     (click)="scrollBy(1)"
   >
-    ›
+    <svg aria-hidden="true" viewBox="0 0 24 24">
+      <path d="m9 18 6-6-6-6" />
+    </svg>
   </button>
 </div>

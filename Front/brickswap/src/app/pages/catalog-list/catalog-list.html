@@ -1,8 +1,19 @@
 <div class="container my-4">
   <div class="row">
     
-    <aside class="col-12 col-lg-3 mb-4">
+    <div class="catalog-filter-overlay" [class.catalog-filter-overlay--open]="catalogFiltersService.isOpen()" (click)="closeFilters()"></div>
+
+    <aside class="catalog-filters col-12 col-lg-3 mb-4" [class.catalog-filters--open]="catalogFiltersService.isOpen()">
+      <button class="catalog-filters__close" type="button" aria-label="Cerrar filtros" (click)="closeFilters()">
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </button>
+
       <app-filter-sidebar 
+        [hasActiveFilters]="filtersApplied()"
+        [activeFiltersCount]="activeFiltersCount()"
+        [searchTextValue]="searchKeyword"
         (onFilterChange)="onApplyCatalogFilters($event)" 
         (onReset)="onResetCatalog()">
         
@@ -54,9 +65,11 @@
       
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="fw-bold text-dark m-0">Available Sets</h4>
-        <span class="text-muted small fw-semibold">
-          Showing {{ filteredArticles().length }} results
-        </span>
+        <div class="catalog-toolbar__actions">
+          <span class="text-muted small fw-semibold">
+            Showing {{ filteredArticles().length }} results
+          </span>
+        </div>
       </div>
 
       <div *ngIf="isLoading()" class="alert alert-light text-center border-0 shadow-sm rounded-3 py-4">

@@ -6,9 +6,8 @@ import {
   input,
 } from '@angular/core';
 
-import { UiCategoryCardComponent } from '../category-card/category-card.component';
-
 export interface UiCarrouselItem {
+  id?: number;
   icon: string;
   color: string;
   text: string;
@@ -16,13 +15,14 @@ export interface UiCarrouselItem {
 
 @Component({
   selector: 'ui-carrousel',
-  imports: [UiCategoryCardComponent],
   templateUrl: './carrousel.component.html',
   styleUrl: './carrousel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiCarrouselComponent {
-  items = input.required<UiCarrouselItem[]>();
+  items = input<UiCarrouselItem[]>([]);
+  isLoading = input(false);
+  skeletonItems = input(7);
 
   @ViewChild('track')
   private track?: ElementRef<HTMLElement>;

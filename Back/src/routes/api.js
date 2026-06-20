@@ -16,7 +16,7 @@ router.get('/test', (req, res) => {
     res.json({ mensaje: '¡Servidor Express funcionando correctamente!' });
 });
 
-router.use('/categories', checkToken, categoryRoutes);
+router.use('/categories', categoryRoutes);
 router.use('/articles', articleRoutes);
 router.use('/reviews', reviewRoutes);
 router.use('/favorites', favoriteRoutes);

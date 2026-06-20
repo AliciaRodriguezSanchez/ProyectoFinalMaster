@@ -1,7 +1,18 @@
-aside {
+.catalog-filters {
   position: sticky;
   top: 20px; /* Se queda fijo al hacer scroll en pantallas grandes */
   z-index: 10;
+}
+
+.catalog-filters__close,
+.catalog-filter-overlay {
+  display: none;
+}
+
+.catalog-toolbar__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
 }
 
 .form-range::-webkit-slider-thumb {
@@ -43,4 +54,92 @@ h4 {
 .badge {
   font-size: var(--brick-font-size-bootstrap-sm);
   padding: 0.4em 0.65em;
+}
+
+@media (max-width: 991.98px) {
+  .catalog-filters__close svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .catalog-filter-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1040;
+    background: var(--brick-color-dark-30);
+    backdrop-filter: blur(2px);
+  }
+
+  .catalog-filter-overlay--open {
+    display: block;
+  }
+
+  .catalog-filters {
+    position: fixed;
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    display: block;
+    max-height: min(82vh, 640px);
+    overflow-y: auto;
+    margin: 0;
+    padding: 0 12px env(safe-area-inset-bottom);
+    transform: translateY(105%);
+    transition: transform .24s ease;
+  }
+
+  .catalog-filters--open {
+    transform: translateY(0);
+  }
+
+  .catalog-filters__close {
+    width: 36px;
+    height: 36px;
+    position: absolute;
+    top: 18px;
+    right: 26px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--brick-color-border);
+    border-radius: var(--brick-radius-pill);
+    background: var(--brick-color-white);
+    color: var(--brick-color-text);
+  }
+
+  .catalog-filters app-filter-sidebar {
+    display: block;
+  }
+
+  .catalog-filters ::ng-deep .card {
+    margin-bottom: 0 !important;
+    border-radius: var(--brick-radius-2xl) var(--brick-radius-2xl) 0 0 !important;
+    background: var(--brick-color-white) !important;
+    box-shadow: var(--brick-shadow-card-hover) !important;
+    padding: 30px 20px 20px !important;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .catalog-filters {
+    left: 50%;
+    max-width: 560px;
+    transform: translate(-50%, 105%);
+  }
+
+  .catalog-filters--open {
+    transform: translate(-50%, 0);
+  }
+
+  .catalog-filters ::ng-deep .filter-sidebar__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
