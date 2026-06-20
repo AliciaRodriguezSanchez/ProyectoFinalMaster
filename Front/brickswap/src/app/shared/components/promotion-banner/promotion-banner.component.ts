@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { UiButtonComponent } from '../../ui/button/ui-button.component';
 
@@ -10,7 +11,13 @@ import { UiButtonComponent } from '../../ui/button/ui-button.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PromotionBannerComponent {
+  constructor(private router: Router) {}
+
   title = input.required<string>();
   description = input.required<string>();
   imageUrl = input.required<string>();
+
+  goToCatalog(): void {
+    this.router.navigate(['/catalog']);
+  }
 }

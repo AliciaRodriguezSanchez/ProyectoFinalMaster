@@ -56,7 +56,15 @@
 <section class="playground-section playground-section--full">
   <h2>Carrousel</h2>
 
-  <ui-carrousel [items]="categoryItems" />
+  <ui-carrousel>
+    @for (item of categoryItems; track item.text) {
+      <ui-category-card
+        [icon]="item.icon"
+        [color]="item.color"
+        [text]="item.text"
+      />
+    }
+  </ui-carrousel>
 </section>
 
 <section class="playground-section">

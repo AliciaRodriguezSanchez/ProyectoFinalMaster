@@ -5,7 +5,9 @@
 >
   <div class="auth-hero__shade"></div>
 
-  <ui-logo class="auth-hero__logo" [text]="logoText()"></ui-logo>
+  <a class="auth-hero__logo" routerLink="/home" aria-label="Ir a Home">
+    <ui-logo [text]="logoText()"></ui-logo>
+  </a>
 
   <div class="auth-hero__content">
     <span class="auth-hero__line"></span>

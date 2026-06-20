@@ -6,6 +6,13 @@
   /* Font families */
   --brick-font-family-base: Arial, sans-serif;
 
+  /* Font weights */
+  --brick-font-weight-xs: 400;
+  --brick-font-weight-s: 500;
+  --brick-font-weight-m: 600;
+  --brick-font-weight-l: 700;
+  --brick-font-weight-xl: 900;
+
   /* Brand colors */
   --brick-color-brand: #ffc000;
   --brick-color-brand-soft: #ffc107;

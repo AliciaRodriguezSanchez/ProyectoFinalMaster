@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { Router, RouterOutlet, RouterModule, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
 import { Header } from './shared/components/header/header';
+import { UiToastComponent } from './shared/ui/toast/ui-toast.component';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,8 @@ import { Header } from './shared/components/header/header';
   imports: [
     RouterOutlet,
     RouterModule,
-    Header
+    Header,
+    UiToastComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'

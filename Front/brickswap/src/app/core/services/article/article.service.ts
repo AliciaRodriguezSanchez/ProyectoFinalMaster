@@ -1,8 +1,10 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { Article, Category } from "../../models/article/article.model";
-import { API_URL } from "../../../../config/api";
+import { Observable, firstValueFrom } from "rxjs";
+import { Article } from "../../models/article/article.model";
+import { ICategory } from "../../interfaces/icategory.interface";
+import { IArticle } from "../../interfaces/iarticles.interface";
+import { API_URL , ARTICLES, LAST_PUBLICATIONS} from "../../../../config/api";
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +13,8 @@ export class ArticleService {
   constructor(private http: HttpClient) { }
 
   // 1. GET /api/categories
-  getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(`${API_URL}/categories`);
+  getCategories(): Observable<ICategory[]> {
+    return this.http.get<ICategory[]>(`${API_URL}/categories`);
   }
 
   // 2. GET /api/articles
@@ -22,13 +24,15 @@ export class ArticleService {
     const params: string[] = [];
     if (search) params.push(`search=${search}`);
     if (categoryId) params.push(`category=${categoryId}`);
-    
+
     if (params.length > 0) {
       url += `?${params.join('&')}`;
     }
-    
+
     return this.http.get<Article[]>(url);
   }
+
+
 
   // 3. GET /api/articles/:id
   getArticleById(id: number): Observable<Article> {
@@ -52,9 +56,17 @@ export class ArticleService {
 
   // 7. POST /api/articles/:id/favorites
   addToFavorites(articuloId: number, perfilId: number): Observable<any> {
-    return this.http.post<any>(`${API_URL}/favorites`, { 
-      articulo_id: articuloId, 
-      perfil_id: perfilId 
+    return this.http.post<any>(`${API_URL}/favorites`, {
+      articulo_id: articuloId,
+      perfil_id: perfilId
     });
+  }
+
+
+  // 8. GET ultimas publicaciones => los publicados esa semana 
+  getLastArticle(): Promise<IArticle[]> {
+    return firstValueFrom(
+      this.http.get<IArticle[]>(`${API_URL}/${ARTICLES}/${LAST_PUBLICATIONS}`)
+    );
   }
 }

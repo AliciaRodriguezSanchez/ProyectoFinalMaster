@@ -1,5 +1,9 @@
 @if (detailRoute()) {
-  <a class="product-card" [routerLink]="detailRoute()">
+  <a
+    class="product-card"
+    [routerLink]="detailRoute()"
+    [queryParams]="queryParams()"
+  >
     <ng-container [ngTemplateOutlet]="productCardContent"></ng-container>
   </a>
 } @else {

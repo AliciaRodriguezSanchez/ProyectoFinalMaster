@@ -5,7 +5,7 @@ import {
   Component,
   input,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Params, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'ui-product-card',
@@ -23,6 +23,7 @@ export class UiProductCardComponent {
   showBadge = input(false);
   badgeText = input('Nuevo');
   detailRoute = input<unknown[] | string>('');
+  queryParams = input<Params | null>(null);
   condition = input('');
   fallbackImageUrl = input('https://placehold.co/400x300?text=No+Image');
 
