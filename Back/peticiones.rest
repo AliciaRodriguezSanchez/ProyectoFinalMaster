@@ -152,3 +152,21 @@ Content-Type: application/json
 ### autorization
 GET {{baseUrl}}/categories
 Authorization: {{TOKEN}}
+
+
+########################################
+# REVIEWS
+########################################
+
+POST {{baseUrl}}/users/register
+Content-Type: application/json
+
+{
+  "email": "465654@gmail.com",
+  "lastname": "lopes garsia",
+  "name": "Álvaro",
+  "password": "1234",
+  "repetPassword": "1234",
+  "username": "alvarolg"
+
+}
