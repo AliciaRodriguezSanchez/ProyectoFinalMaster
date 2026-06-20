@@ -2,6 +2,65 @@
   font-size: var(--brick-font-size-helper);
 }
 
+.filter-sidebar__reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.filter-sidebar__title {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-sidebar__title-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--brick-color-text);
+  font-size: var(--brick-font-size-sm);
+  font-weight: var(--brick-font-weight-m);
+}
+
+.filter-sidebar__handle {
+  display: none;
+}
+
+.filter-sidebar__actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.filter-sidebar__actions .btn-warning {
+  border-color: var(--brick-color-brand);
+  background: var(--brick-color-brand);
+  color: var(--brick-color-text-strong);
+}
+
+.filter-sidebar__active-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: var(--brick-radius-pill);
+  background: var(--brick-color-brand);
+  box-shadow: 0 0 0 3px var(--brick-color-brand-focus);
+}
+
+@media (max-width: 991.98px) {
+  .filter-sidebar__handle {
+    width: 44px;
+    height: 5px;
+    display: block;
+    margin: -2px auto 18px;
+    border-radius: var(--brick-radius-pill);
+    background: var(--brick-color-border-muted);
+  }
+}
+
 .form-range::-webkit-slider-thumb {
   background-color: var(--brick-color-brand-soft);
 }

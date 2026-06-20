@@ -21,6 +21,7 @@ export const routes: Routes = [
 
     // 3. CATÁLOGO GENERAL
     { path: 'catalog', component: CatalogList },
+    { path: 'categories', component: CatalogList },
 
     // 4. DETALLE DE ARTÍCULO POR ID DINÁMICO
     { path: 'article/:id', component: ArticleDetail },
