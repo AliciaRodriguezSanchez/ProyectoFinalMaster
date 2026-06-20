@@ -11,7 +11,6 @@
 
   border-radius: var(--brick-radius-lg);
   color: var(--brick-color-white);
-  box-shadow: var(--brick-shadow-card);
 
   font-family: var(--brick-font-family-base);
   cursor: pointer;
@@ -21,8 +20,8 @@
 }
 
 .category-card:hover {
-  transform: scale(1.04);
-  box-shadow: var(--brick-shadow-card-hover-strong);
+  transform: translateY(-3px);
+  box-shadow: var(--brick-shadow-sm);
 }
 
 .category-card__icon {

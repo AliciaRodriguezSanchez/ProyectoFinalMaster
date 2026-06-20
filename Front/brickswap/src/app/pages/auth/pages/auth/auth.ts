@@ -1,10 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserRole } from '../../../../core/constants/user-role';
+import { AuthService } from '../../../../core/services/auth/auth.service';
+import { decodeJwtPayload } from '../../../../core/utils/jwt';
 import { AuthHero } from '../../components/auth-hero/auth-hero';
 import { AuthLoginPanel } from '../../components/auth-login-panel/auth-login-panel';
 import type { AuthHeroStat } from '../../interfaces/auth-hero.interface';
 import type { AuthLoginForm } from '../../interfaces/auth-login-form.interface';
+
+interface AuthTokenPayload {
+  userId: number;
+  role: UserRole;
+}
 
 @Component({
   selector: 'app-auth-page',
@@ -13,7 +21,10 @@ import type { AuthLoginForm } from '../../interfaces/auth-login-form.interface';
   styleUrl: './auth.css',
 })
 export class AuthPage {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   heroStats: AuthHeroStat[] = [
     { value: '2.4K+', label: 'Artículos' },
@@ -22,7 +33,7 @@ export class AuthPage {
   ];
 
   loginForm = new FormGroup({
-    username: new FormControl('', {
+    email: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required],
     }),
@@ -35,11 +46,13 @@ export class AuthPage {
   loginSubmitted = false;
   passwordRecoveryMode = false;
   recoverySuccessMessage = '';
+  loginErrorMessage = signal('');
 
   showPasswordRecovery(): void {
     this.passwordRecoveryMode = true;
     this.loginSubmitted = false;
     this.recoverySuccessMessage = '';
+    this.clearLoginError();
     this.loginForm.markAsUntouched();
   }
 
@@ -47,6 +60,7 @@ export class AuthPage {
     this.passwordRecoveryMode = false;
     this.loginSubmitted = false;
     this.recoverySuccessMessage = '';
+    this.clearLoginError();
     this.loginForm.markAsUntouched();
   }
 
@@ -61,21 +75,26 @@ export class AuthPage {
 
   async doLogin(): Promise<void> {
     this.loginSubmitted = true;
+    this.clearLoginError();
 
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
+      this.setLoginRequiredError();
       return;
     }
 
     const loginData: AuthLoginForm = this.loginForm.getRawValue();
 
     try {
-      console.log('Login BrickSwap:', loginData);
+      const response = await this.authService.login(loginData);
 
-      await this.router.navigate(['/catalog']);
+      localStorage.setItem('token', response.token);
+
+      const payload = this.getTokenPayload(response.token);
+      await this.navigateByRole(payload.role);
     } catch (error: unknown) {
       console.error('Error al iniciar sesión:', error);
-      alert('No se pudo iniciar sesión');
+      this.setLoginCredentialsError();
     }
   }
 
@@ -83,19 +102,45 @@ export class AuthPage {
     this.loginSubmitted = true;
     this.recoverySuccessMessage = '';
 
-    const usernameControl = this.loginForm.controls.username;
+    const emailControl = this.loginForm.controls.email;
 
-    if (usernameControl.invalid) {
-      usernameControl.markAsTouched();
+    if (emailControl.invalid) {
+      emailControl.markAsTouched();
       return;
     }
 
     try {
-      console.log('Recuperar contraseña BrickSwap:', usernameControl.value);
+      console.log('Recuperar contraseña BrickSwap:', emailControl.value);
       this.recoverySuccessMessage = 'Te hemos enviado las instrucciones a tu email.';
     } catch (error: unknown) {
       console.error('Error al recuperar contraseña:', error);
       alert('No se pudo enviar el email de recuperación');
     }
+  }
+
+  private clearLoginError(): void {
+    this.loginErrorMessage.set('');
+  }
+
+  private setLoginRequiredError(): void {
+    this.loginErrorMessage.set('Email y password son campos requeridos');
+  }
+
+  private setLoginCredentialsError(): void {
+    this.loginErrorMessage.set('Email y/o Password incorrecto');
+  }
+
+  private getTokenPayload(token: string): AuthTokenPayload {
+    return decodeJwtPayload<AuthTokenPayload>(token);
+  }
+
+  private navigateByRole(role: UserRole): Promise<boolean> {
+    const routesByRole: Record<UserRole, string> = {
+      [UserRole.USER]: '/catalog',
+      [UserRole.MODERATOR]: '/moderador',
+      [UserRole.ADMIN]: '/administration',
+    };
+
+    return this.router.navigate([routesByRole[role] || '/home']);
   }
 }

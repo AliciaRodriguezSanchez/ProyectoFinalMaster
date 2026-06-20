@@ -1,7 +1,9 @@
 @if (!isAuthLayout()) {
-  <app-navbar></app-navbar>
+  <app-header></app-header>
 }
 
-<div [class.container]="!isAuthLayout()" [class.my-4]="!isAuthLayout()">
+<div [class.container]="!isAuthLayout() && !isHomeLayout()" [class.my-4]="!isAuthLayout() && !isHomeLayout()">
   <router-outlet></router-outlet>
 </div>
+
+<ui-toast></ui-toast>

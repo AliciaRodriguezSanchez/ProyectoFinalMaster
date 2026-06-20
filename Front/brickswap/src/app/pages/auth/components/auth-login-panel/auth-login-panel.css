@@ -30,7 +30,8 @@
 
 .auth-form__header p,
 .auth-form__footer,
-.auth-form__success {
+.auth-form__success,
+.auth-form__error {
   margin: 0;
   color: var(--brick-color-muted);
   font-size: var(--brick-font-size-base);
@@ -53,6 +54,14 @@
   margin-top: 14px;
   font-weight: 700;
   text-align: center;
+}
+
+.auth-form__error {
+  margin: -8px 0 12px;
+  color: var(--brick-color-danger);
+  font-size: var(--brick-font-size-sm);
+  font-weight: 700;
+  text-align: left;
 }
 
 .auth-form__footer a,

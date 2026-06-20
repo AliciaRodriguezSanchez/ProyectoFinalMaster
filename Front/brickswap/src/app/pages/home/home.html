@@ -1,0 +1,110 @@
+<main class="home-page">
+  <app-hero-banner
+    title="Encuentra tu próximo set LEGO"
+    description="Compra y vende sets, minifiguras y piezas nuevas o usadas de cualquier colección."
+    [imageUrl]="heroImageUrl"
+  ></app-hero-banner>
+
+  @if (isLoadingCategories() || categoryItems().length > 0) {
+    <section class="home-section" aria-labelledby="home-categories-title">
+      <div class="home-section__header">
+        <h2 id="home-categories-title">Explorar por categorías</h2>
+      </div>
+
+      <div class="home-carrousel-frame">
+        <ui-carrousel
+          [isLoading]="isLoadingCategories()"
+        >
+          @for (category of categoryItems(); track category.text) {
+            <a
+              class="home-category-link"
+              [routerLink]="['/catalog']"
+              [queryParams]="{ category: category.id }"
+              [attr.aria-label]="'Ver catálogo de ' + category.text"
+            >
+              <ui-category-card
+                [icon]="category.icon"
+                [color]="category.color"
+                [text]="category.text"
+              ></ui-category-card>
+            </a>
+          }
+        </ui-carrousel>
+      </div>
+    </section>
+  }
+
+  <section class="home-section" aria-labelledby="home-latest-title">
+    <div class="home-section__header">
+      <h2 id="home-latest-title">Últimas novedades</h2>
+    </div>
+
+    <div class="home-carrousel-frame">
+      <ui-carrousel
+        [isLoading]="isLoadingLastProduct()"
+        [skeletonItems]="3"
+      >
+        @for (product of popularProducts(); track product.id) {
+          <ui-product-card
+            [imageUrl]="product.foto"
+            [title]="product.titulo"
+            [price]="product.precio"
+            [location]="product.categoria_nombre || ''"
+            [publishedAt]="product.fecha_publicacion || ''"
+            [condition]="product.estado_articulo"
+            [showBadge]="true"
+            [badgeText]="product.estado_venta"
+            [detailRoute]="['/catalog']"
+            [queryParams]="{ search: product.titulo }"
+          ></ui-product-card>
+        }
+      </ui-carrousel>
+    </div>
+  </section>
+
+  <section class="home-promo" [style.background-image]="'url(' + heroImageUrl + ')'">
+    <div>
+      <h2>Colecciona épicas aventuras</h2>
+      <p>Descubre los mejores sets y revive tus momentos favoritos.</p>
+      <a routerLink="/catalog">Ver colección</a>
+    </div>
+  </section>
+
+  <section class="home-section" aria-labelledby="home-popular-title">
+    <div class="home-section__header">
+      <h2 id="home-popular-title">Sets más populares</h2>
+    </div>
+
+    <div class="home-carrousel-frame">
+      <ui-carrousel
+        [isLoading]="isLoadingLastProduct()"
+        [skeletonItems]="3"
+      >
+        @for (product of popularProducts(); track product.id) {
+          <ui-product-card
+            [imageUrl]="product.foto"
+            [title]="product.titulo"
+            [price]="product.precio"
+            [location]="product.categoria_nombre || ''"
+            [publishedAt]="product.fecha_publicacion || ''"
+            [condition]="product.estado_articulo"
+            [showBadge]="true"
+            [badgeText]="product.estado_venta"
+            [detailRoute]="['/catalog']"
+            [queryParams]="{ search: product.titulo }"
+          ></ui-product-card>
+        }
+      </ui-carrousel>
+    </div>
+  </section>
+
+  <section class="home-features" aria-label="Ventajas de BrickSwap">
+    @for (feature of features; track feature.title) {
+      <ui-info-card
+        [icon]="feature.icon"
+        [title]="feature.title"
+        [description]="feature.description"
+      ></ui-info-card>
+    }
+  </section>
+</main>

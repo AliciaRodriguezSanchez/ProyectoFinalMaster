@@ -1,0 +1,169 @@
+<header class="app-header">
+  <a class="app-header__brand" routerLink="/home" aria-label="Ir a Home">
+    <ui-logo text="BrickSwap"></ui-logo>
+  </a>
+
+  <nav class="app-header__nav" aria-label="Navegacion principal">
+    <a
+      class="app-header__link"
+      *ngFor="let item of navItems()"
+      [routerLink]="item.route"
+      routerLinkActive="app-header__link--active"
+      [class.app-header__link--icon-only]="item.icon"
+      [attr.aria-label]="item.icon ? item.label : null"
+      (click)="closeMenu()"
+    >
+      @if (item.icon === 'search') {
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m16 16 4 4" />
+        </svg>
+      }
+      @if (item.icon === 'home') {
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M3 11.5 12 4l9 7.5" />
+          <path d="M5 10.5V20h14v-9.5" />
+          <path d="M9 20v-6h6v6" />
+        </svg>
+      }
+      @if (item.icon === 'messages') {
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M4 5h16v11H8l-4 4V5z" />
+          <path d="M8 9h8" />
+          <path d="M8 13h5" />
+        </svg>
+      }
+      @if (!item.icon) {
+        <span>{{ item.label }}</span>
+      }
+      @if (item.icon) {
+        <span class="app-header__tooltip">{{ item.label }}</span>
+      }
+    </a>
+
+    <a
+      class="app-header__user"
+      [class.app-header__user--guest]="!role()"
+      [class.app-header__user--active]="isProfileRoute()"
+      [routerLink]="profileRoute()"
+      [attr.aria-label]="profileLabel()"
+    >
+      @if (role()) {
+        <span class="app-header__user-initials">{{ userInitials() }}</span>
+        <span class="app-header__tooltip">Mi perfil</span>
+      } @else {
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M8 20a4 4 0 0 1 8 0" />
+          <circle cx="12" cy="9" r="3" />
+          <path d="M17.5 6.5a2.5 2.5 0 0 1 3.6 3.2c-.4.7-1.1 1-1.1 2" />
+          <path d="M20 15h.01" />
+        </svg>
+      }
+    </a>
+
+    @if (role()) {
+      <button class="app-header__logout" type="button" aria-label="Cerrar sesion" (click)="logout()">
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M10 17l5-5-5-5" />
+          <path d="M15 12H3" />
+          <path d="M21 3v18" />
+        </svg>
+        <span>Cerrar sesion</span>
+      </button>
+    }
+  </nav>
+
+  <div class="app-header__mobile-actions">
+    @if (showCatalogFiltersButton()) {
+      <button
+        class="app-header__filter-button"
+        type="button"
+        aria-label="Abrir filtros"
+        (click)="openCatalogFilters()"
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M4 5h16l-6 7v5l-4 2v-7L4 5z" />
+        </svg>
+        @if (catalogFiltersService.hasActiveFilters()) {
+          <span class="app-header__filter-dot" aria-hidden="true"></span>
+        }
+      </button>
+    }
+
+    <button
+      class="app-header__menu-button"
+      type="button"
+      aria-label="Abrir menu"
+      [attr.aria-expanded]="isMenuOpen()"
+      (click)="toggleMenu()"
+    >
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M4 7h16" />
+        <path d="M4 12h16" />
+        <path d="M4 17h16" />
+      </svg>
+    </button>
+  </div>
+
+  @if (isMenuOpen()) {
+    <nav class="app-header__menu" aria-label="Menu movil">
+      <a
+        class="app-header__menu-link"
+        *ngFor="let item of navItems()"
+        [routerLink]="item.route"
+        routerLinkActive="app-header__menu-link--active"
+        [attr.aria-label]="!role() && item.icon === 'search' ? 'Buscar categorias' : item.icon === 'messages' ? 'Mensajes' : null"
+        (click)="closeMenu()"
+      >
+        @if (item.icon === 'search') {
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m16 16 4 4" />
+          </svg>
+        }
+        @if (item.icon === 'home') {
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M3 11.5 12 4l9 7.5" />
+            <path d="M5 10.5V20h14v-9.5" />
+            <path d="M9 20v-6h6v6" />
+          </svg>
+        }
+        @if (item.icon === 'messages') {
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M4 5h16v11H8l-4 4V5z" />
+            <path d="M8 9h8" />
+            <path d="M8 13h5" />
+          </svg>
+        }
+        @if ((role() || item.icon !== 'search') && item.icon !== 'messages') {
+          <span>{{ item.label }}</span>
+        }
+      </a>
+
+      <a class="app-header__menu-link" [routerLink]="profileRoute()" (click)="closeMenu()">
+        @if (role()) {
+          <span class="app-header__menu-initials">{{ userInitials() }}</span>
+        } @else {
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M8 20a4 4 0 0 1 8 0" />
+            <circle cx="12" cy="9" r="3" />
+            <path d="M17.5 6.5a2.5 2.5 0 0 1 3.6 3.2c-.4.7-1.1 1-1.1 2" />
+            <path d="M20 15h.01" />
+          </svg>
+        }
+        <span>{{ profileLabel() }}</span>
+      </a>
+
+      @if (role()) {
+        <button class="app-header__menu-link app-header__menu-link--button" type="button" (click)="logout()">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M10 17l5-5-5-5" />
+            <path d="M15 12H3" />
+            <path d="M21 3v18" />
+          </svg>
+          <span>Cerrar sesion</span>
+        </button>
+      }
+    </nav>
+  }
+</header>

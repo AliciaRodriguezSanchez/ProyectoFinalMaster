@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, effect, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -9,9 +9,18 @@ import { FormsModule } from '@angular/forms';
 })
 export class FilterSidebar {
   searchText: string = '';
+  hasActiveFilters = input(false);
+  activeFiltersCount = input(0);
+  searchTextValue = input('');
 
   @Output() onFilterChange = new EventEmitter<string>();
   @Output() onReset = new EventEmitter<void>(); 
+
+  constructor() {
+    effect(() => {
+      this.searchText = this.searchTextValue();
+    });
+  }
 
   applyFilters() {
     
@@ -21,6 +30,5 @@ export class FilterSidebar {
   resetFilters() {
     this.searchText = '';
     this.onReset.emit();
-    this.applyFilters();
   }
 }

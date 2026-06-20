@@ -1,14 +1,25 @@
 <div class="container my-4">
   <div class="row">
     
-    <aside class="col-12 col-lg-3 mb-4">
+    <div class="catalog-filter-overlay" [class.catalog-filter-overlay--open]="catalogFiltersService.isOpen()" (click)="closeFilters()"></div>
+
+    <aside class="catalog-filters col-12 col-lg-3 mb-4" [class.catalog-filters--open]="catalogFiltersService.isOpen()">
+      <button class="catalog-filters__close" type="button" aria-label="Cerrar filtros" (click)="closeFilters()">
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M6 6l12 12M18 6 6 18" />
+        </svg>
+      </button>
+
       <app-filter-sidebar 
-        (onFilterChange)="onSearchChange($event)" 
+        [hasActiveFilters]="filtersApplied()"
+        [activeFiltersCount]="activeFiltersCount()"
+        [searchTextValue]="searchKeyword"
+        (onFilterChange)="onApplyCatalogFilters($event)" 
         (onReset)="onResetCatalog()">
         
         <div class="mb-3">
           <label class="form-label small fw-semibold text-secondary">Categoría LEGO®</label>
-          <select class="form-select form-select-sm" [(ngModel)]="selectedCategory" (change)="applyCatalogFilters()">
+          <select class="form-select form-select-sm" [(ngModel)]="selectedCategory">
             <option value="">Todas las temáticas</option>
             <option value="1">Star Wars</option>
             <option value="2">Technic</option>
@@ -25,7 +36,7 @@
 
         <div class="mb-3">
           <label class="form-label small fw-semibold text-secondary">Condición</label>
-          <select class="form-select form-select-sm" [(ngModel)]="selectedCondition" (change)="applyCatalogFilters()">
+          <select class="form-select form-select-sm" [(ngModel)]="selectedCondition">
             <option value="">Todas las condiciones</option>
             <option value="Nuevo">Nuevo</option>
             <option value="Como nuevo">Como nuevo</option>
@@ -44,8 +55,7 @@
                  min="0" 
                  max="1000" 
                  step="10" 
-                 [(ngModel)]="maxPrice" 
-                 (input)="applyCatalogFilters()">
+                 [(ngModel)]="maxPrice">
         </div>
 
       </app-filter-sidebar>
@@ -55,20 +65,35 @@
       
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="fw-bold text-dark m-0">Available Sets</h4>
-        <span class="text-muted small fw-semibold">
-          Showing {{ filteredArticles.length }} results
-        </span>
+        <div class="catalog-toolbar__actions">
+          <span class="text-muted small fw-semibold">
+            Showing {{ filteredArticles().length }} results
+          </span>
+        </div>
       </div>
 
-      <div *ngIf="filteredArticles.length === 0" class="alert alert-warning text-center border-0 shadow-sm rounded-3 py-4">
+      <div *ngIf="isLoading()" class="alert alert-light text-center border-0 shadow-sm rounded-3 py-4">
+        <p class="m-0 fw-bold">Cargando artículos...</p>
+      </div>
+
+      <div *ngIf="!isLoading() && filtersApplied() && filteredArticles().length === 0" class="alert alert-warning text-center border-0 shadow-sm rounded-3 py-4">
         <p class="m-0 fw-bold">🧩 No hay sets de LEGO® que cumplan tus requerimientos.</p>
         <small class="text-muted">¡Intenta ajustar tus filtros o resetéalos y prueba de nuevo!</small>
       </div>
 
       <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-        <div class="col" *ngFor="let item of filteredArticles">
+        <div class="col" *ngFor="let item of filteredArticles()">
           
-          <app-article-card [article]="item"></app-article-card>
+          <ui-product-card
+            [imageUrl]="item.foto"
+            [title]="item.titulo"
+            [price]="item.precio"
+            [condition]="item.estado_articulo"
+            [showBadge]="true"
+            [badgeText]="item.estado_venta"
+            [publishedAt]="item.fecha_publicacion || ''"
+            [detailRoute]="['/article', item.id]"
+          ></ui-product-card>
           
         </div>
       </div>

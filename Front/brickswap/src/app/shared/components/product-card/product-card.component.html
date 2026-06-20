@@ -1,17 +1,35 @@
-<div class="product-card">
+@if (detailRoute()) {
+  <a
+    class="product-card"
+    [routerLink]="detailRoute()"
+    [queryParams]="queryParams()"
+  >
+    <ng-container [ngTemplateOutlet]="productCardContent"></ng-container>
+  </a>
+} @else {
+  <article class="product-card">
+    <ng-container [ngTemplateOutlet]="productCardContent"></ng-container>
+  </article>
+}
 
+<ng-template #productCardContent>
   <div class="product-card__image-wrapper">
 
     @if (showBadge()) {
-      <span class="product-card__badge">
+      <span
+        class="product-card__badge"
+        [class.product-card__badge--reserved]="badgeText() === 'Reservado'"
+        [class.product-card__badge--sold]="badgeText() === 'Vendido'"
+      >
         {{ badgeText() }}
       </span>
     }
 
     <img
       class="product-card__image"
-      [src]="imageUrl()"
+      [src]="resolvedImageUrl()"
       [alt]="title()"
+      (error)="onImageError($event)"
     />
   </div>
 
@@ -25,10 +43,29 @@
       {{ price() | number:'1.2-2' }} €
     </div>
 
-    <div class="product-card__meta">
-      {{ location() }} • {{ publishedAt() }}
-    </div>
+    @if (condition()) {
+      <div class="product-card__condition">
+        {{ condition() }}
+      </div>
+    }
+
+    @if (hasMeta()) {
+      <div class="product-card__meta">
+        @if (location()) {
+          <span>{{ location() }}</span>
+        }
+        @if (location() && publishedAgo()) {
+          <span> • </span>
+        }
+        @if (publishedAgo()) {
+          <span>{{ publishedAgo() }}</span>
+        }
+      </div>
+    }
+
+    <span class="product-card__detail">
+      Ver detalles
+    </span>
 
   </div>
-
-</div>
+</ng-template>

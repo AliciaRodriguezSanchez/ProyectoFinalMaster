@@ -22,7 +22,7 @@ const getAllArticles = async (req, res) => {
 
     } catch (error) {
         console.error('Error al recuperar artículos:', error.message);
-        res.status(500).json({message: 'Server error al recuperar artículos' });
+        res.status(500).json({ message: 'Server error al recuperar artículos' });
     }
 };
 
@@ -88,7 +88,7 @@ const createArticle = async (req, res) => {
 };
 
 // PUT /api/articles/:id/buy COMPRAR ARTÍCULO
-const buyArticle = async (req,res) => {
+const buyArticle = async (req, res) => {
     try {
 
         //  OBTENER ID DEL ARTÍCULO
@@ -115,7 +115,7 @@ const buyArticle = async (req,res) => {
 };
 
 // PUT /api/articles/:id/reserve RESERVAR ARTÍCULO
-const reserveArticle = async (req,res) => {
+const reserveArticle = async (req, res) => {
     try {
 
         // OBTENER ID DEL ARTÍCULO
@@ -141,11 +141,22 @@ const reserveArticle = async (req,res) => {
     }
 };
 
+const getLastArticle = async (req, res) => {
+    try {
+        const result = await Article.getLastArticle();
+
+        res.status(200).json(result);
+    }catch (error) {
+        console.error('Error al obtener los artículos: ', error.message);
+        res.status(500).json({ message: 'Error al obtener los artículos' });
+    }
+}
+
 module.exports = {
     getAllArticles,
     getArticleById,
+    getLastArticle,
     createArticle,
     buyArticle,
     reserveArticle
 };
-

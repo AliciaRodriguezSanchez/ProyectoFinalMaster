@@ -20,6 +20,7 @@
     [forgotPasswordLink]="''"
     [showPassword]="!passwordRecoveryMode"
     [successMessage]="recoverySuccessMessage"
+    [errorMessage]="loginErrorMessage()"
     [submitted]="loginSubmitted"
     (forgotPasswordClicked)="showPasswordRecovery()"
     (footerClicked)="showLogin()"
