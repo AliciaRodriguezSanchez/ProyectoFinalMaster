@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserRole } from '../../../core/constants/user-role';
@@ -12,7 +12,7 @@ interface HeaderTokenPayload {
 interface HeaderNavItem {
   label: string;
   route: string;
-  icon?: 'search';
+  icon?: 'home' | 'search';
 }
 
 @Component({
@@ -28,9 +28,19 @@ export class Header {
   navItems = this.getNavItemsByRole(this.role);
   profileRoute = this.role ? '/profile' : '/login';
   profileLabel = this.role ? 'Perfil' : 'Iniciar sesion';
+  isMenuOpen = signal(false);
+
+  toggleMenu(): void {
+    this.isMenuOpen.update((isOpen) => !isOpen);
+  }
+
+  closeMenu(): void {
+    this.isMenuOpen.set(false);
+  }
 
   logout(): void {
     localStorage.removeItem('token');
+    this.closeMenu();
     this.router.navigate(['/home']);
   }
 
@@ -57,14 +67,21 @@ export class Header {
     }
 
     const roleHomeRoutes: Record<UserRole, HeaderNavItem> = {
-      [UserRole.USER]: { label: 'Mi panel', route: '/my-panel' },
-      [UserRole.MODERATOR]: { label: 'Panel moderacion', route: '/moderador' },
-      [UserRole.ADMIN]: { label: 'Panel administracion', route: '/administration' },
+      [UserRole.USER]: { label: 'Mi panel', route: '/my-panel', icon: 'home' },
+      [UserRole.MODERATOR]: { label: 'Panel moderacion', route: '/moderador', icon: 'home' },
+      [UserRole.ADMIN]: { label: 'Panel administracion', route: '/administration', icon: 'home' },
     };
+
+    if (role === UserRole.USER) {
+      return [
+        roleHomeRoutes[role],
+        { label: 'Catalogo', route: '/catalog', icon: 'search' },
+        { label: 'Mensajes', route: '/messages' },
+      ];
+    }
 
     return [
       roleHomeRoutes[role],
-      { label: 'Catalogo', route: '/catalog', icon: 'search' },
       { label: 'Mensajes', route: '/messages' },
     ];
   }
