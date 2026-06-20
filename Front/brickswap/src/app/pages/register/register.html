@@ -1,0 +1,37 @@
+<main class="register-page">
+    <app-auth-hero
+        title="Construye tu colección"
+        highlightedTitle="pieza a pieza."
+        description="Compra, vende e intercambia sets de LEGO de segunda mano con   la comunidad."
+        [stats]="heroStats">
+    </app-auth-hero>
+
+    <!--<app-auth-login-panel
+    [formGroup]="loginForm"
+    [title]="'Crea tu cuenta'"
+    [subtitle]="'Únete a la comunidad de Brickswap'"
+    [submitLabel]="'Crear cuenta'"
+    [emailActionText]="''"
+    [emailActionLink]="''"
+    [footerText]="passwordRecoveryMode ? '¿Ya tienes cuenta?' : '¿No tienes cuenta?'"
+    [footerLinkText]="passwordRecoveryMode ? 'Inicia sesión' : 'Regístrate gratis'"
+    [footerLink]="passwordRecoveryMode ? '' : '/auth/register'"
+    [forgotPasswordLink]="''"
+    [showPassword]="!passwordRecoveryMode"
+    [successMessage]="recoverySuccessMessage"
+    [submitted]="loginSubmitted"
+    (forgotPasswordClicked)="showPasswordRecovery()"
+    (footerClicked)="showLogin()"
+    (formSubmitted)="submitAuthForm()"
+  ></app-auth-login-panel> -->
+    
+    <app-register-form title="Crea tu cuenta", [formGroup]="registerForm" subtitle="Únete a la comunidad Brickswap" (formSubmitted)="onRegisterSubmit()">
+
+    </app-register-form>
+    
+  
+
+
+    
+
+</main>

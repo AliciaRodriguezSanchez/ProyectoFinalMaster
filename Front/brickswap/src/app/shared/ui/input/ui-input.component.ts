@@ -3,7 +3,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 export type UiInputType = 'email' | 'password' | 'text';
-export type UiInputIcon = 'email' | 'lock';
+export type UiInputIcon = 'email' | 'lock' | 'profile';
 
 @Component({
   selector: 'ui-input',

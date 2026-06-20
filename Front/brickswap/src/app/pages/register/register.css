@@ -1,0 +1,33 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--brick-color-surface-alt);
+  color: var(--brick-color-text);
+  font-family: var(--brick-font-family-base);
+}
+
+.register-page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(360px, 1fr) minmax(420px, 1fr);
+  background: var(--brick-color-surface-alt);
+}
+
+@media (max-width: 900px) {
+  .register-page {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  :host,
+  .register-page {
+    min-height: 100vh;
+    background: var(--brick-color-white);
+  }
+
+  .register-page {
+    display: block;
+    padding: 112px 23px 40px;
+  }
+}

@@ -1,0 +1,99 @@
+<section class="auth-panel" [attr.aria-labelledby]="titleId()">
+  <form class="auth-form" [formGroup]="formGroup()" (ngSubmit)="onSubmit()">
+    <div class="auth-form__header">
+      <h2 [id]="titleId()">{{ title() }}</h2>
+      <p>{{ subtitle() }}</p>
+    </div>
+
+    <ui-input
+      formControlName="name"
+      label="Nombre"
+      type="text"
+      icon="profile"
+      placeholder="Juan"
+      [required]="true"
+      [invalid]="showRequiredError('name')"
+    ></ui-input>
+
+    <ui-input
+      formControlName="lastname"
+      label="Apellidos"
+      type="text"
+      icon="profile"
+      placeholder="Álvarez García"
+      [required]="true"
+      [invalid]="showRequiredError('lastname')"
+    ></ui-input>
+    
+    <!-- habría que incluir una validación en el username para que no valgan espacios y limitar tamaño -->
+    <ui-input
+      formControlName="username"
+      label="Nombre de usuario"
+      type="text"
+      icon="profile"
+      placeholder="juanalvarez1234" 
+      [required]="true"
+      [invalid]="showRequiredError('username')"
+    ></ui-input>
+
+
+    <!-- validación para ver si existe este email  -->
+    <ui-input
+      formControlName="email"
+      label="email"
+      type="email"
+      icon="email"
+      placeholder="juanalvarez@email.com"
+      autocomplete="email"
+      [required]="true"
+      [invalid]="showRequiredError('email')"
+    ></ui-input>
+
+      <ui-input
+        formControlName="password"
+        label="Contraseña"
+        type="password"
+        icon="lock"
+        [placeholder]="passwordPlaceholder()"
+        autocomplete="new-password"
+        [required]="true"
+        [invalid]="showRequiredError('password')"
+      ></ui-input>
+    
+      <ui-input
+        formControlName="repetPassword"
+        label="Repetir contraseña"
+        type="password"
+        icon="lock"
+        [placeholder]="passwordPlaceholder()"
+        autocomplete="current-password"
+        [required]="true"
+        [invalid]="showRequiredError('repetPassword')"
+      ></ui-input>
+    
+
+    <ui-button
+      label="Crear cuenta"
+      type="submit"
+      size="md"
+      [showArrow]="showSubmitArrow()"
+    ></ui-button>
+
+    @if (successMessage()) {
+      <p class="auth-form__success" role="status">{{ successMessage() }}</p>
+    }
+
+    <p class="auth-form__footer">
+      {{ footerText() }}
+      @if (footerLink()) {
+        <a [routerLink]="footerLink()">{{ footerLinkText() }}</a>
+      }
+
+      @if (!footerLink()) {
+        <button type="button" class="auth-form__link" (click)="onFooterClick()">
+          {{ footerLinkText() }}
+        </button>
+      }
+    </p>
+  </form>
+</section>
