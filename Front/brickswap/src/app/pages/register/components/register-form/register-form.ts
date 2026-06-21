@@ -37,14 +37,6 @@ export class RegisterForm {
   }
 
 
-  
-
-
-
-
-
-
-
 
   onEmailAction(): void {
     this.emailActionClicked.emit();
@@ -60,10 +52,56 @@ export class RegisterForm {
 
   showRequiredError(controlName: string): boolean {
     const control = this.formGroup().get(controlName);
+    const groupError = controlName === 'repetPassword' && this.formGroup().hasError('passwordMismatch');
 
     return Boolean(
-      control?.hasError('required') &&
-      (control.touched || this.submitted())
+      (control?.invalid || groupError) &&
+      (control?.touched || this.submitted())
     );
   }
+
+  getErrorMessage(controlName: string): string {
+    const control = this.formGroup().get(controlName);
+    if (!control) return '';
+
+    if (control.hasError('required')) {
+      return 'Este campo es obligatorio';
+    }
+
+    if (control.hasError('minlength')) {
+      const requiredLength = control.getError('minlength').requiredLength;
+      return `Debe tener al menos ${requiredLength} caracteres`;
+    }
+
+    if (control.hasError('maxlength')) {
+      const requiredLength = control.getError('maxlength').requiredLength;
+      return `No puede superar los ${requiredLength} caracteres`;
+    }
+
+
+    if (controlName === 'email' && control.hasError('pattern')) {
+        return 'Introduce un email válido';
+      }
+
+    if (controlName === 'username' && control.hasError('pattern')) {
+      return 'Solo letras, números y guion bajo, sin espacios';
+    }
+
+    if ((controlName === 'name' || controlName === 'lastname') && control.hasError('pattern')) {
+      return 'Solo se permiten letras';
+    }
+
+    if (controlName === 'password' && control.hasError('pattern')) {
+      return 'Debe incluir mayúscula, minúscula y un número';
+    }
+
+    if (controlName === 'repetPassword' && this.formGroup().hasError('passwordMismatch')) {
+      return 'Las contraseñas no coinciden';
+    }
+
+    return '';
+  }
+
+  //ver si esta úlyima función se puede abreviar con un switch o algo
+
 }

@@ -43,6 +43,7 @@ export class AuthPage {
     }),
   });
 
+  
   loginSubmitted = false;
   passwordRecoveryMode = false;
   recoverySuccessMessage = '';

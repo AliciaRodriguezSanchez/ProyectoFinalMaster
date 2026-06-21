@@ -29,6 +29,8 @@ export class UiInputComponent implements ControlValueAccessor {
   actionLink = input('');
   required = input(false);
   invalid = input(false);
+  errorMessage = input('') //lo añado para que se me muestre un texto con error en el registro
+  
 
   actionClicked = output<void>();
 

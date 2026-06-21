@@ -93,3 +93,12 @@
 .ui-input:has(input:disabled) {
   opacity: .62;
 }
+
+.ui-input__error {
+  display: block;
+  margin-top: 6px;
+  color: var(--brick-color-danger);
+  font-size: var(--brick-font-size-sm);
+  font-weight: 700;
+}
+

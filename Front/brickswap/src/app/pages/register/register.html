@@ -6,13 +6,13 @@
         [stats]="heroStats">
     </app-auth-hero>
 
-    <app-register-form title="Crea tu cuenta", [formGroup]="registerForm" subtitle="Únete a la comunidad Brickswap" (formSubmitted)="onRegisterSubmit()">
+    <app-register-form 
+    title="Crea tu cuenta" 
+    [formGroup]="registerForm" 
+    [submitted]="submitted"
+    subtitle="Únete a la comunidad Brickswap" 
+    (formSubmitted)="onRegisterSubmit()">
 
     </app-register-form>
     
-  
-
-
-    
-
 </main>

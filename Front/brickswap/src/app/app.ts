@@ -21,6 +21,7 @@ export class App {
 
   readonly isAuthLayout = signal(false);
   readonly isHomeLayout = signal(false);
+  readonly isRegisterLayout = signal(false);
 
   constructor(private router: Router) {
     this.updateLayout(this.router.url);
@@ -33,5 +34,7 @@ export class App {
   private updateLayout(url: string): void {
     this.isAuthLayout.set(url.startsWith('/login') || url.startsWith('/auth/'));
     this.isHomeLayout.set(url === '/home' || url === '/');
+    this.isRegisterLayout.set(url.startsWith('/register'));
+
   }
 }

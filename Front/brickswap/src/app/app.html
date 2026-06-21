@@ -1,8 +1,10 @@
-@if (!isAuthLayout()) {
+@if (!isAuthLayout() && !isRegisterLayout()) {
   <app-header></app-header>
 }
 
-<div [class.container]="!isAuthLayout() && !isHomeLayout()" [class.my-4]="!isAuthLayout() && !isHomeLayout()">
+<div
+  [class.container]="!isAuthLayout() && !isHomeLayout() && !isRegisterLayout()"
+  [class.my-4]="!isAuthLayout() && !isHomeLayout() && !isRegisterLayout()">
   <router-outlet></router-outlet>
 </div>
 

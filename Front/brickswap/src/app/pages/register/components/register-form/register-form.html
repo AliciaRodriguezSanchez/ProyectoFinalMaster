@@ -13,6 +13,7 @@
       placeholder="Juan"
       [required]="true"
       [invalid]="showRequiredError('name')"
+      [errorMessage]="getErrorMessage('name')"
     ></ui-input>
 
     <ui-input
@@ -23,6 +24,7 @@
       placeholder="Álvarez García"
       [required]="true"
       [invalid]="showRequiredError('lastname')"
+      [errorMessage]="getErrorMessage('lastname')"
     ></ui-input>
     
     <!-- habría que incluir una validación en el username para que no valgan espacios y limitar tamaño -->
@@ -34,6 +36,7 @@
       placeholder="juanalvarez1234" 
       [required]="true"
       [invalid]="showRequiredError('username')"
+      [errorMessage]="getErrorMessage('username')"
     ></ui-input>
 
 
@@ -47,6 +50,7 @@
       autocomplete="email"
       [required]="true"
       [invalid]="showRequiredError('email')"
+      [errorMessage]="getErrorMessage('email')"
     ></ui-input>
 
       <ui-input
@@ -58,6 +62,7 @@
         autocomplete="new-password"
         [required]="true"
         [invalid]="showRequiredError('password')"
+        [errorMessage]="getErrorMessage('password')"
       ></ui-input>
     
       <ui-input
@@ -66,9 +71,10 @@
         type="password"
         icon="lock"
         [placeholder]="passwordPlaceholder()"
-        autocomplete="current-password"
+        autocomplete="new-password"
         [required]="true"
         [invalid]="showRequiredError('repetPassword')"
+        [errorMessage]="getErrorMessage('repetPassword')"
       ></ui-input>
     
 

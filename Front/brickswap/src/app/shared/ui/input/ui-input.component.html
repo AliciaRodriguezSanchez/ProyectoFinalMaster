@@ -53,4 +53,8 @@
       (blur)="onBlur()"
     />
   </span>
+
+  @if (invalid() && errorMessage()) {
+    <span class="ui-input__error" role="alert">{{ errorMessage() }}</span>
+  }
 </label>
