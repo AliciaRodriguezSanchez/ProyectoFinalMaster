@@ -141,9 +141,19 @@ const reserveArticle = async (req, res) => {
     }
 };
 
-const getLastArticle = async (req, res) => {
+const getLastArticles = async (req, res) => {
     try {
-        const result = await Article.getLastArticle();
+        const result = await Article.getLastArticles();
+
+        res.status(200).json(result);
+    }catch (error) {
+        console.error('Error al obtener los artículos: ', error.message);
+        res.status(500).json({ message: 'Error al obtener los artículos' });
+    }
+}
+const getArticlesInPromotion = async (req, res) => {
+    try {
+        const result = await Article.getArticlesInPromotion();
 
         res.status(200).json(result);
     }catch (error) {
@@ -155,7 +165,8 @@ const getLastArticle = async (req, res) => {
 module.exports = {
     getAllArticles,
     getArticleById,
-    getLastArticle,
+    getLastArticles,
+    getArticlesInPromotion,
     createArticle,
     buyArticle,
     reserveArticle

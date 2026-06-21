@@ -1,16 +1,6 @@
 const LoginModel = require('../models/login.model');
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-
-const register = async (req, res) => {
-    try {
-        req.body.password = bcrypt.hashSync(req.body.password, 8);
-        const result = await LoginModel.insert(req.body);
-        res.json(result);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
+const { createAuthToken } = require('../utils/auth-token');
 
 const login = async (req, res) => {
     try {
@@ -33,13 +23,13 @@ const login = async (req, res) => {
 
         res.json({
             message: "Login correcto!",
-            token: jwt.sign({
+            token: createAuthToken({
                 userId: user.id,
                 role: user.rol_id,
                 name: user.nombre,
                 surname: user.apellidos,
                 username: user.nombre_usuario
-            }, process.env.JWT_SECRET_KET)
+            })
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -47,6 +37,5 @@ const login = async (req, res) => {
 }
 
 module.exports = {
-    register,
     login
 };

@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
 const LoginModel = require('../models/login.model');
+const { verifyAuthToken } = require('../utils/auth-token');
 
 const checkToken = async (req, res, next) => {
 
@@ -15,7 +15,7 @@ const checkToken = async (req, res, next) => {
     const token = req.headers.authorization;
     let payload;
     try {
-        payload = jwt.verify(token, process.env.JWT_SECRET_KET);
+        payload = verifyAuthToken(token);
     } catch (error) {
         console.log(error)
         return res.status(401).json({

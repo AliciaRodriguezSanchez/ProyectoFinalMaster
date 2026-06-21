@@ -28,6 +28,10 @@
   border-color: var(--brick-color-danger, #dc2626);
 }
 
+.toast-message--success {
+  border-color: var(--brick-color-success, #16a34a);
+}
+
 .toast-message__icon {
   width: 28px;
   height: 28px;
@@ -38,6 +42,10 @@
   background: var(--brick-color-danger, #dc2626);
   color: var(--brick-color-white);
   font-weight: var(--brick-font-weight-xl);
+}
+
+.toast-message--success .toast-message__icon {
+  background: var(--brick-color-success, #16a34a);
 }
 
 .toast-message p {

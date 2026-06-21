@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { API_URL } from '../../../../config/api';
+import { API_URL } from '../api';
 import type { ICategory } from '../../interfaces/icategory.interface';
 
 @Injectable({

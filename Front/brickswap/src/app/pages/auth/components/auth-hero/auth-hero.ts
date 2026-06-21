@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UiLogoComponent } from '../../../../shared/ui/logo/ui-logo.component';
-import type { AuthHeroStat } from '../../interfaces/auth-hero.interface';
+import type { AuthHeroStat } from '../../../../interfaces/auth/auth-hero.interface';
 import { APP_ASSETS } from '../../../../core/constants/app-assets';
 
 @Component({

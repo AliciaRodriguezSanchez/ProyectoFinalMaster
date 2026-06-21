@@ -16,9 +16,17 @@
   >
     @if (isLoading()) {
       @for (item of [].constructor(skeletonItems()); track $index) {
-        <article class="carrousel__skeleton" aria-hidden="true">
+        <article
+          class="carrousel__skeleton"
+          [class.carrousel__skeleton--product]="skeletonVariant() === 'product'"
+          aria-hidden="true"
+        >
           <span class="carrousel__skeleton-icon"></span>
           <span class="carrousel__skeleton-text"></span>
+          @if (skeletonVariant() === 'product') {
+            <span class="carrousel__skeleton-price"></span>
+            <span class="carrousel__skeleton-meta"></span>
+          }
         </article>
       }
     } @else {

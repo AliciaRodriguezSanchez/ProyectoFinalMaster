@@ -4,11 +4,12 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { UserRole } from '../constants/user-role';
 import { decodeJwtPayload } from '../utils/jwt';
+import { TOKEN_KEY } from '../constants/auth';
 
 export const roleGuard: CanActivateFn = (route) => {
   const router = inject(Router);
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem(TOKEN_KEY);
 
   if (!token) {
     return router.createUrlTree(['/login']);
@@ -21,7 +22,7 @@ export const roleGuard: CanActivateFn = (route) => {
     const allowedRoles = route.data['roles'] as UserRole[];
 
     if (!allowedRoles.includes(userRole)) {
-      return router.createUrlTree(['/unauthorized']);
+      return router.createUrlTree(['/home']);
     }
 
     return true;

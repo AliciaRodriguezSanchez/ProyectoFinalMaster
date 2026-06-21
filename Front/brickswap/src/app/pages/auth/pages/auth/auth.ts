@@ -1,18 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { UserRole } from '../../../../core/constants/user-role';
+import { MESSAGE_TEXT } from '../../../../core/constants/message-text';
 import { AuthService } from '../../../../core/services/auth/auth.service';
-import { decodeJwtPayload } from '../../../../core/utils/jwt';
+import { UiToastService } from '../../../../core/services/toast/ui-toast.service';
 import { AuthHero } from '../../components/auth-hero/auth-hero';
 import { AuthLoginPanel } from '../../components/auth-login-panel/auth-login-panel';
-import type { AuthHeroStat } from '../../interfaces/auth-hero.interface';
-import type { AuthLoginForm } from '../../interfaces/auth-login-form.interface';
-
-interface AuthTokenPayload {
-  userId: number;
-  role: UserRole;
-}
+import type { AuthHeroStat } from '../../../../interfaces/auth/auth-hero.interface';
+import type { AuthLoginForm } from '../../../../interfaces/auth/auth-login-form.interface';
 
 @Component({
   selector: 'app-auth-page',
@@ -22,8 +16,8 @@ interface AuthTokenPayload {
 })
 export class AuthPage {
   constructor(
-    private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: UiToastService
   ) {}
 
   heroStats: AuthHeroStat[] = [
@@ -41,6 +35,12 @@ export class AuthPage {
       nonNullable: true,
       validators: [Validators.required],
     }),
+    newPassword: new FormControl('', {
+      nonNullable: true,
+    }),
+    repeatPassword: new FormControl('', {
+      nonNullable: true,
+    }),
   });
 
   
@@ -54,6 +54,7 @@ export class AuthPage {
     this.loginSubmitted = false;
     this.recoverySuccessMessage = '';
     this.clearLoginError();
+    this.configurePasswordRecoveryValidators();
     this.loginForm.markAsUntouched();
   }
 
@@ -62,6 +63,7 @@ export class AuthPage {
     this.loginSubmitted = false;
     this.recoverySuccessMessage = '';
     this.clearLoginError();
+    this.configureLoginValidators();
     this.loginForm.markAsUntouched();
   }
 
@@ -84,15 +86,13 @@ export class AuthPage {
       return;
     }
 
-    const loginData: AuthLoginForm = this.loginForm.getRawValue();
+    const { email, password } = this.loginForm.getRawValue();
+    const loginData: AuthLoginForm = { email, password };
 
     try {
       const response = await this.authService.login(loginData);
 
-      localStorage.setItem('token', response.token);
-
-      const payload = this.getTokenPayload(response.token);
-      await this.navigateByRole(payload.role);
+      await this.authService.handleAuthSuccess(response.token);
     } catch (error: unknown) {
       console.error('Error al iniciar sesión:', error);
       this.setLoginCredentialsError();
@@ -103,19 +103,34 @@ export class AuthPage {
     this.loginSubmitted = true;
     this.recoverySuccessMessage = '';
 
-    const emailControl = this.loginForm.controls.email;
+    this.clearLoginError();
+    const { email, newPassword, repeatPassword } = this.loginForm.getRawValue();
 
-    if (emailControl.invalid) {
-      emailControl.markAsTouched();
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      this.loginErrorMessage.set(MESSAGE_TEXT.auth.resetRequiredFields);
+      return;
+    }
+
+    if (newPassword !== repeatPassword) {
+      this.loginErrorMessage.set(MESSAGE_TEXT.auth.resetPasswordMismatch);
       return;
     }
 
     try {
-      console.log('Recuperar contraseña BrickSwap:', emailControl.value);
-      this.recoverySuccessMessage = 'Te hemos enviado las instrucciones a tu email.';
+      await this.authService.resetPassword({
+        email,
+        newPassword,
+        repeatPassword,
+      });
+
+      this.toastService.success(MESSAGE_TEXT.auth.resetPasswordSuccess);
+      this.showLogin();
+      this.loginForm.reset();
     } catch (error: unknown) {
       console.error('Error al recuperar contraseña:', error);
-      alert('No se pudo enviar el email de recuperación');
+      this.toastService.error(MESSAGE_TEXT.auth.resetPasswordError);
+      this.loginErrorMessage.set(MESSAGE_TEXT.auth.resetPasswordError);
     }
   }
 
@@ -124,24 +139,35 @@ export class AuthPage {
   }
 
   private setLoginRequiredError(): void {
-    this.loginErrorMessage.set('Email y password son campos requeridos');
+    this.loginErrorMessage.set(MESSAGE_TEXT.auth.loginRequiredFields);
   }
 
   private setLoginCredentialsError(): void {
-    this.loginErrorMessage.set('Email y/o Password incorrecto');
+    this.loginErrorMessage.set(MESSAGE_TEXT.auth.loginInvalidCredentials);
   }
 
-  private getTokenPayload(token: string): AuthTokenPayload {
-    return decodeJwtPayload<AuthTokenPayload>(token);
+  private configureLoginValidators(): void {
+    this.loginForm.controls.password.setValidators([Validators.required]);
+    this.loginForm.controls.newPassword.clearValidators();
+    this.loginForm.controls.repeatPassword.clearValidators();
+    this.updatePasswordControlsValidity();
   }
 
-  private navigateByRole(role: UserRole): Promise<boolean> {
-    const routesByRole: Record<UserRole, string> = {
-      [UserRole.USER]: '/catalog',
-      [UserRole.MODERATOR]: '/moderador',
-      [UserRole.ADMIN]: '/administration',
-    };
-
-    return this.router.navigate([routesByRole[role] || '/home']);
+  private configurePasswordRecoveryValidators(): void {
+    this.loginForm.controls.password.clearValidators();
+    this.loginForm.controls.newPassword.setValidators([
+      Validators.required,
+      Validators.minLength(8),
+      Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/),
+    ]);
+    this.loginForm.controls.repeatPassword.setValidators([Validators.required]);
+    this.updatePasswordControlsValidity();
   }
+
+  private updatePasswordControlsValidity(): void {
+    this.loginForm.controls.password.updateValueAndValidity();
+    this.loginForm.controls.newPassword.updateValueAndValidity();
+    this.loginForm.controls.repeatPassword.updateValueAndValidity();
+  }
+
 }

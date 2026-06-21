@@ -133,7 +133,7 @@ const reserveArticle = async (id) => {
     return result;
 };
 
-const getLastArticle = async () => {
+const getLastArticles = async () => {
     const [result] = await db.query(
         `SELECT a.*,
             c.nombre AS categoria_nombre
@@ -149,10 +149,23 @@ const getLastArticle = async () => {
 
 }
 
+const getArticlesInPromotion = async () => {
+    const [result] = await db.query(
+        `SELECT a.*
+        FROM articulos as a
+        WHERE  a.in_promotion = 1
+        ORDER BY a.fecha_publicacion DESC`
+    );
+
+    return result;
+
+}
+
 module.exports = {
     getAllArticles,
     getArticleById,
-    getLastArticle,
+    getLastArticles,
+    getArticlesInPromotion,
     createArticle,
     buyArticle,
     reserveArticle

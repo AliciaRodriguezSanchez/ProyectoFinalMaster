@@ -32,6 +32,10 @@ export class UiToastService {
     this.show(message, 'error');
   }
 
+  success(message: string): void {
+    this.show(message, 'success');
+  }
+
   remove(id: number): void {
     this.messages.update((messages) => messages.filter((message) => message.id !== id));
   }

@@ -66,7 +66,9 @@ export class UiInputComponent implements ControlValueAccessor {
     this.onTouched();
   }
 
-  onActionClick(): void {
+  onActionClick(event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
     this.actionClicked.emit();
   }
 }

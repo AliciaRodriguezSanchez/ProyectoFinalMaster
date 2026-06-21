@@ -12,7 +12,7 @@
     }
 
     @if (actionText() && !actionLink()) {
-      <button type="button" (click)="onActionClick()">{{ actionText() }}</button>
+      <button type="button" (click)="onActionClick($event)">{{ actionText() }}</button>
     }
   </span>
 

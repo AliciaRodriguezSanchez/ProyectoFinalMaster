@@ -126,19 +126,6 @@ Content-Type: application/json
 # REVIEWS
 ########################################
 
-### Crear usuario
-POST {{baseUrl}}/register
-Content-Type: application/json
-
-{
-  "username": "moderatoruser",
-  "name" : "moderatoruser",
-  "surname": "moderatoruser",
-  "email": "moderatoruser@gmail.com",
-  "password": "12345678",
-  "rol":2
-}
-
 ### Login usuario
 POST {{baseUrl}}/login
 Content-Type: application/json
@@ -169,4 +156,14 @@ Content-Type: application/json
   "repetPassword": "1234",
   "username": "alvarolg"
 
+}
+
+### Resetear contraseña
+PATCH {{baseUrl}}/users/reset-password
+Content-Type: application/json
+
+{
+  "email": "465654@gmail.com",
+  "newPassword": "Nueva1234",
+  "repeatPassword": "Nueva1234"
 }

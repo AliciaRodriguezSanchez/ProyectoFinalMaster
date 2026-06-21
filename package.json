@@ -1,0 +1,12 @@
+{
+  "name": "brickswap-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "npm run dev:back & npm run dev:front",
+    "dev:front": "npm --prefix Front/brickswap start",
+    "dev:back": "npm --prefix Back run dev",
+    "build:front": "npm --prefix Front/brickswap run build"
+  }
+}

@@ -59,7 +59,9 @@
 }
 
 .carrousel__skeleton-icon,
-.carrousel__skeleton-text {
+.carrousel__skeleton-text,
+.carrousel__skeleton-price,
+.carrousel__skeleton-meta {
   display: block;
   border-radius: var(--brick-radius-pill);
   background: var(--brick-color-border);
@@ -73,6 +75,41 @@
 .carrousel__skeleton-text {
   width: 72px;
   height: 13px;
+}
+
+.carrousel__skeleton--product {
+  width: 176px;
+  min-height: 256px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 0 10px 14px;
+  border: 1px solid var(--brick-color-border);
+  border-radius: var(--brick-radius-md);
+  background: var(--brick-color-white);
+}
+
+.carrousel__skeleton--product .carrousel__skeleton-icon {
+  width: calc(100% + 20px);
+  height: 148px;
+  margin: 0 -10px 4px;
+  border-radius: var(--brick-radius-md) var(--brick-radius-md) 0 0;
+}
+
+.carrousel__skeleton--product .carrousel__skeleton-text {
+  width: 92%;
+  height: 14px;
+}
+
+.carrousel__skeleton--product .carrousel__skeleton-price {
+  width: 54px;
+  height: 18px;
+}
+
+.carrousel__skeleton--product .carrousel__skeleton-meta {
+  width: 78%;
+  height: 11px;
+  margin-top: auto;
 }
 
 .carrousel__control {

@@ -1,15 +1,11 @@
-import { Component, Inject, inject, input, output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AuthHero } from '../auth/components/auth-hero/auth-hero';
-import { AuthHeroStat } from '../auth/interfaces/auth-hero.interface';
-import { AuthLoginPanel } from '../auth/components/auth-login-panel/auth-login-panel';
+import { AuthHeroStat } from '../../interfaces/auth/auth-hero.interface';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthLoginForm } from '../auth/interfaces/auth-login-form.interface';
-import { Router } from '@angular/router';
 import { RegisterForm } from './components/register-form/register-form';
 import { RegisterService } from '../../core/services/register/register.service';
 import { Iuser } from '../../core/interfaces/iuser.interfaces';
-import Swal  from 'sweetalert2';
-import { AuthService } from '../../core/services/auth/auth.service.pruebasRegister';
+import { AuthService } from '../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -20,7 +16,6 @@ import { AuthService } from '../../core/services/auth/auth.service.pruebasRegist
 export class Register {
   registerService = inject(RegisterService)
   authService = inject(AuthService)
-  router = inject(Router)
 
 
   heroStats: AuthHeroStat[] = [
@@ -91,31 +86,12 @@ export class Register {
     try {
         const result = await this.registerService.insertUser(registerValue);
 
-        this.authService.saveToken(result.token)
-
-        await Swal.fire({
-            position: 'center',
-            icon: 'success',
-            title: '¡Todo correcto!',
-            text: 'El usuario se ha creado correctamente',
-            showConfirmButton: false,
-            timer: 2000
-        });
-
-        this.router.navigate(['/'])
+        await this.authService.handleAuthSuccess(result.token);
 
     } catch (error: any) {
-        
-        await Swal.fire({
-            icon: 'error',
-            title: 'Error al registrar',
-            text: error?.error?.message || 'No se ha podido crear el usuario. Inténtalo de nuevo.',
-            confirmButtonText: 'OK'
-        });
+        console.error('Error al registrar:', error);
     }
 
 }
 
 }
-
-
