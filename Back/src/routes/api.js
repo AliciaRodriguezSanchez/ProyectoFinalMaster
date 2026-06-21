@@ -23,7 +23,7 @@ router.use('/reviews', reviewRoutes);
 router.use('/favorites', favoriteRoutes);
 router.use('/messages', checkToken,  messageRoutes);
 router.use('/reports', checkToken, reportRoutes);
-router.use('/', loginRoutes);
+router.use('/login', loginRoutes);
 router.use('/users', usersRoutes);
 
 module.exports = router;

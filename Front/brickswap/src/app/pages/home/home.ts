@@ -7,6 +7,7 @@ import { PromotionBannerComponent } from '../../shared/components/promotion-bann
 import { UiInfoCardComponent } from '../../shared/components/info-card/info-card.component';
 import { CATEGORY_STYLES, HOME_FEATURES } from './home-features';
 import { APP_ASSETS } from '../../core/constants/app-assets';
+import { MESSAGE_TEXT } from '../../core/constants/message-text';
 import { CategoryService } from '../../core/services/category/category.service';
 import { ICategory } from '../../core/interfaces/icategory.interface';
 import { UiToastService } from '../../core/services/toast/ui-toast.service';
@@ -34,8 +35,10 @@ export class Home implements OnInit {
   toastService = inject(UiToastService);
   categories = signal<ICategory[]>([]);
   popularProducts = signal<IArticle[]>([]);
+  promotionProducts = signal<IArticle[]>([]);
   isLoadingCategories = signal(true);
   isLoadingLastProduct = signal(true);
+  isLoadingProductsInPromotion = signal(true);
   categoryItems = computed<UiCarrouselItem[]>(() =>
     this.categories().map((category, index) => {
       const style = CATEGORY_STYLES[index % CATEGORY_STYLES.length];
@@ -48,10 +51,12 @@ export class Home implements OnInit {
       };
     })
   );
+  features = HOME_FEATURES;
 
   ngOnInit(): void {
     this.loadCategories();
     this.loadLatestProducts();
+    this.loadProductsInPromotion();
   }
 
   async loadCategories(): Promise<void> {
@@ -60,7 +65,7 @@ export class Home implements OnInit {
       const response = await this.categoryServices.getCategories();
       this.categories.set(response);
     } catch (error: unknown) {
-      this.toastService.error('No se han podido cargar las categorías');
+      this.toastService.error(MESSAGE_TEXT.home.categoriesLoadError);
     } finally {
       this.isLoadingCategories.set(false);
     }
@@ -69,12 +74,25 @@ export class Home implements OnInit {
     this.isLoadingLastProduct.set(true);
 
     try {
-      const response = await this.articlesServices.getLastArticle();
+      const response = await this.articlesServices.getLastArticles();
       this.popularProducts.set(response);
     } catch (error: unknown) {
-      this.toastService.error('No se han podido cargar los últimos productos');
+      this.toastService.error(MESSAGE_TEXT.home.latestProductsLoadError);
     } finally {
       this.isLoadingLastProduct.set(false);
+    }
+  }
+
+  async loadProductsInPromotion(): Promise<void> {
+    this.isLoadingProductsInPromotion.set(true);
+
+    try {
+      const response = await this.articlesServices.getArticlesInPromotions();
+      this.promotionProducts.set(response);
+    } catch (error: unknown) {
+      this.toastService.error(MESSAGE_TEXT.home.promotionProductsLoadError);
+    } finally {
+      this.isLoadingProductsInPromotion.set(false);
     }
   }
 
@@ -115,5 +133,5 @@ export class Home implements OnInit {
     ...this.latestProducts,
   ];*/
 
-  features = HOME_FEATURES;
+ 
 }

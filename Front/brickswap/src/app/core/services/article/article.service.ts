@@ -4,7 +4,7 @@ import { Observable, firstValueFrom } from "rxjs";
 import { Article } from "../../models/article/article.model";
 import { ICategory } from "../../interfaces/icategory.interface";
 import { IArticle } from "../../interfaces/iarticles.interface";
-import { API_URL , ARTICLES, LAST_PUBLICATIONS} from "../../../../config/api";
+import { API_URL , ARTICLES, LAST_PUBLICATIONS, IN_PROMOTIONS} from "../api";
 
 @Injectable({
   providedIn: 'root'
@@ -64,9 +64,16 @@ export class ArticleService {
 
 
   // 8. GET ultimas publicaciones => los publicados esa semana 
-  getLastArticle(): Promise<IArticle[]> {
+  getLastArticles(): Promise<IArticle[]> {
     return firstValueFrom(
       this.http.get<IArticle[]>(`${API_URL}/${ARTICLES}/${LAST_PUBLICATIONS}`)
+    );
+  }
+
+   // 8. GET ultimas publicaciones => los publicados esa semana 
+  getArticlesInPromotions(): Promise<IArticle[]> {
+    return firstValueFrom(
+      this.http.get<IArticle[]>(`${API_URL}/${ARTICLES}/${IN_PROMOTIONS}`)
     );
   }
 }

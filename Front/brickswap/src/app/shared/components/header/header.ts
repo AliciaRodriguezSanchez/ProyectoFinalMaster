@@ -6,6 +6,7 @@ import { UserRole } from '../../../core/constants/user-role';
 import { decodeJwtPayload } from '../../../core/utils/jwt';
 import { CatalogFiltersService } from '../../../core/services/catalog-filters/catalog-filters.service';
 import { UiLogoComponent } from '../../ui/logo/ui-logo.component';
+import { TOKEN_KEY } from '../../../core/constants/auth';
 
 interface HeaderTokenPayload {
   role: UserRole;
@@ -31,9 +32,15 @@ export class Header {
   catalogFiltersService = inject(CatalogFiltersService);
 
   constructor() {
+    // Se suscribe a los eventos de navegación del Router y,
+    //  al finalizar cada cambio de ruta, actualiza la URL actual y refresca el estado de autenticación/autorización del usuario.
+    //Usuario pulsa "Catálogo". => Router navega a /catalog => NavigationEnd => currentUrl = "/catalog" => refreshUserState() => Se recalculan login, rol y permisos => Navbar se actualiza
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe((event) => this.currentUrl.set(event.urlAfterRedirects));
+      .subscribe((event) => {
+        this.currentUrl.set(event.urlAfterRedirects);
+        this.refreshUserState();
+      });
   }
 
   role = signal(this.getCurrentRole());
@@ -55,9 +62,8 @@ export class Header {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    this.role.set(null);
-    this.userInitials.set('');
+    localStorage.removeItem(TOKEN_KEY);
+    this.refreshUserState();
     this.closeMenu();
     this.router.navigate(['/home']);
   }
@@ -70,8 +76,13 @@ export class Header {
     return this.getTokenPayload()?.role ?? null;
   }
 
+  private refreshUserState(): void {
+    this.role.set(this.getCurrentRole());
+    this.userInitials.set(this.getUserInitials());
+  }
+
   private getTokenPayload(): HeaderTokenPayload | null {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem(TOKEN_KEY);
 
     if (!token) {
       return null;
@@ -80,7 +91,7 @@ export class Header {
     try {
       return decodeJwtPayload<HeaderTokenPayload>(token);
     } catch {
-      localStorage.removeItem('token');
+      localStorage.removeItem(TOKEN_KEY);
       return null;
     }
   }

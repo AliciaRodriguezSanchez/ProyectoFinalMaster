@@ -142,3 +142,14 @@ npm run dev
 - Las consultas SQL usan parametros `?`, lo que ayuda a evitar inyeccion SQL.
 - Actualmente no hay autenticacion; los ids de usuario se reciben desde el body de las peticiones.
 - El script `test` todavia no ejecuta pruebas reales.
+
+
+
+
+## añadí una columna en articulos 
+ALTER TABLE articulos ADD COLUMN in_promotion BOOLEAN NOT NULL DEFAUL FALSE
+
+UPDATE articulos
+SET in_promotion = 0
+WHERE id IN (2, 9, 11, 20, 33);
+

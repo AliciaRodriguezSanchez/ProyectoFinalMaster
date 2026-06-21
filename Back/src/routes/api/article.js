@@ -8,7 +8,10 @@ const articleController = require('../../controllers/article.controller');
 router.get('/', articleController.getAllArticles);
 
 // obtener los últimos articulos publicados en la semana actual
-router.get('/lastPublications', articleController.getLastArticle);
+router.get('/lastPublications', articleController.getLastArticles);
+
+// obtener los articulos en promocion
+router.get('/promotions', articleController.getArticlesInPromotion);
 
 
 // POST

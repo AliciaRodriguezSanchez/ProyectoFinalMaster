@@ -43,6 +43,7 @@
       <ui-carrousel
         [isLoading]="isLoadingLastProduct()"
         [skeletonItems]="3"
+        skeletonVariant="product"
       >
         @for (product of popularProducts(); track product.id) {
           <ui-product-card
@@ -70,33 +71,36 @@
     </div>
   </section>
 
-  <section class="home-section" aria-labelledby="home-popular-title">
-    <div class="home-section__header">
-      <h2 id="home-popular-title">Sets más populares</h2>
-    </div>
+  @if (isLoadingProductsInPromotion() || promotionProducts().length > 0) {
+    <section class="home-section" aria-labelledby="home-popular-title">
+      <div class="home-section__header">
+        <h2 id="home-popular-title">Sets más populares</h2>
+      </div>
 
-    <div class="home-carrousel-frame">
-      <ui-carrousel
-        [isLoading]="isLoadingLastProduct()"
-        [skeletonItems]="3"
-      >
-        @for (product of popularProducts(); track product.id) {
-          <ui-product-card
-            [imageUrl]="product.foto"
-            [title]="product.titulo"
-            [price]="product.precio"
-            [location]="product.categoria_nombre || ''"
-            [publishedAt]="product.fecha_publicacion || ''"
-            [condition]="product.estado_articulo"
-            [showBadge]="true"
-            [badgeText]="product.estado_venta"
-            [detailRoute]="['/catalog']"
-            [queryParams]="{ search: product.titulo }"
-          ></ui-product-card>
-        }
-      </ui-carrousel>
-    </div>
-  </section>
+      <div class="home-carrousel-frame">
+        <ui-carrousel
+          [isLoading]="isLoadingProductsInPromotion()"
+          [skeletonItems]="3"
+          skeletonVariant="product"
+        >
+          @for (product of promotionProducts(); track product.id) {
+            <ui-product-card
+              [imageUrl]="product.foto"
+              [title]="product.titulo"
+              [price]="product.precio"
+              [location]="product.categoria_nombre || ''"
+              [publishedAt]="product.fecha_publicacion || ''"
+              [condition]="product.estado_articulo"
+              [showBadge]="true"
+              [badgeText]="product.estado_venta"
+              [detailRoute]="['/catalog']"
+              [queryParams]="{ search: product.titulo }"
+            ></ui-product-card>
+          }
+        </ui-carrousel>
+      </div>
+    </section>
+  }
 
   <section class="home-features" aria-label="Ventajas de BrickSwap">
     @for (feature of features; track feature.title) {

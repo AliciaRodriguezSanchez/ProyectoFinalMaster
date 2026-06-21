@@ -13,6 +13,8 @@ export interface UiCarrouselItem {
   text: string;
 }
 
+export type UiCarrouselSkeletonVariant = 'category' | 'product';
+
 @Component({
   selector: 'ui-carrousel',
   templateUrl: './carrousel.component.html',
@@ -23,6 +25,7 @@ export class UiCarrouselComponent {
   items = input<UiCarrouselItem[]>([]);
   isLoading = input(false);
   skeletonItems = input(7);
+  skeletonVariant = input<UiCarrouselSkeletonVariant>('category');
 
   @ViewChild('track')
   private track?: ElementRef<HTMLElement>;

@@ -27,8 +27,18 @@ const selectByUsername = async(username) =>{
     return result[0] || null;
 }
 
+const updatePasswordByEmail = async (email, password) => {
+    const [result] = await db.query(
+        'UPDATE perfiles SET contraseña = ? WHERE email = ?',
+        [password, email]
+    );
+
+    return result;
+}
+
 module.exports = {
     insert,
     selectByEmail,
-    selectByUsername
+    selectByUsername,
+    updatePasswordByEmail
 }

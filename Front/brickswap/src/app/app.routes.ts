@@ -36,8 +36,6 @@ export const routes: Routes = [
     // 7. REGISTER
     { path: 'register', component: Register },
 
-    // 6. RUTA COMÚN PARA REDIRIGIR
-    { path: '**', redirectTo: 'catalog' },
     // 8. MI PANEL
     {
         path: 'my-panel',

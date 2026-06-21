@@ -31,6 +31,7 @@ export class AuthLoginPanel {
   footerLink = input('/auth/register');
   submitted = input(false);
   showPassword = input(true);
+  showResetPasswordFields = input(false);
   successMessage = input('');
   errorMessage = input('');
 
@@ -48,6 +49,10 @@ export class AuthLoginPanel {
   }
 
   onForgotPassword(): void {
+    if (!this.showPassword()) {
+      return;
+    }
+
     this.forgotPasswordClicked.emit();
   }
 

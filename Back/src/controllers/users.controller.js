@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const userModel = require('../models/users.model')
-const jwt = require('jsonwebtoken')
+const { createAuthToken } = require('../utils/auth-token');
 
 
 const register = async (req, res) => {
@@ -45,13 +45,13 @@ const register = async (req, res) => {
             password: hashedPassword
         });
 
-        const token = jwt.sign({
+        const token = createAuthToken({
             userId: newUser.insertId,
             role: 1,
             name: formattedName,
             surname: formattedLastname,
             username,
-        }, process.env.JWT_SECRET_KEY);
+        });
 
 
         res.status(201).json({
@@ -65,6 +65,35 @@ const register = async (req, res) => {
         }
 } 
 
+const resetPassword = async (req, res) => {
+    try {
+        const { email, newPassword, repeatPassword } = req.body;
+
+        if (!email || !newPassword || !repeatPassword) {
+            return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+        }
+
+        if (newPassword !== repeatPassword) {
+            return res.status(400).json({ message: 'Las contraseñas no coinciden' });
+        }
+
+        const user = await userModel.selectByEmail(email);
+
+        if (!user) {
+            return res.status(404).json({ message: 'No existe ningún usuario con ese email' });
+        }
+
+        const hashedPassword = bcrypt.hashSync(newPassword, 8);
+        await userModel.updatePasswordByEmail(email, hashedPassword);
+
+        res.status(200).json({ message: 'Contraseña actualizada correctamente' });
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
+}
+
 
 ////////////////funciones auxiliares
 
@@ -77,5 +106,6 @@ const capitalizar = (texto) => {
 }
 
 module.exports = {
-    register
+    register,
+    resetPassword
 }

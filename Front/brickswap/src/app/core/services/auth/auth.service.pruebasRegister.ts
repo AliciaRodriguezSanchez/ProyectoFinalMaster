@@ -1,15 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { API_URL } from '../../../../config/api';
-import type { AuthLoginForm } from '../../../pages/auth/interfaces/auth-login-form.interface';
-
-export interface AuthLoginResponse {
-  message: string;
-  token: string;
-}
-
-const TOKEN_KEY = 'auth_token'
+import { API_URL } from '../api';
+import { TOKEN_KEY } from '../../constants/auth';
+import type { AuthLoginForm } from '../../../interfaces/auth/auth-login-form.interface';
+import type { AuthLoginResponse } from '../../../interfaces/auth/auth-login.interface';
 
 @Injectable({
   providedIn: 'root',

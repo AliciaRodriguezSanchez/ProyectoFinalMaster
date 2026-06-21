@@ -33,10 +33,34 @@
         [invalid]="showRequiredError('password')"
         (actionClicked)="onForgotPassword()"
       ></ui-input>
+    }
 
-      @if (errorMessage()) {
-        <p class="auth-form__error" role="alert">{{ errorMessage() }}</p>
-      }
+    @if (showResetPasswordFields()) {
+      <ui-input
+        formControlName="newPassword"
+        label="Nueva contraseña"
+        type="password"
+        icon="lock"
+        placeholder="••••••••"
+        autocomplete="new-password"
+        [required]="true"
+        [invalid]="showRequiredError('newPassword')"
+      ></ui-input>
+
+      <ui-input
+        formControlName="repeatPassword"
+        label="Repite contraseña"
+        type="password"
+        icon="lock"
+        placeholder="••••••••"
+        autocomplete="new-password"
+        [required]="true"
+        [invalid]="showRequiredError('repeatPassword')"
+      ></ui-input>
+    }
+
+    @if (errorMessage()) {
+      <p class="auth-form__error" role="alert">{{ errorMessage() }}</p>
     }
 
     <ui-button
