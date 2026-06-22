@@ -3,7 +3,7 @@
 ########################################
 
 @baseUrl = http://localhost:3000/api
-@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIzLCJpYXQiOjE3ODE4NDIwODZ9.qPLt9NVatG9kV-7WwatJRxqDQYRLA6gRSpJ4OsthGWM
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIxLCJyb2xlIjoyLCJpYXQiOjE3ODE5Nzg2MTB9.OvqwLVCIF1ICenziLdWeMSZWzhvoS4Tv4afQUYEGQSQ
 
 ########################################
 # TEST SERVER
@@ -88,10 +88,39 @@ Content-Type: application/json
   "articulo_id": 1
 }
 
-
 ########################################
 # REPORTS
 ########################################
+
+### Reportes pendientes
+GET {{baseUrl}}/reports?estado=Pendiente
+Authorization: {{TOKEN}}
+
+### Reportes retirado
+GET {{baseUrl}}/reports?estado=Revisado_Retirado
+Authorization: {{TOKEN}}
+
+### Reportes mantenido
+GET {{baseUrl}}/reports?estado=Revisado_Mantenido
+Authorization: {{TOKEN}}
+
+### Reporte por id
+GET  {{baseUrl}}/reports/1
+Authorization: {{TOKEN}}
+
+### Estadísticas estados
+GET {{baseUrl}}/reports/stadistics
+Authorization: {{TOKEN}}
+
+### Actualizar estado del reporte
+PUT {{baseUrl}}/reports/1
+Authorization: {{TOKEN}}
+Content-Type: application/json
+
+{
+  "estado_reporte": "Revisado_Mantenido",
+  "resolucion_comentario": "Producto totalmente apto y verificado"
+}
 
 ### Crear reporte
 POST {{baseUrl}}/reports
@@ -131,9 +160,8 @@ POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-  "email": "username1@gmail.com",
+  "email": "moderatoruser@gmail.com",
   "password": "12345678"
-
 }
 
 ### autorization
