@@ -13,40 +13,15 @@ const getReportsById = async (id) => {
         return result[0];
 }
 
-// GET REPORTES PENDIENTES G2
+// GET REPORTES ESTADO G2
 // NOMBRE DEL ARTICULO (TABLA ARTICULOS), MOTIVO, FECHA REPORTE Y ESTADO DE REPORTE
 
-const getAllPendingReports = async (estado) => {
+const getStateReports = async (estado) => {
     const [result] = await db.query( `
-    SELECT a.titulo, r.motivo, r.fecha_reporte, r.estado_reporte
+    SELECT a.titulo,p.nombre, r.motivo, r.fecha_reporte, r.estado_reporte, r.resolucion_comentario
     FROM reportes AS r
     JOIN  articulos AS a ON r.articulo_id =  a.id
-    WHERE r.estado_reporte = ?
-    `, [estado]);
-    return result;
-};
-
-// GET REPORTES Revisado_Retirado G2
-// NOMBRE DEL ARTICULO (TABLA ARTICULOS), MOTIVO, FECHA REPORTE Y ESTADO DE REPORTE
-
-const getAllRetireReports = async (estado) => {
-    const [result] = await db.query( `
-    SELECT a.titulo, r.motivo, r.fecha_reporte, r.estado_reporte
-    FROM reportes AS r
-    JOIN  articulos AS a ON r.articulo_id =  a.id
-    WHERE r.estado_reporte = ?
-    `, [estado]);
-    return result;
-};
-
-// GET REPORTES Revisado_Mantenido G2
-// NOMBRE DEL ARTICULO (TABLA ARTICULOS), MOTIVO, FECHA REPORTE Y ESTADO DE REPORTE
-
-const getAllMantainReports = async (estado) => {
-    const [result] = await db.query( `
-    SELECT a.titulo, r.motivo, r.fecha_reporte, r.estado_reporte
-    FROM reportes AS r
-    JOIN  articulos AS a ON r.articulo_id =  a.id
+    JOIN perfiles as p ON r.denunciante_id = p.id
     WHERE r.estado_reporte = ?
     `, [estado]);
     return result;
@@ -103,5 +78,5 @@ const createReport = async (reportData) => {
 };
 
 module.exports = {
-    createReport, getAllPendingReports, getAllRetireReports, getAllMantainReports,getAllStadicticsState, getReportsById, updateReportState
+    createReport, getStateReports, getReportsById, updateReportState, getAllStadicticsState
 };

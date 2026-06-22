@@ -1,43 +1,15 @@
 const Report = require('../models/report.model');
 
 // GET /api/reports?estado=pendiente G2
-const pendingReports = async (req, res) => {
+const stateReports = async (req, res) => {
     try{
         const state = req.query.estado;
-        const reports = await Report.getAllPendingReports(state);
+        const reports = await Report.getStateReports(state);
         res.json(reports);
     }catch (error){
         console.log("ERROR REAL:", error);
         res.status(500).json({
             message: 'Error al cargar los Reportes pendientes'
-        });
-    }
-};
-
-// GET /api/reports?estado=Revisado_Retirado G2
-const retireReports = async (req, res) => {
-    try{
-        const state = req.query.estado;
-        const reports = await Report.getAllRetireReports(state);
-        res.json(reports);
-    }catch (error){
-        console.log("ERROR REAL:", error);
-        res.status(500).json({
-            message: 'Error al cargar los Reportes retirados'
-        });
-    }
-};
-
-// GET /api/reports?estado=Revisado_Mantenido G2
-const matainReports = async (req, res) => {
-    try{
-        const state = req.query.estado;
-        const reports = await Report.getAllMantainReports(state);
-        res.json(reports);
-    }catch (error){
-        console.log("ERROR REAL:", error);
-        res.status(500).json({
-            message: 'Error al cargar los Reportes mantenidos'
         });
     }
 };
@@ -132,5 +104,5 @@ const createReport = async (req, res) => {
 };
 
 module.exports = {
-    createReport, pendingReports, reportsById, updateReportStatus, stateStadistics
+    createReport, stateReports, reportsById, updateReportStatus, stateStadistics
 };

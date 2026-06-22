@@ -1,3 +1,14 @@
-<main class="moderador-page">
-  <h1>Panel de moderador</h1>
-</main>
+<section class="container">
+    <app-title size="medium" text="Panel de Moderación"></app-title> 
+    <app-descriptions format="label" text="Hola Moderador, gestiona los reportes pendientes."></app-descriptions>
+    <div class="row g-4 mt-4">
+      @for(stadistic of totalStadistics(); track $index){
+        <div class="col-12 col-lg-4" (click)="cambiarEstadoUrl(stadistic.label)">
+          <app-card-panel class="w-100 d-block" [stat]="stadistic" [isActive]="estadoActual() === stadistic.label"></app-card-panel>
+        </div>
+      }
+    </div>
+    <div class="mt-5">
+      <app-table [typeTable]="estadoActual()" [data]="reportsTables()"></app-table>
+    </div>
+</section>

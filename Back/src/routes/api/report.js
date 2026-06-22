@@ -3,7 +3,7 @@ const router = express.Router();
 const reportController = require('../../controllers/report.controller');
 
 // GET /api/reports?status=pendiente G2
-router.get('/', reportController.pendingReports)
+router.get('/', reportController.stateReports)
 
 // GET /api/reports/stadistics G2
 router.get('/stadistics', reportController.stateStadistics);

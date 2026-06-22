@@ -10,6 +10,6 @@ import { CommonModule } from '@angular/common';
 })
 export class CardPanelComponent {
   stat = input<IStat>();
-
+  isActive = input<boolean>(false);
 }
 
