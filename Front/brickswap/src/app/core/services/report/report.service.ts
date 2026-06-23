@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { IStat } from '../../../interfaces/istat.interface';
 import { IReportsTable } from '../../../interfaces/ireports-table.interface';
+import { dateTimestampProvider } from 'rxjs/internal/scheduler/dateTimestampProvider';
 
 @Injectable({
   providedIn: 'root'
@@ -41,6 +42,22 @@ export class ReportService {
     return firstValueFrom(
       this.http.get<IReportsTable[]>(`${API_URL}/reports?estado=${estado}`, {headers})
     )
+  }
+
+  actualizarReporte(datos: {id: number, estado:string, resolucion:string}): Promise<any>{
+    console.log('Paquete de datos', datos);
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `${token}`
+    });
+    const body= {
+      estado_reporte: datos.estado,
+      resolucion_comentario: datos.resolucion
+    };
+    return firstValueFrom(
+      this.http.put<any>(`${API_URL}/reports/${datos.id}`, body, {headers})
+    );
+
   }
 
 

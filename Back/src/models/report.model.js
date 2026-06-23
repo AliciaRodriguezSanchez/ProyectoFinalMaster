@@ -18,7 +18,7 @@ const getReportsById = async (id) => {
 
 const getStateReports = async (estado) => {
     const [result] = await db.query( `
-    SELECT a.titulo,p.nombre, r.motivo, r.fecha_reporte, r.estado_reporte, r.resolucion_comentario
+    SELECT r.id, a.titulo,p.nombre, r.motivo, r.fecha_reporte, r.estado_reporte, r.resolucion_comentario
     FROM reportes AS r
     JOIN  articulos AS a ON r.articulo_id =  a.id
     JOIN perfiles as p ON r.denunciante_id = p.id
@@ -40,12 +40,12 @@ const getAllStadicticsState = async () => {
 }
 
 // UPDATE Actualizar estado del reporte G2
-const updateReportState = async (id,estado,comentario) => {
+const updateReportState = async (id,estado_reporte,resolucion_comentariocomentario) => {
     const [result] = await db.query(`
         UPDATE reportes
         SET estado_reporte = ?, resolucion_comentario = ? 
         WHERE id = ?
-        `, [estado, comentario, parseInt(id)]);
+        `, [estado_reporte, resolucion_comentariocomentario, parseInt(id)]);
     return result;
 }
 

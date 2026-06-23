@@ -3,7 +3,7 @@
 ########################################
 
 @baseUrl = http://localhost:3000/api
-@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIxLCJyb2xlIjoyLCJpYXQiOjE3ODE5Nzg2MTB9.OvqwLVCIF1ICenziLdWeMSZWzhvoS4Tv4afQUYEGQSQ
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMwLCJyb2xlIjoxLCJuYW1lIjoiQWRtaW4iLCJzdXJuYW1lIjoiQWRtaW4gQWRtaW4iLCJ1c2VybmFtZSI6ImRhbmlyb290IiwiaWF0IjoxNzgyMjI4ODI5fQ.N5k7VEBOwS-XEo6RJnrkRDq6ppsZHJq-5M3A6yvh72M
 
 ########################################
 # TEST SERVER
@@ -160,8 +160,8 @@ POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-  "email": "moderatoruser@gmail.com",
-  "password": "12345678"
+  "email": "adminrootdani@brickswap.com",
+  "password": "1234"
 }
 
 ### autorization
@@ -177,12 +177,12 @@ POST {{baseUrl}}/users/register
 Content-Type: application/json
 
 {
-  "email": "465654@gmail.com",
-  "lastname": "lopes garsia",
-  "name": "Álvaro",
+  "email": "adminrootdani@brickswap.com",
+  "lastname": "admin admin",
+  "name": "admin",
   "password": "1234",
   "repetPassword": "1234",
-  "username": "alvarolg"
+  "username": "daniroot"
 
 }
 

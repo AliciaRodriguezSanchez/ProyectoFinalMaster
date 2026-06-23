@@ -1,5 +1,5 @@
 export interface IPendingTable {
-    id: string | number;
+    id: number;
     title: string;
     customer: string;
     reason:string;

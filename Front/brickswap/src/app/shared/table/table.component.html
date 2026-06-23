@@ -1,4 +1,4 @@
-<div class="container card shadow-sm border border-light-subtle rounded-4 overflow-hidden my-4">
+<div class="container card shadow-sm border border-light-subtle rounded-4 overflow-hidden my-4" >
 
   <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center p-3 px-4 pt-4">
     <div class="d-flex align-items-center gap-2 fw-bold" [ngClass]="{
@@ -23,7 +23,7 @@
 
     </div>
 
-    <div class="text-secondary small d-flex align-items-center gap-1 cursor-pointer" style="font-size: 0.85rem;">
+    <div class="text-secondary small d-flex align-items-center gap-1 cursor-pointer" style="font-size: 0.85rem; cursor:pointer; user-select: none;" (click)="emitirOrden()">
       @if (typeTable()) {
       <i class="bi bi-arrow-down-up"></i> Más reciente
       }
@@ -56,7 +56,7 @@
           <span class="text-secondary" style="font-size: 0.85rem;">
             {{ $any(item).time | date:'short' }}
           </span>
-          <button class="btn btn-white border rounded-3 btn-sm px-3 py-1 text-dark shadow-sm border-light-subtle fw-medium">
+          <button class="btn btn-white border rounded-3 btn-sm px-3 py-1 text-dark shadow-sm border-light-subtle fw-medium" (click)="mostrarReporte(item)">
             <i class="bi bi-eye"></i> Revisar
           </button>
         </div>
@@ -78,7 +78,7 @@
           <span class="text-secondary" style="font-size: 0.85rem;">
             {{ $any(item).time | date:'short' }}
           </span>
-          <button class="btn btn-white border rounded-3 btn-sm px-3 py-1 text-dark shadow-sm border-light-subtle fw-medium">
+          <button class="btn btn-white border rounded-3 btn-sm px-3 py-1 text-dark shadow-sm border-light-subtle fw-medium" (click)="mostrarReporte(item)">
             <i class="bi bi-eye"></i> Ver
           </button>
         </div>
@@ -100,7 +100,7 @@
           <span class="text-secondary" style="font-size: 0.85rem;">
             {{ $any(item).time | date:'short' }}
           </span>
-          <button class="btn btn-white border rounded-3 btn-sm px-3 py-1 text-dark shadow-sm border-light-subtle fw-medium">
+          <button class="btn btn-white border rounded-3 btn-sm px-3 py-1 text-dark shadow-sm border-light-subtle fw-medium" (click)="mostrarReporte(item)">
             <i class="bi bi-eye"></i> Ver
           </button>
         </div>
@@ -145,3 +145,11 @@
     }
   </div>
 </div>
+@if (mostrarModal) {
+<app-report-view 
+  [reporte]="reporteSeleccionado" 
+  [estado]="typeTable()"
+  (onClose)="cerrarModal()" 
+  (onResolve)="procesarResolucion($event)">
+</app-report-view>
+}

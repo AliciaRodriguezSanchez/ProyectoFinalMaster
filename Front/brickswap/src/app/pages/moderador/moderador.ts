@@ -8,6 +8,7 @@ import { IReportsTable } from '../../interfaces/ireports-table.interface';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPendingTable } from '../../interfaces/ipending-table.interface';
 import { TableComponent } from '../../shared/table/table.component';
+import { ReportViewComponent } from '../../shared/components/report-view/report-view.component';
 
 // Define los estados exactos que te devuelve la base de datos
 const CONFIGURACION_ESTADOS: Record<string, { icon: string, color: string }> = {
@@ -31,7 +32,7 @@ const CONFIGURACION_ESTADOS: Record<string, { icon: string, color: string }> = {
 
 @Component({
   selector: 'app-moderador',
-  imports:[TitleComponent, DescriptionsComponent, CardPanelComponent, TableComponent],
+  imports:[TitleComponent, DescriptionsComponent, CardPanelComponent, TableComponent, ReportViewComponent],
   templateUrl: './moderador.html',
   styleUrl: './moderador.css',
 })
@@ -56,6 +57,23 @@ export class ModeradorPage {
       })
   };
 
+  ordenarAscendente: boolean = false; // Falso = más reciente primero
+
+  cambiarOrden() {
+    this.ordenarAscendente = !this.ordenarAscendente;
+    
+    // Ordenamos el array actual que tienes en la señal
+    const listaActual = [...this.reportsTables()];
+    
+    listaActual.sort((a, b) => {
+      const fechaA = new Date(a.time).getTime();
+      const fechaB = new Date(b.time).getTime();
+      return this.ordenarAscendente ? fechaA - fechaB : fechaB - fechaA;
+    });
+
+    this.reportsTables.set(listaActual);
+  }
+
   cambiarEstadoUrl(estadoSeleccionado: string){
     this.router.navigate([],{
       relativeTo: this.route,
@@ -69,7 +87,7 @@ export class ModeradorPage {
       const datosBackend = await this.reportServices.stateReports(estado);
 
       const datosMapeados = datosBackend.map((item: any) => ({
-        id: item.id || Math.random(), 
+        id: item.id, 
         title: item.titulo,
         customer: item.nombre,
         reason: item.motivo,
@@ -113,6 +131,26 @@ export class ModeradorPage {
       console.log('Datos Obtenidos:', datosMapeados);
     }catch (error){
       console.log('Error al cargar las estadisticas:',error);
+    }
+  }
+
+  async guardarResolucion(datosResolucion: {id: number, estado: string, resolucion: string}){
+
+    try{
+      await this.reportServices.actualizarReporte(datosResolucion);
+  
+      const reportesActuales = this.reportsTables();
+  
+      const reportesActualizados = reportesActuales.filter((r:any) =>
+        r.id !== datosResolucion.id);
+  
+      this.reportsTables.set(reportesActualizados);
+
+      await this.obtenerEstadisticas();
+      console.log(datosResolucion.id);
+      console.log('Reporte resuelto y eliminado de la vista');
+    }catch (error){
+      console.log('Error al guardar la resolución del reporte:',error);
     }
   }
 }

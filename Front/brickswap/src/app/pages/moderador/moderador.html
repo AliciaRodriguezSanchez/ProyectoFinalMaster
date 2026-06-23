@@ -9,6 +9,6 @@
       }
     </div>
     <div class="mt-5">
-      <app-table [typeTable]="estadoActual()" [data]="reportsTables()"></app-table>
+      <app-table [typeTable]="estadoActual()" [data]="reportsTables()" (onGuardarResolucion)="guardarResolucion($event)" (ordenarEvent)="cambiarOrden()"></app-table>
     </div>
 </section>
