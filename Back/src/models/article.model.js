@@ -141,8 +141,8 @@ const getLastArticles = async () => {
         LEFT JOIN categorias c ON a.categoria_id = c.id
         WHERE a.estado_revision = 'Publicado'
             AND a.estado_venta = 'Disponible'
-            AND a.fecha_publicacion >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
-        ORDER BY a.fecha_publicacion DESC`
+        ORDER BY a.fecha_publicacion DESC
+        LIMIT 10`
     );
 
     return result;

@@ -1,14 +1,42 @@
 :host {
   display: block;
+  overflow: hidden;
 }
 
 .messages-page {
-  padding: 32px;
+  background: var(--brick-color-white);
+  box-sizing: border-box;
+  height: calc(100dvh - 64px - 3rem);
+  max-height: calc(100dvh - 64px - 3rem);
+  overflow: hidden;
+  padding: 18px 24px 24px;
 }
 
-.messages-page h1 {
-  margin: 0;
-  color: var(--brick-color-title);
-  font-size: var(--brick-font-size-8xl);
-  font-weight: 900;
+.messages-page__shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+  margin: 0 auto;
+  max-width: 674px;
+  overflow: hidden;
+}
+
+.messages-page__footer {
+  display: grid;
+  flex-shrink: 0;
+}
+
+app-message-thread,
+app-message-empty-state {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 760px) {
+  .messages-page {
+    height: calc(100dvh - 64px - 3rem);
+    max-height: calc(100dvh - 64px - 3rem);
+    padding: 12px 14px 16px;
+  }
 }

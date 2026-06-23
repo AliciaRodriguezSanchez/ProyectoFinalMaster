@@ -1,3 +1,26 @@
 <main class="messages-page">
-  <h1>Mensajes</h1>
+  <section class="messages-page__shell" aria-label="Conversacion">
+    <app-message-conversation-header
+      [contact]="contact"
+      [product]="product"
+      (back)="onBack()"
+    ></app-message-conversation-header>
+
+    <app-message-thread
+      *ngIf="hasMessages(); else emptyConversation"
+      [messages]="messages"
+    ></app-message-thread>
+
+    <ng-template #emptyConversation>
+      <app-message-empty-state [text]="emptyText"></app-message-empty-state>
+    </ng-template>
+
+    <footer class="messages-page__footer">
+      <app-message-actions
+        [showBuy]="!hasMessages()"
+        (actionSelected)="onActionSelected($event)"
+      ></app-message-actions>
+      <app-message-composer (messageSent)="onMessageSent($event)"></app-message-composer>
+    </footer>
+  </section>
 </main>

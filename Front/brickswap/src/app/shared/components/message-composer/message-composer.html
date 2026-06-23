@@ -1,0 +1,14 @@
+<form class="message-composer" (ngSubmit)="sendMessage()">
+  <label class="message-composer__label" for="message-text">Mensaje</label>
+  <input
+    id="message-text"
+    name="message"
+    type="text"
+    [(ngModel)]="message"
+    placeholder="Escribe un mensaje..."
+    autocomplete="off"
+  />
+  <button type="submit" aria-label="Enviar mensaje">
+    <span aria-hidden="true">></span>
+  </button>
+</form>
