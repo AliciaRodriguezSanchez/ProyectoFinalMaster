@@ -1,0 +1,54 @@
+:host {
+  display: block;
+}
+
+.message-composer {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) 38px;
+  padding-top: 12px;
+}
+
+.message-composer__label {
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.message-composer input {
+  border: 1px solid var(--brick-color-border);
+  border-radius: var(--brick-radius-lg);
+  color: var(--brick-color-text);
+  font-size: var(--brick-font-size-md);
+  font-weight: var(--brick-font-weight-s);
+  height: 38px;
+  outline: 0;
+  padding: 0 14px;
+  width: 100%;
+}
+
+.message-composer input:focus {
+  border-color: var(--brick-color-brand);
+  box-shadow: var(--brick-shadow-focus-input);
+}
+
+.message-composer input::placeholder {
+  color: #596578;
+}
+
+.message-composer button {
+  align-items: center;
+  background: #ffdc85;
+  border: 0;
+  border-radius: var(--brick-radius-lg);
+  color: #4f6586;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: var(--brick-font-size-xl);
+  height: 38px;
+  justify-content: center;
+  padding: 0;
+  width: 38px;
+}

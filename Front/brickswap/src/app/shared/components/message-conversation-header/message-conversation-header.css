@@ -1,0 +1,123 @@
+:host {
+  display: block;
+}
+
+.message-header {
+  align-items: center;
+  border-bottom: 1px solid var(--brick-color-border);
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  min-height: 78px;
+}
+
+.message-header__back {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--brick-color-text);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 30px;
+  height: 34px;
+  justify-content: center;
+  padding: 0;
+  width: 34px;
+}
+
+.message-header__contact {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+}
+
+.message-header__avatar {
+  align-items: center;
+  background: #fff8e9;
+  border-radius: var(--brick-radius-pill);
+  color: var(--brick-color-text-strong);
+  display: inline-flex;
+  flex: 0 0 38px;
+  font-size: var(--brick-font-size-base);
+  font-weight: var(--brick-font-weight-l);
+  height: 38px;
+  justify-content: center;
+  width: 38px;
+}
+
+.message-header__copy,
+.message-header__product div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.message-header__copy strong,
+.message-header__product strong {
+  color: var(--brick-color-text-strong);
+  font-size: var(--brick-font-size-md);
+  font-weight: var(--brick-font-weight-l);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message-header__copy span {
+  color: var(--brick-color-muted);
+  font-size: var(--brick-font-size-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message-header__product {
+  align-items: center;
+  background: var(--brick-color-surface-muted);
+  border-radius: var(--brick-radius-lg);
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  max-width: 164px;
+  min-width: 164px;
+  padding: 8px 10px;
+  text-decoration: none;
+  transition: background-color .2s ease, transform .2s ease;
+}
+
+.message-header__product:hover {
+  background: #ecebe8;
+  transform: translateY(-1px);
+}
+
+.message-header__product:focus-visible {
+  outline: 2px solid var(--brick-color-brand);
+  outline-offset: 2px;
+}
+
+.message-header__product img {
+  border-radius: var(--brick-radius-sm);
+  height: 32px;
+  object-fit: cover;
+  width: 32px;
+}
+
+.message-header__product span {
+  color: #ff9900;
+  font-size: var(--brick-font-size-sm);
+  font-weight: var(--brick-font-weight-l);
+}
+
+@media (max-width: 640px) {
+  .message-header {
+    grid-template-columns: 34px minmax(0, 1fr);
+    padding-bottom: 12px;
+  }
+
+  .message-header__product {
+    grid-column: 2;
+    max-width: 100%;
+    min-width: 0;
+  }
+}

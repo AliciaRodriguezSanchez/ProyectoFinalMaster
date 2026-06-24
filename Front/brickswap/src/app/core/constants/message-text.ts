@@ -12,4 +12,8 @@ export const MESSAGE_TEXT = {
     latestProductsLoadError: 'No se han podido cargar los últimos productos',
     promotionProductsLoadError: 'No se han podido cargar los productos en promoción',
   },
+  messages: {
+    emptyConversation:
+      'Inicia la conversación enviando un mensaje, haciendo una oferta de precio o proponiendo un método de entrega.',
+  },
 } as const;

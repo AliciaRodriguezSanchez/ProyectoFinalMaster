@@ -4,5 +4,8 @@ const messageController = require('../../controllers/message.controller');
 
 // POST /api/messages
 router.post('/', messageController.sendMessage);
+router.get('/conversations/:userId', messageController.getConversations);
+router.get('/conversation-by-id/:conversationId/:userId', messageController.getConversationById);
+router.get('/conversation/:articleId/:userId', messageController.getConversation);
 
 module.exports = router;

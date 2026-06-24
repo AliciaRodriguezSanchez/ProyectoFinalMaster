@@ -77,16 +77,46 @@ Content-Type: application/json
 # MESSAGES
 ########################################
 
-### Enviar mensaje
+@messageArticleId = 1
+@messageBuyerId = 1
+# IMPORTANTE: este valor debe ser el perfil_id del artículo.
+# Compruébalo con: 
+GET {{baseUrl}}/articles/{{messageArticleId}}
+@messageSellerId = 26
+
+### 1. Comprobar vendedor del artículo
+### Copia el valor "perfil_id" de esta respuesta en @messageSellerId.
+GET {{baseUrl}}/articles/{{messageArticleId}}
+
+### 2. Enviar mensaje comprador -> vendedor
+### receptor_id debe ser igual a @messageSellerId.
 POST {{baseUrl}}/messages
 Content-Type: application/json
 
 {
-  "texto_mensaje": "Hola, sigue disponible?",
-  "emisor_id": 1,
-  "receptor_id": 2,
-  "articulo_id": 1
+  "texto_mensaje": "Hola, me interesa este artículo es super bonito",
+  "emisor_id": {{messageBuyerId}},
+  "receptor_id": {{messageSellerId}},
+  "articulo_id": {{messageArticleId}}
 }
+
+### 3. Enviar mensaje vendedor -> comprador
+### emisor_id debe ser igual a @messageSellerId.
+POST {{baseUrl}}/messages
+Content-Type: application/json
+
+{
+  "texto_mensaje": "Sí, sigue disponible",
+  "emisor_id": {{messageSellerId}},
+  "receptor_id": {{messageBuyerId}},
+  "articulo_id": {{messageArticleId}}
+}
+
+### 4. Recuperar conversación del artículo para el comprador
+GET {{baseUrl}}/messages/conversation/{{messageArticleId}}/{{messageBuyerId}}
+
+### 5. Recuperar conversación del artículo para el vendedor
+GET {{baseUrl}}/messages/conversation/{{messageArticleId}}/{{messageSellerId}}
 
 ########################################
 # REPORTS
@@ -195,3 +225,7 @@ Content-Type: application/json
   "newPassword": "Nueva1234",
   "repeatPassword": "Nueva1234"
 }
+
+### Recuperar conversacion
+
+GET  {{baseUrl}}/messages/conversation/1/1

@@ -8,7 +8,6 @@ import { Home } from './pages/home/home';
 import { ModeradorPage } from './pages/moderador/moderador';
 import { AdminPage } from './pages/admin/admin';
 import { UserPanelPage } from './pages/user-panel/user-panel';
-import { MessagesPage } from './pages/messages/messages';
 import { ProfilePage } from './pages/profile/profile';
 import { roleGuard } from './core/guards/role.guard';
 import { UserRole } from './core/constants/user-role';
@@ -53,7 +52,7 @@ export const routes: Routes = [
         data: {
             roles: [UserRole.USER, UserRole.MODERATOR, UserRole.ADMIN]
         },
-        component: MessagesPage
+        loadChildren: () => import('./pages/messages/messages.routes').then((m) => m.MESSAGES_ROUTES)
     },
 
     // 10. PERFIL

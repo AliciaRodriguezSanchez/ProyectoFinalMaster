@@ -63,14 +63,14 @@ export class ArticleService {
   }
 
 
-  // 8. GET ultimas publicaciones => los publicados esa semana 
+  // 8. GET ultimas publicaciones
   getLastArticles(): Promise<IArticle[]> {
     return firstValueFrom(
       this.http.get<IArticle[]>(`${API_URL}/${ARTICLES}/${LAST_PUBLICATIONS}`)
     );
   }
 
-   // 8. GET ultimas publicaciones => los publicados esa semana 
+   // 9. GET articulos en promocion
   getArticlesInPromotions(): Promise<IArticle[]> {
     return firstValueFrom(
       this.http.get<IArticle[]>(`${API_URL}/${ARTICLES}/${IN_PROMOTIONS}`)
