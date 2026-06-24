@@ -1,4 +1,6 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 export interface MessageContact {
   name: string;
@@ -14,7 +16,7 @@ export interface MessageProductSummary {
 
 @Component({
   selector: 'app-message-conversation-header',
-  standalone: false,
+  imports: [DecimalPipe, RouterLink],
   templateUrl: './message-conversation-header.html',
   styleUrl: './message-conversation-header.css',
 })

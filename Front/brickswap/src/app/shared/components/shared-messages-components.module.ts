@@ -10,13 +10,6 @@ import { MessageEmptyStateComponent } from './message-empty-state/message-empty-
 import { MessageThreadComponent } from './message-thread/message-thread';
 
 @NgModule({
-  declarations: [
-    MessageActionsComponent,
-    MessageComposerComponent,
-    MessageConversationHeaderComponent,
-    MessageEmptyStateComponent,
-    MessageThreadComponent,
-  ],
   exports: [
     MessageActionsComponent,
     MessageComposerComponent,
@@ -24,6 +17,15 @@ import { MessageThreadComponent } from './message-thread/message-thread';
     MessageEmptyStateComponent,
     MessageThreadComponent,
   ],
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    MessageActionsComponent,
+    MessageComposerComponent,
+    MessageConversationHeaderComponent,
+    MessageEmptyStateComponent,
+    MessageThreadComponent,
+  ],
 })
 export class SharedMessagesComponentsModule {}

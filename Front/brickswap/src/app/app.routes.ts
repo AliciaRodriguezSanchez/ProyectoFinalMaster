@@ -52,7 +52,7 @@ export const routes: Routes = [
         data: {
             roles: [UserRole.USER, UserRole.MODERATOR, UserRole.ADMIN]
         },
-        loadChildren: () => import('./pages/messages/messages.module').then((m) => m.MessagesModule)
+        loadChildren: () => import('./pages/messages/messages.routes').then((m) => m.MESSAGES_ROUTES)
     },
 
     // 10. PERFIL

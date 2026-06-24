@@ -9,7 +9,8 @@ const sendMessage = async (req, res) => {
             texto_mensaje,
             emisor_id,
             receptor_id,
-            articulo_id
+            articulo_id,
+            tipo_mensaje
         } = req.body;
 
         // VALIDACIÓN BÁSICA
@@ -33,7 +34,8 @@ const sendMessage = async (req, res) => {
             texto_mensaje: texto_mensaje.trim(),
             emisor_id: senderId,
             receptor_id: receiverId,
-            articulo_id: articleId
+            articulo_id: articleId,
+            tipo_mensaje
         });
 
         if (!result) {
@@ -85,6 +87,29 @@ const getConversation = async (req, res) => {
 
 }
 
+const getConversationById = async (req, res) => {
+    try {
+        const conversationId = Number(req.params.conversationId);
+        const userId = Number(req.params.userId || req.query.userId);
+
+        if (!Number.isInteger(conversationId) || !Number.isInteger(userId)) {
+            return res.status(400).json({
+                message: 'Los identificadores deben ser números válidos'
+            });
+        }
+
+        const conversation = await Message.getConversationById({ conversationId, userId });
+
+        if (!conversation) {
+            return res.status(404).json({ message: 'Conversación no encontrada' });
+        }
+
+        res.status(200).json(conversation);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 const getConversations = async (req, res) => {
     try {
         const userId = Number(req.params.userId || req.query.userId);
@@ -108,5 +133,6 @@ const getConversations = async (req, res) => {
 module.exports = {
     sendMessage,
     getConversations,
-    getConversation
+    getConversation,
+    getConversationById
 };

@@ -195,3 +195,9 @@ ADD COLUMN tipo_mensaje ENUM(
   'DELIVERY_METHOD',
   'SYSTEM'
 ) NOT NULL DEFAULT 'TEXT';
+
+## borrar mensajes 
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE mensajes;
+TRUNCATE TABLE conversations;
+TRUNCATE TABLE conversations;

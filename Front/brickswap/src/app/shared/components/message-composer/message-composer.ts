@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-message-composer',
-  standalone: false,
+  imports: [FormsModule],
   templateUrl: './message-composer.html',
   styleUrl: './message-composer.css',
 })

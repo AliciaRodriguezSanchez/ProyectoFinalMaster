@@ -3,7 +3,6 @@ import { MESSAGE_TEXT } from '../../../core/constants/message-text';
 
 @Component({
   selector: 'app-message-empty-state',
-  standalone: false,
   templateUrl: './message-empty-state.html',
   styleUrl: './message-empty-state.css',
 })

@@ -32,3 +32,22 @@
   font-weight: var(--brick-font-weight-l);
   text-decoration: none;
 }
+
+.messages-page__conversation-link {
+  color: inherit;
+  display: block;
+  text-decoration: none;
+}
+
+.messages-page__conversation-link:hover {
+  text-decoration: none;
+}
+
+.messages-page__state {
+  color: var(--brick-color-muted);
+  margin: 0;
+}
+
+.messages-page__state--error {
+  color: var(--brick-color-danger);
+}

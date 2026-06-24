@@ -1,3 +1,4 @@
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, Input } from '@angular/core';
 
 export type ConversationMessageType = 'text' | 'priceProposal' | 'deliveryMethod';
@@ -14,7 +15,7 @@ export interface ConversationMessage {
 
 @Component({
   selector: 'app-message-thread',
-  standalone: false,
+  imports: [CommonModule, DecimalPipe],
   templateUrl: './message-thread.html',
   styleUrl: './message-thread.css',
 })

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
@@ -15,10 +16,12 @@ import {
 import {
   ConversationMessage,
 } from '../../../shared/components/message-thread/message-thread';
+import { SharedMessagesComponentsModule } from '../../../shared/components/shared-messages-components.module';
 
 @Component({
   selector: 'app-conversation',
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, SharedMessagesComponentsModule],
   templateUrl: './conversation.html',
   styleUrl: './conversation.css',
 })
@@ -28,6 +31,7 @@ export class ConversationPage implements OnInit {
   contact = signal<MessageContact | null>(null);
   product = signal<MessageProductSummary | null>(null);
   messages = signal<ConversationMessage[]>([]);
+  conversationId = signal(0);
   articleId = signal(0);
   currentUserId = signal(0);
   receiveId = signal(0);
@@ -55,6 +59,7 @@ export class ConversationPage implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.conversationId.set(Number(this.route.snapshot.paramMap.get('conversationId')));
     this.articleId.set(Number(this.route.snapshot.paramMap.get('articleId')));
     this.currentUserId.set(
       this.authService.getCurrentUserId() ?? Number(this.route.snapshot.paramMap.get('userId'))
@@ -63,14 +68,16 @@ export class ConversationPage implements OnInit {
   }
 
   async loadConversation(): Promise<void> {
-    if (!this.articleId() || !this.currentUserId()) {
+    if ((!this.conversationId() && !this.articleId()) || !this.currentUserId()) {
       return;
     }
 
     this.isLoading.set(true);
 
     try {
-      const conversation = await this.messageService.getConversation(this.articleId(), this.currentUserId());
+      const conversation = this.conversationId()
+        ? await this.messageService.getConversationById(this.conversationId(), this.currentUserId())
+        : await this.messageService.getConversation(this.articleId(), this.currentUserId());
       this.setConversation(conversation);
     } catch (error) {
       console.error('Error al cargar la conversacion:', error);
@@ -85,13 +92,24 @@ export class ConversationPage implements OnInit {
   }
 
   onActionSelected(action: MessageAction): void {
+    if (action === 'price') {
+      this.sendPriceOffer();
+      return;
+    }
+
+    if (action === 'delivery') {
+      this.sendDeliveryMethod();
+      return;
+    }
+
     console.log('Accion de mensaje seleccionada:', action);
   }
 
   onMessageSent(message: string): void {
     const senderId = this.currentUserId();
-    const receiverId = this.messageReceiverId(); //28 prueba 12345678Pp/ 2612345678Aa
-    const articleId = 1 ///this.articleId();
+
+    const receiverId = this.messageReceiverId();
+    const articleId = this.articleId();
 
     if (!senderId || !receiverId || !articleId) {
       return;
@@ -116,20 +134,128 @@ export class ConversationPage implements OnInit {
       });
   }
 
+  private sendPriceOffer(): void {
+    const offer = prompt('Introduce tu propuesta de precio:');
+
+    if (!offer) {
+      return;
+    }
+
+    const amount = Number(offer.replace(',', '.'));
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      alert('Introduce un precio válido');
+      return;
+    }
+
+    const senderId = this.currentUserId();
+    const receiverId = this.messageReceiverId();
+    const articleId = this.articleId();
+
+    if (!senderId || !receiverId || !articleId) {
+      return;
+    }
+
+    this.messageService
+      .sendMessage(amount.toFixed(2), senderId, receiverId, articleId, 'PRICE_OFFER')
+      .subscribe({
+        next: () => {
+          this.messages.update((messages) => [
+            ...messages,
+            {
+              id: Date.now(),
+              type: 'priceProposal',
+              title: 'Propuesta de precio',
+              amount,
+              time: this.getCurrentTime(),
+              mine: true,
+            },
+          ]);
+        },
+        error: (error) => console.error('Error al enviar propuesta de precio:', error),
+      });
+  }
+
+  private sendDeliveryMethod(): void {
+    const deliveryMethod = prompt(
+      'Introduce el método de entrega:',
+      'Envío por mensajería (MRW, SEUR, etc.)'
+    );
+
+    if (!deliveryMethod?.trim()) {
+      return;
+    }
+
+    const senderId = this.currentUserId();
+    const receiverId = this.messageReceiverId();
+    const articleId = this.articleId();
+
+    if (!senderId || !receiverId || !articleId) {
+      return;
+    }
+
+    this.messageService
+      .sendMessage(deliveryMethod.trim(), senderId, receiverId, articleId, 'DELIVERY_METHOD')
+      .subscribe({
+        next: () => {
+          this.messages.update((messages) => [
+            ...messages,
+            {
+              id: Date.now(),
+              type: 'deliveryMethod',
+              title: 'Método de entrega',
+              text: deliveryMethod.trim(),
+              time: this.getCurrentTime(),
+              mine: true,
+            },
+          ]);
+        },
+        error: (error) => console.error('Error al enviar método de entrega:', error),
+      });
+  }
+
   private setConversation(conversation: IAConversation): void {
+    this.conversationId.set(Number(conversation.conversation_id));
+    this.articleId.set(Number(conversation.item_id));
     this.product.set(this.mapConversationProduct(conversation));
     this.receiveId.set(Number(conversation.buyer_id));
     this.sendId.set(Number(conversation.seller_id));
 
     this.contact.set(this.mapConversationContact(conversation));
 
-    this.messages.set(conversation.messages.map((message) => ({
+    this.messages.set(conversation.messages.map((message) => this.mapConversationMessage(message)));
+  }
+
+  private mapConversationMessage(message: IAConversation['messages'][number]): ConversationMessage {
+    const baseMessage = {
       id: message.id,
-      type: 'text',
-      text: message.texto_mensaje,
       time: this.formatTime(message.fecha_envio),
       mine: Number(message.emisor_id) === this.currentUserId(),
-    })));
+    };
+
+    if (message.tipo_mensaje === 'PRICE_OFFER') {
+      return {
+        ...baseMessage,
+        type: 'priceProposal',
+        title: 'Propuesta de precio',
+        amount: Number(message.texto_mensaje),
+      };
+    }
+
+    if (message.tipo_mensaje === 'DELIVERY_METHOD') {
+      return {
+        ...baseMessage,
+        type: 'deliveryMethod',
+        title: 'Método de entrega',
+        text: message.texto_mensaje,
+      };
+    }
+
+    return {
+      ...baseMessage,
+      type: 'text',
+      text: message.texto_mensaje,
+    };
   }
 
   private mapConversationProduct(conversation: IAConversation): MessageProductSummary {

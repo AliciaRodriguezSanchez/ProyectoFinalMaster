@@ -6,10 +6,12 @@ const sendMessage = async (messageData) => {
         texto_mensaje,
         emisor_id,
         receptor_id,
-        articulo_id
+        articulo_id,
+        tipo_mensaje = 'TEXT'
     } = messageData;
 
     const messageText = texto_mensaje.trim();
+    const messageType = tipo_mensaje || 'TEXT';
     const senderId = Number(emisor_id);
     const receiverId = Number(receptor_id);
     const articleId = Number(articulo_id);
@@ -69,15 +71,16 @@ const sendMessage = async (messageData) => {
         const [result] = await connection.query(
             `
             INSERT INTO mensajes
-                (texto_mensaje, fecha_envio, emisor_id, receptor_id, articulo_id, conversation_id)
-            VALUES (?, NOW(), ?, ?, ?, ?)
+                (texto_mensaje, fecha_envio, emisor_id, receptor_id, articulo_id, conversation_id, tipo_mensaje)
+            VALUES (?, NOW(), ?, ?, ?, ?, ?)
             `,
             [
                 messageText,
                 senderId,
                 receiverId,
                 articleId,
-                conversationId
+                conversationId,
+                messageType
             ]
         );
 
@@ -110,7 +113,8 @@ const getConversationMessages = async (conversationId) => {
             emisor_id,
             receptor_id,
             articulo_id,
-            conversation_id
+            conversation_id,
+            tipo_mensaje
         FROM mensajes
         WHERE conversation_id = ?
         ORDER BY fecha_envio ASC, id ASC
@@ -142,6 +146,7 @@ const getConversationsByUser = async (userId) => {
             c.last_message_at AS conversation_last_message_at,
             last_message.id AS last_message_id,
             last_message.texto_mensaje AS last_message_text,
+            last_message.tipo_mensaje AS last_message_type,
             last_message.fecha_envio AS last_message_fecha_envio,
             last_message.emisor_id AS last_message_sender_id
         FROM conversations c
@@ -324,8 +329,54 @@ const getConversation = async ({ articleId, userId }) => {
     };
 };
 
+// RECUPERAR CONVERSACIÓN POR ID DE HILO
+const getConversationById = async ({ conversationId, userId }) => {
+    const sql = `
+    SELECT
+      c.id AS conversation_id,
+      c.item_id,
+      a.titulo,
+      a.foto,
+      a.precio,
+      c.buyer_id,
+      buyer.nombre AS buyer_nombre,
+      buyer.apellidos AS buyer_apellidos,
+      buyer.nombre_usuario AS buyer_nombre_usuario,
+      c.seller_id,
+      seller.nombre AS seller_nombre,
+      seller.apellidos AS seller_apellidos,
+      seller.nombre_usuario AS seller_nombre_usuario,
+      c.last_message_at
+    FROM conversations c
+    INNER JOIN articulos a
+      ON a.id = c.item_id
+    LEFT JOIN perfiles buyer
+      ON buyer.id = c.buyer_id
+    LEFT JOIN perfiles seller
+      ON seller.id = c.seller_id
+    WHERE c.id = ?
+      AND (c.buyer_id = ? OR c.seller_id = ?)
+    LIMIT 1
+  `;
+
+    const [conversations] = await db.query(sql, [conversationId, userId, userId]);
+
+    if (conversations.length === 0) {
+        return null;
+    }
+
+    const conversation = conversations[0];
+    const messages = await getConversationMessages(conversation.conversation_id);
+
+    return {
+        ...conversation,
+        messages
+    };
+};
+
 module.exports = {
     sendMessage,
     getConversationsByUser,
-    getConversation
+    getConversation,
+    getConversationById
 };

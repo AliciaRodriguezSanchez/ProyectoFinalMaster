@@ -1,10 +1,11 @@
+import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 export type MessageAction = 'price' | 'delivery' | 'buy';
 
 @Component({
   selector: 'app-message-actions',
-  standalone: false,
+  imports: [CommonModule],
   templateUrl: './message-actions.html',
   styleUrl: './message-actions.css',
 })
