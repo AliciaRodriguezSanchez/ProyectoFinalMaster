@@ -1,0 +1,26 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+/*   min-height: 38px;
+ */  padding: .005rem 1rem;
+
+  border: 1px solid #6c757d;
+  border-radius: 999px;
+
+  color: #6c757d;
+  background: white;
+
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+
+  transition: all .2s ease;
+}
+
+.active-pill {
+  background-color: #212529;
+  border-color: #212529;
+  color: white;
+}
