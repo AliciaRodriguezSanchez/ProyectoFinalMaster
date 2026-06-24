@@ -1,0 +1,38 @@
+.message-card__avatar {
+  width: 40px;
+  height: 40px;
+  background: #f0ede6;
+  color: #555;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.message-card__badge {
+  font-size: 12px;
+  font-weight: 500;
+  background: #f0f0f0;
+  color: #555;
+}
+
+.message-card__badge.badge--leído     { background: #eef4ff; color: #3b6fd4; }
+.message-card__badge.badge--sin-leer  { background: #fff4e5; color: #b96d00; }
+.message-card__badge.badge--pendiente { background: #fff8e1; color: #8a6d00; }
+.message-card__badge.badge--resuelto  { background: #e8f5e9; color: #2e7d32; }
+
+.message-card__select {
+  width: auto;
+}
+
+@media (max-width: 480px) {
+  .message-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .message-card > div:last-child {
+    flex-direction: row ;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+}

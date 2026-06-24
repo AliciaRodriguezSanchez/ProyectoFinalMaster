@@ -1,3 +1,16 @@
 <main class="messages-page">
   <h1>Mensajes</h1>
+  <div class="mt-5 d-flex flex-wrap gap-2 justify-content-between align-items-center">
+    <div class="d-flex flex-wrap gap-2">
+      <app-pill class="mx-3" label="Todos" value="all" [active]="selectedTab() === 'all'" (selected)="selectedTab.set($event)"></app-pill>
+      <app-pill class="mx-3" label="Sin leer" value="unreaded" [active]="selectedTab() === 'unreaded'" (selected)="selectedTab.set($event)"></app-pill>
+      <app-pill class="mx-3" label="Leído" value="readed" [active]="selectedTab() === 'readed'" (selected)="selectedTab.set($event)"></app-pill>
+      <app-pill class="mx-3" label="Pendiente" value="pending" [active]="selectedTab() === 'pending'" (selected)="selectedTab.set($event)"></app-pill>
+      <app-pill class="mx-3" label="Resuelto" value="resolved" [active]="selectedTab() === 'resolved'" (selected)="selectedTab.set($event)"></app-pill>
+    </div>
+    <app-ordenar-lista [active]="sortOrder()" (changed)="setOrder($event)"></app-ordenar-lista>
+  </div>
+  <div class="mt-5 d-flex flex-wrap gap-2 justify-content-between align-items-center w-100">
+    <app-caja-mensaje name="Álvaro" product="Lego Harry Potter Castillo de Hogwarts" timeAgo="Hace 2 días" status="Leído" lastMsg="Hola, me gustaría saber si el producto sigue disponible para envío a Madrid" (statusChanged)="onStatusChanged(1, $event)"></app-caja-mensaje>
+  </div>
 </main>
