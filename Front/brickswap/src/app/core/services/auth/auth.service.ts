@@ -46,6 +46,21 @@ export class AuthService {
     return decodeJwtPayload<AuthTokenPayload>(token);
   }
 
+  getCurrentUserId(): number | null {
+    const token = localStorage.getItem(TOKEN_KEY);
+
+    if (!token) {
+      return null;
+    }
+
+    try {
+      return this.getTokenPayload(token).userId;
+    } catch {
+      localStorage.removeItem(TOKEN_KEY);
+      return null;
+    }
+  }
+
   private navigateByRole(role: UserRole): Promise<boolean> {
     const routesByRole: Record<UserRole, string> = {
       [UserRole.USER]: '/catalog',

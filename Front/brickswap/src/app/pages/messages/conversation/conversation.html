@@ -1,0 +1,33 @@
+<main class="conversation-page">
+  <section class="conversation-page__shell" aria-label="Conversacion">
+    <ng-container *ngIf="product() as loadedProduct">
+      <app-message-conversation-header
+        *ngIf="contact() as loadedContact"
+        [contact]="loadedContact"
+        [product]="loadedProduct"
+        (back)="onBack()"
+      ></app-message-conversation-header>
+    </ng-container>
+
+    <p class="conversation-page__loading" *ngIf="isLoading()">Cargando conversación...</p>
+
+    <app-message-thread
+      *ngIf="!isLoading() && hasMessages(); else emptyConversation"
+      [messages]="messages()"
+    ></app-message-thread>
+
+    <ng-template #emptyConversation>
+      <app-message-empty-state *ngIf="!isLoading()" [text]="emptyText"></app-message-empty-state>
+    </ng-template>
+
+    <footer class="conversation-page__footer">
+      <app-message-actions
+        [showPrice]="isReceiver()"
+        [showDelivery]="isSender()"
+        [showBuy]="!hasMessages()"
+        (actionSelected)="onActionSelected($event)"
+      ></app-message-actions>
+      <app-message-composer (messageSent)="onMessageSent($event)"></app-message-composer>
+    </footer>
+  </section>
+</main>

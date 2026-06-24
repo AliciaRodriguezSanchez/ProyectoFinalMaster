@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { MESSAGE_TEXT } from '../../../core/constants/message-text';
 
 @Component({
   selector: 'app-message-empty-state',
@@ -7,6 +8,5 @@ import { Component, Input } from '@angular/core';
   styleUrl: './message-empty-state.css',
 })
 export class MessageEmptyStateComponent {
-  @Input() text =
-    'Inicia la conversación enviando un mensaje, haciendo una oferta de precio o proponiendo un método de entrega.';
+  @Input() text = MESSAGE_TEXT.messages.emptyConversation;
 }

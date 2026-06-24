@@ -1,42 +1,34 @@
 :host {
   display: block;
-  overflow: hidden;
 }
 
 .messages-page {
   background: var(--brick-color-white);
-  box-sizing: border-box;
-  height: calc(100dvh - 64px - 3rem);
-  max-height: calc(100dvh - 64px - 3rem);
-  overflow: hidden;
-  padding: 18px 24px 24px;
+  min-height: calc(100dvh - 64px - 3rem);
+  padding: 32px 24px;
 }
 
-.messages-page__shell {
+.messages-page__intro {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  height: 100%;
+  gap: 12px;
   margin: 0 auto;
   max-width: 674px;
-  overflow: hidden;
 }
 
-.messages-page__footer {
-  display: grid;
-  flex-shrink: 0;
+.messages-page__intro h1 {
+  color: var(--brick-color-title);
+  font-size: var(--brick-font-size-8xl);
+  font-weight: var(--brick-font-weight-xl);
+  margin: 0;
 }
 
-app-message-thread,
-app-message-empty-state {
-  min-height: 0;
-  overflow-y: auto;
-  scrollbar-gutter: stable;
+.messages-page__intro p {
+  color: var(--brick-color-muted);
+  margin: 0;
 }
 
-@media (max-width: 760px) {
-  .messages-page {
-    height: calc(100dvh - 64px - 3rem);
-    max-height: calc(100dvh - 64px - 3rem);
-    padding: 12px 14px 16px;
-  }
+.messages-page__intro a {
+  color: var(--brick-color-brand-dark);
+  font-weight: var(--brick-font-weight-l);
+  text-decoration: none;
 }

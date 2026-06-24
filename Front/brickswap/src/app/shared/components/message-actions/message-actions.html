@@ -1,10 +1,20 @@
 <section class="message-actions" aria-label="Acciones de conversacion">
-  <button class="message-actions__button message-actions__button--price" type="button" (click)="selectAction('price')">
+  <button
+    class="message-actions__button message-actions__button--price"
+    type="button"
+    *ngIf="showPrice"
+    (click)="selectAction('price')"
+  >
     <span aria-hidden="true">$</span>
     Proponer precio
   </button>
 
-  <button class="message-actions__button message-actions__button--delivery" type="button" (click)="selectAction('delivery')">
+  <button
+    class="message-actions__button message-actions__button--delivery"
+    type="button"
+    *ngIf="showDelivery"
+    (click)="selectAction('delivery')"
+  >
     <span aria-hidden="true">[]</span>
     Proponer entrega
   </button>

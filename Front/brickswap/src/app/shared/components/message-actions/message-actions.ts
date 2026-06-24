@@ -9,6 +9,8 @@ export type MessageAction = 'price' | 'delivery' | 'buy';
   styleUrl: './message-actions.css',
 })
 export class MessageActionsComponent {
+  @Input() showPrice = true;
+  @Input() showDelivery = true;
   @Input() showBuy = true;
   @Output() actionSelected = new EventEmitter<MessageAction>();
 
