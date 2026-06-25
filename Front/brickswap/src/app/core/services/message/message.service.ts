@@ -10,6 +10,14 @@ export interface SendMessageResponse {
   conversationId: number;
 }
 
+export interface SendReportMessageResponse {
+  message: string;
+  messageId: number;
+  receiverId: number;
+  articleId: number;
+  conversationId: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -45,6 +53,24 @@ export class MessageService {
     return firstValueFrom(
       this.http.get<IAConversation>(`${API_URL}/messages/conversation-by-id/${conversationId}/${userId}`)
     );
+  }
+
+  getConversationByReport(reportId: number): Promise<IAConversation> {
+    return firstValueFrom(
+      this.http.get<IAConversation>(`${API_URL}/messages/conversation-by-report/${reportId}`)
+    );
+  }
+
+  sendReportMessage(
+    texto_mensaje: string,
+    emisor_id: number,
+    report_id: number
+  ): Observable<SendReportMessageResponse> {
+    return this.http.post<SendReportMessageResponse>(`${API_URL}/messages/report-message`, {
+      texto_mensaje,
+      emisor_id,
+      report_id
+    });
   }
 
   getConversations(userId: number): Promise<IAConversationListItem[]> {

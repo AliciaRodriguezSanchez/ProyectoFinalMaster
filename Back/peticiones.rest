@@ -122,6 +122,10 @@ GET {{baseUrl}}/messages/conversation/{{messageArticleId}}/{{messageSellerId}}
 # REPORTS
 ########################################
 
+### Todos los reportes
+GET {{baseUrl}}/reports
+Authorization: {{TOKEN}}
+
 ### Reportes pendientes
 GET {{baseUrl}}/reports?estado=Pendiente
 Authorization: {{TOKEN}}
@@ -229,3 +233,8 @@ Content-Type: application/json
 ### Recuperar conversacion
 
 GET  {{baseUrl}}/messages/conversation/1/1
+
+
+### Recuperar reportes de moderador/admin
+
+GET  {{baseUrl}}/reports

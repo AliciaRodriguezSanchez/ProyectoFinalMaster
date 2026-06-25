@@ -8,6 +8,7 @@ import { MessageComposerComponent } from './message-composer/message-composer';
 import { MessageConversationHeaderComponent } from './message-conversation-header/message-conversation-header';
 import { MessageEmptyStateComponent } from './message-empty-state/message-empty-state';
 import { MessageThreadComponent } from './message-thread/message-thread';
+import { ReportMessageComposerComponent } from './report-message-composer/report-message-composer';
 
 @NgModule({
   exports: [
@@ -16,6 +17,7 @@ import { MessageThreadComponent } from './message-thread/message-thread';
     MessageConversationHeaderComponent,
     MessageEmptyStateComponent,
     MessageThreadComponent,
+    ReportMessageComposerComponent,
   ],
   imports: [
     CommonModule,
@@ -26,6 +28,7 @@ import { MessageThreadComponent } from './message-thread/message-thread';
     MessageConversationHeaderComponent,
     MessageEmptyStateComponent,
     MessageThreadComponent,
+    ReportMessageComposerComponent,
   ],
 })
 export class SharedMessagesComponentsModule {}

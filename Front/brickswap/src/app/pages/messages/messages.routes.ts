@@ -13,6 +13,10 @@ export const MESSAGES_ROUTES: Routes = [
     component: ConversationPage,
   },
   {
+    path: 'conversation-report/:reportId',
+    component: ConversationPage,
+  },
+  {
     path: 'conversation/:articleId',
     component: ConversationPage,
   },

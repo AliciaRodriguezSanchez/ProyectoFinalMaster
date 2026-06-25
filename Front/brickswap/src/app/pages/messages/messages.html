@@ -13,10 +13,30 @@
 
   <div class="mt-5 d-flex flex-column gap-3 w-100">
     @if (isLoading()) {
-      <p class="messages-page__state">Cargando conversaciones...</p>
+      <p class="messages-page__state">Cargando datos...</p>
     } @else if (errorMessage()) {
       <p class="messages-page__state messages-page__state--error">{{ errorMessage() }}</p>
-    } @else if (filteredConversations().length === 0) {
+    } @else if (isReportsMode()) {
+      @if (filteredReports().length === 0) {
+        <p class="messages-page__state">No hay reportes para mostrar.</p>
+      } @else {
+        @for (report of filteredReports(); track report.id) {
+          <a
+            class="messages-page__conversation-link"
+            [routerLink]="['/messages/conversation-report', report.id]"
+          >
+            <app-caja-mensaje
+              [name]="reportCardName(report)"
+              [product]="report.titulo"
+              [timeAgo]="reportTimeAgo(report)"
+              [status]="reportStatusValue(report)"
+              [lastMsg]="report.motivo"
+              [showStatusSelect]="false"
+            ></app-caja-mensaje>
+          </a>
+        }
+      }
+    } @else if (filteredConversations().length === 0 && filteredReports().length === 0) {
       <p class="messages-page__state">No hay conversaciones para mostrar.</p>
     } @else {
       @for (conversation of filteredConversations(); track conversation.conversation_id) {
@@ -31,6 +51,21 @@
             [status]="statusValue(conversation)"
             [lastMsg]="lastMessagePreview(conversation)"
             (statusChanged)="onStatusChanged(conversation.conversation_id, $event)"
+          ></app-caja-mensaje>
+        </a>
+      }
+      @for (report of filteredReports(); track report.id) {
+        <a
+          class="messages-page__conversation-link"
+          [routerLink]="['/messages/conversation-report', report.id]"
+        >
+          <app-caja-mensaje
+            [name]="reportCardName(report)"
+            [product]="report.titulo"
+            [timeAgo]="reportTimeAgo(report)"
+            [status]="reportStatusValue(report)"
+            [lastMsg]="report.motivo"
+            [showStatusSelect]="false"
           ></app-caja-mensaje>
         </a>
       }

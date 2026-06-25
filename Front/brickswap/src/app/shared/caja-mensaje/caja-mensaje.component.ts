@@ -19,6 +19,7 @@ export class CajaMensajeComponent {
   currentStatus = signal<MessageStatus>('Sin leer');
   lastMsg = input<string>('');
   previewLength = input<number>(80);
+  showStatusSelect = input<boolean>(true);
 
   statusChanged = output<MessageStatus>();
 

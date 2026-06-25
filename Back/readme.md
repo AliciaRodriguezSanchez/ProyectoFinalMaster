@@ -201,3 +201,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE mensajes;
 TRUNCATE TABLE conversations;
 TRUNCATE TABLE conversations;
+
+
+los mensajes de denuncia/admin los separamos del hilo comercial, se guardan así a propósito:
+conversation_id = NULL
+tipo_mensaje = 'SYSTEM'

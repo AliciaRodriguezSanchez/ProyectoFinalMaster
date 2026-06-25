@@ -4,6 +4,7 @@ export interface IAConversationMessage {
   tipo_mensaje?: 'TEXT' | 'PRICE_OFFER' | 'DELIVERY_METHOD' | 'SYSTEM';
   fecha_envio: string;
   emisor_id: number;
+  emisor_rol_id?: number;
   receptor_id: number;
   articulo_id: number;
   conversation_id: number;
@@ -23,6 +24,9 @@ export interface IAConversation {
   seller_nombre?: string;
   seller_apellidos?: string;
   seller_nombre_usuario?: string;
+  report_id?: number;
+  report_denunciante_id?: number;
+  report_denunciado_id?: number;
   last_message_at: string;
   messages: IAConversationMessage[];
 }

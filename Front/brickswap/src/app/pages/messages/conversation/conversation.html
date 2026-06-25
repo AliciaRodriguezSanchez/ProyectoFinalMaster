@@ -17,17 +17,28 @@
     ></app-message-thread>
 
     <ng-template #emptyConversation>
-      <app-message-empty-state *ngIf="!isLoading()" [text]="emptyText"></app-message-empty-state>
+      <app-message-empty-state
+        *ngIf="!isLoading() && !isModeratorView()"
+        [text]="emptyText"
+      ></app-message-empty-state>
     </ng-template>
 
-    <footer class="conversation-page__footer">
+    <footer class="conversation-page__footer" *ngIf="isModeratorView() && !isAdminViewer()">
+      <app-report-message-composer
+        (messageSent)="onMessageSent($event)"
+      ></app-report-message-composer>
+    </footer>
+
+    <footer class="conversation-page__footer" *ngIf="!isModeratorView()">
       <app-message-actions
         [showPrice]="isReceiver()"
         [showDelivery]="isSender()"
-        [showBuy]="!hasMessages()"
+        [showBuy]="!hasMessages() && isLoggedIn()"
         (actionSelected)="onActionSelected($event)"
       ></app-message-actions>
-      <app-message-composer (messageSent)="onMessageSent($event)"></app-message-composer>
+      <app-message-composer
+        (messageSent)="onMessageSent($event)"
+      ></app-message-composer>
     </footer>
   </section>
 </main>
