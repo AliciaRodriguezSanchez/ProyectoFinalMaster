@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IAConversationListItem } from '../../core/interfaces/iconversation.interfaces';
 import { UserRole } from '../../core/constants/user-role';
@@ -9,14 +9,15 @@ import { IReportsTable } from '../../interfaces/ireports-table.interface';
 import { PillComponent } from '../../shared/ui/pill/pill.component';
 import { OrdenarListaComponent, SortOrder } from '../../shared/ui/ordenar-lista/ordenar-lista.component';
 import { CajaMensajeComponent, MessageStatus } from '../../shared/caja-mensaje/caja-mensaje.component';
+import { DescriptionsComponent } from '../../shared/ui/descriptions/descriptions.component';
 
 @Component({
   selector: 'app-messages',
-  imports: [RouterLink, PillComponent, OrdenarListaComponent, CajaMensajeComponent],
+  imports: [RouterLink, PillComponent, OrdenarListaComponent, CajaMensajeComponent, DescriptionsComponent],
   templateUrl: './messages.html',
   styleUrl: './messages.css',
 })
-export class MessagesPage implements OnInit {
+export class MessagesPage {
   selectedTab = signal<string>('all');
   sortOrder = signal<SortOrder>('newest');
   currentRole = signal<UserRole | null>(null);
@@ -29,19 +30,16 @@ export class MessagesPage implements OnInit {
     return role === UserRole.ADMIN || role === UserRole.MODERATOR;
   });
 
-  filteredConversations = computed(() => {
-    const selectedTab = this.selectedTab();
-    const sortOrder = this.sortOrder();
+  authService = inject(AuthService);
+  messageService = inject(MessageService);
 
-    return this.conversations()
-      .filter((conversation) => selectedTab === 'all' || this.statusValue(conversation) === this.tabToStatus(selectedTab))
-      .sort((first, second) => {
-        const firstTime = new Date(first.last_message_fecha_envio || first.conversation_last_message_at).getTime();
-        const secondTime = new Date(second.last_message_fecha_envio || second.conversation_last_message_at).getTime();
+ ngOnInit(): void {
+  this.loadData();
+} 
 
-        return sortOrder === 'newest' ? secondTime - firstTime : firstTime - secondTime;
-      });
-  });
+ filteredConversations = computed(() => {
+  const selectedTab = this.selectedTab();
+  const sortOrder = this.sortOrder();
 
   filteredReports = computed(() => {
     const selectedTab = this.selectedTab();
@@ -62,10 +60,34 @@ export class MessagesPage implements OnInit {
     private messageService: MessageService,
     private reportService: ReportService
   ) {}
+  let conversations = [...this.conversations()];
 
-  ngOnInit(): void {
-    this.loadData();
+  // Filtrado por estado
+  if (selectedTab !== 'all') {
+    const status = this.tabToStatus(selectedTab);
+
+    conversations = conversations.filter(
+      conversation => this.statusValue(conversation) === status
+    );
   }
+
+  // Ordenación por fecha del último mensaje
+  conversations.sort((a, b) => {
+    const dateA = new Date(
+      a.last_message_fecha_envio || a.conversation_last_message_at || 0
+    ).getTime();
+
+    const dateB = new Date(
+      b.last_message_fecha_envio || b.conversation_last_message_at || 0
+    ).getTime();
+
+    return sortOrder === 'newest'
+      ? dateB - dateA
+      : dateA - dateB;
+  });
+
+  return conversations;
+});
 
   async loadData(): Promise<void> {
 
@@ -73,6 +95,8 @@ export class MessagesPage implements OnInit {
     const role = this.authService.getCurrentRole();
 
     if (!userId || !role) {
+    const userId = this.authService.getCurrentUserId()
+    if (!userId) {
       this.errorMessage.set('No se ha podido identificar al usuario logueado');
       return;
     }
@@ -101,13 +125,29 @@ export class MessagesPage implements OnInit {
     }
   }
 
-  onStatusChanged(id: number, status: MessageStatus) {
-    this.conversations.update(conversations =>
-      conversations.map(conversation =>
-        conversation.conversation_id === id ? { ...conversation, status } : conversation
-      )
-    );
+ async onStatusChanged(id: number, status: MessageStatus): Promise<void> {
+  const previous = this.conversations()
+    .find(c => c.conversation_id === id)?.status;
+
+  this.conversations.update(conversations =>
+    conversations.map(c =>
+      c.conversation_id === id ? { ...c, status } : c
+    )
+  );
+
+  try {
+    await this.messageService.changeConversationStatus(id, status);
+  } catch (error) {
+    console.error('Error al cambiar status:', error);
+    if (previous) {
+      this.conversations.update(conversations =>
+        conversations.map(c =>
+          c.conversation_id === id ? { ...c, status: previous } : c
+        )
+      );
+    }
   }
+}
 
   setOrder(order: SortOrder) {
     this.sortOrder.set(order);
@@ -215,5 +255,46 @@ export class MessagesPage implements OnInit {
     const diffDays = Math.floor(diffHours / 24);
 
     return diffDays === 1 ? 'Hace 1 día' : `Hace ${diffDays} días`;
+  }
+
+  statusValue(conversation: IAConversationListItem): MessageStatus {
+    return conversation.status || 'unreaded';
+  }
+
+  lastMessagePreview(conversation: IAConversationListItem): string {
+    if (conversation.last_message_type === 'PRICE_OFFER') {
+      return `Propuesta de precio: ${Number(conversation.last_message_text || 0).toFixed(2)} €`;
+    }
+
+    if (conversation.last_message_type === 'DELIVERY_METHOD') {
+      return `Método de entrega: ${conversation.last_message_text || ''}`;
+    }
+
+    return conversation.last_message_text || '';
+  }
+
+  onConversationClick(conversation: IAConversationListItem): void{
+    
+    const currentUserId = this.authService.getCurrentUserId();
+    const lastMessageIsFromMe = conversation.last_message_sender_id === currentUserId;
+
+    if (lastMessageIsFromMe) {
+    return;
+    }
+
+    if (conversation.status === 'unreaded') {
+      this.onStatusChanged(conversation.conversation_id, 'readed');
+    }
+  }
+
+  private tabToStatus(tab: string): MessageStatus {
+    const statusByTab: Record<string, MessageStatus> = {
+      unreaded: 'unreaded',
+      readed: 'readed',
+      pending: 'pending',
+      resolved: 'resolved',
+    };
+
+    return statusByTab[tab] || 'unreaded';
   }
 }

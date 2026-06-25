@@ -207,6 +207,7 @@ const getConversationsByUser = async (userId) => {
         SELECT
             c.id AS conversation_id,
             c.item_id,
+            c.status,
             a.titulo,
             a.foto,
             a.precio,
@@ -465,172 +466,21 @@ const getConversationById = async ({ conversationId, userId }) => {
     };
 };
 
-// RECUPERAR CONVERSACIÓN ASOCIADA A UN REPORTE PARA MODERACIÓN
-const getConversationByReport = async (reportId) => {
-    const [reportRows] = await db.query(
-        `
-        SELECT
-          r.id,
-          r.articulo_id,
-          r.denunciante_id,
-          r.denunciado_id,
-          r.fecha_reporte,
-          a.titulo,
-          a.foto,
-          a.precio,
-          reporter.nombre AS buyer_nombre,
-          reporter.apellidos AS buyer_apellidos,
-          reporter.nombre_usuario AS buyer_nombre_usuario
-        FROM reportes r
-        INNER JOIN articulos a
-          ON a.id = r.articulo_id
-        LEFT JOIN perfiles reporter
-          ON reporter.id = r.denunciante_id
-        WHERE r.id = ?
-        LIMIT 1
-        `,
-        [reportId]
-    );
+//cambiar status de una conversación
 
-    if (reportRows.length === 0) {
-        return null;
-    }
-
-    const report = reportRows[0];
-    const staffUser = await getFirstStaffUser();
-    let conversationId = 0;
-
-    if (staffUser?.id) {
-        const [conversationRows] = await db.query(
-            `
-            SELECT id
-            FROM conversations
-            WHERE item_id = ? AND buyer_id = ? AND seller_id = ?
-            LIMIT 1
-            `,
-            [report.articulo_id, report.denunciante_id, staffUser.id]
-        );
-
-        conversationId = conversationRows[0]?.id || 0;
-    }
-
-    const reportMessages = await getReportModerationMessages({
-        articleId: report.articulo_id,
-        complainantId: report.denunciante_id,
-        conversationId
-    });
-
-    return {
-        conversation_id: conversationId,
-        item_id: report.articulo_id,
-        titulo: report.titulo,
-        foto: report.foto,
-        precio: report.precio,
-        buyer_id: report.denunciante_id,
-        buyer_nombre: report.buyer_nombre,
-        buyer_apellidos: report.buyer_apellidos,
-        buyer_nombre_usuario: report.buyer_nombre_usuario,
-        seller_id: staffUser?.id || report.denunciado_id,
-        seller_nombre: staffUser?.nombre,
-        seller_apellidos: staffUser?.apellidos,
-        seller_nombre_usuario: staffUser?.nombre_usuario,
-        report_id: report.id,
-        report_denunciante_id: report.denunciante_id,
-        report_denunciado_id: report.denunciado_id,
-        last_message_at: report.fecha_reporte,
-        messages: reportMessages
-    };
+const editStatus = async (status, conversationId) => {
+    const [result] = await db.query(`UPDATE legobbdd.conversations SET status = ? WHERE id = ?`, 
+        [status, conversationId]);
+    console.log('affectedRows', result.affectedRows, typeof(conversationId))
+    return result;
 };
 
-// ENVIAR MENSAJE DE MODERACIÓN AL DENUNCIANTE
-const sendReportMessage = async ({ reportId, senderId, messageText }) => {
-    const [reportRows] = await db.query(
-        `
-        SELECT articulo_id, denunciante_id
-        FROM reportes
-        WHERE id = ?
-        LIMIT 1
-        `,
-        [reportId]
-    );
-
-    if (reportRows.length === 0) {
-        return null;
-    }
-
-    const report = reportRows[0];
-    const senderRole = await getUserRole(senderId);
-    const isStaffSender = isStaffRole(senderRole);
-    const staffUser = await getFirstStaffUser();
-
-    if (!staffUser) {
-        return { errorCode: 'ADMIN_NOT_FOUND' };
-    }
-
-    if (Number(senderRole) === 3) {
-        return { errorCode: 'ADMIN_READ_ONLY' };
-    }
-
-    if (!isStaffSender && Number(senderId) !== Number(report.denunciante_id)) {
-        return { errorCode: 'REPORT_PARTICIPANT_REQUIRED' };
-    }
-
-    let receiverId = report.denunciante_id;
-
-    if (Number(senderId) === Number(report.denunciante_id)) {
-        receiverId = staffUser.id;
-    }
-
-    const [conversationRows] = await db.query(
-        `
-        SELECT id
-        FROM conversations
-        WHERE item_id = ? AND buyer_id = ? AND seller_id = ?
-        LIMIT 1
-        `,
-        [report.articulo_id, report.denunciante_id, staffUser.id]
-    );
-
-    let conversationId = conversationRows[0]?.id;
-
-    if (!conversationId) {
-        const [conversationResult] = await db.query(
-            `
-            INSERT INTO conversations (item_id, buyer_id, seller_id, created_at, last_message_at)
-            VALUES (?, ?, ?, NOW(), NOW())
-            `,
-            [report.articulo_id, report.denunciante_id, staffUser.id]
-        );
-
-        conversationId = conversationResult.insertId;
-    }
-
-    const [result] = await db.query(
-        `
-        INSERT INTO mensajes
-            (texto_mensaje, fecha_envio, emisor_id, receptor_id, articulo_id, conversation_id, tipo_mensaje)
-        VALUES (?, NOW(), ?, ?, ?, ?, 'SYSTEM')
-        `,
-        [
-            messageText.trim(),
-            senderId,
-            receiverId,
-            report.articulo_id,
-            conversationId
-        ]
-    );
-
-    await db.query(
-        'UPDATE conversations SET last_message_at = NOW() WHERE id = ?',
-        [conversationId]
-    );
-
-    return {
-        ...result,
-        receiverId,
-        articleId: report.articulo_id,
-        conversationId
-    };
+const existsConversationById = async (conversationId) => {
+  const [rows] = await db.query(
+    `SELECT id FROM legobbdd.conversations WHERE id = ?`,
+    [conversationId]
+  );
+  return rows[0];
 };
 
 module.exports = {
@@ -638,6 +488,6 @@ module.exports = {
     getConversationsByUser,
     getConversation,
     getConversationById,
-    getConversationByReport,
-    sendReportMessage
+    editStatus,
+    existsConversationById
 };

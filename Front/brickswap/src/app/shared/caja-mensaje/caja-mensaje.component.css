@@ -14,10 +14,10 @@
   color: #555;
 }
 
-.message-card__badge.badge--leído     { background: #eef4ff; color: #3b6fd4; }
-.message-card__badge.badge--sin-leer  { background: #fff4e5; color: #b96d00; }
-.message-card__badge.badge--pendiente { background: #fff8e1; color: #8a6d00; }
-.message-card__badge.badge--resuelto  { background: #e8f5e9; color: #2e7d32; }
+.message-card__badge.badge--readed     { background: #eef4ff; color: #3b6fd4; }
+.message-card__badge.badge--unreaded   { background: #fff4e5; color: #ec5d0a; }
+.message-card__badge.badge--pending { background: #fff8e1; color: #8a6d00; }
+.message-card__badge.badge--resolved  { background: #e8f5e9; color: #2e7d32; }
 
 .message-card__select {
   width: auto;

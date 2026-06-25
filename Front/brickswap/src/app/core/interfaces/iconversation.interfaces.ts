@@ -51,5 +51,5 @@ export interface IAConversationListItem {
   last_message_type?: 'TEXT' | 'PRICE_OFFER' | 'DELIVERY_METHOD' | 'SYSTEM';
   last_message_fecha_envio?: string;
   last_message_sender_id?: number;
-  status?: 'Leído' | 'Sin leer' | 'Pendiente' | 'Resuelto';
+  status?: 'readed' | 'unreaded' | 'pending' | 'resolved';
 }

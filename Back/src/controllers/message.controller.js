@@ -57,6 +57,9 @@ const sendMessage = async (req, res) => {
         }
 
         // RESPUESTA DE ÉXITO
+
+        await Message.editStatus('pending', result.conversationId); //para cambiar el estado a pending cuando envías y estas esperando un mensaje
+
         res.status(201).json({
             message: '¡Mensaje enviado con éxito!',
             messageId: result.insertId,
@@ -218,6 +221,44 @@ const sendReportMessage = async (req, res) => {
     }
 };
 
+
+const changeStatus = async (req, res) => {
+  const { status } = req.body;
+  const { conversationId } = req.params;
+
+  console.log('Recibiendo PUT', { status, conversationId})
+
+  const validStatuses = ['unreaded', 'readed', 'pending', 'resolved'];
+
+  if (!status || !validStatuses.includes(status)) {
+        return res.status(400).json({ message: 'Status inválido' });
+    }
+
+  if (!conversationId || isNaN(Number(conversationId))) {
+        return res.status(400).json({ message: 'ID de conversación inválido' });
+    }
+
+  const exists = await Message.existsConversationById(conversationId);
+  
+  if (!exists) {
+        return res.status(404).json({ message: 'Conversación no encontrada' });
+    }
+
+  try {
+    const result = await Message.editStatus(status, conversationId);
+    res.status(200).json({ message: 'Status actualizado'});
+  } catch (error) {
+    res.status(500).json({ message: 'Error al cambiar el status' });
+  }
+};
+
+     
+
+
+    
+
+
+
 module.exports = {
     sendMessage,
     getConversations,
@@ -225,4 +266,6 @@ module.exports = {
     getConversationById,
     getConversationByReport,
     sendReportMessage
+    getConversationById,
+    changeStatus
 };
