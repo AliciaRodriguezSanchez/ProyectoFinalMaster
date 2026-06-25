@@ -7,7 +7,7 @@ const articleController = require('../../controllers/article.controller');
 // RUTA BASE PARA CATÁLOGO GET /api/articles
 router.get('/', articleController.getAllArticles);
 
-// obtener los últimos articulos publicados en la semana actual
+// obtener los últimos articulos publicados
 router.get('/lastPublications', articleController.getLastArticles);
 
 // obtener los articulos en promocion

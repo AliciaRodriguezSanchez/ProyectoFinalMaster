@@ -1,0 +1,26 @@
+:host {
+  display: block;
+}
+
+.message-empty {
+  align-items: flex-start;
+  display: flex;
+  justify-content: center;
+  min-height: 100%;
+  padding-top: 58px;
+  text-align: center;
+}
+
+.message-empty p {
+  color: #58657a;
+  font-size: var(--brick-font-size-base);
+  line-height: 1.35;
+  margin: 0;
+  max-width: 650px;
+}
+
+@media (max-width: 760px) {
+  .message-empty {
+    padding: 36px 12px 0;
+  }
+}

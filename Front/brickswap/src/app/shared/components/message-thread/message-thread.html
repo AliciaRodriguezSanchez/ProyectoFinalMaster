@@ -1,0 +1,34 @@
+<section class="message-thread" aria-label="Mensajes de la conversacion">
+  <article
+    class="message-thread__item"
+    *ngFor="let message of messages"
+    [class.message-thread__item--mine]="message.mine"
+    [class.message-thread__item--proposal]="message.type === 'priceProposal'"
+    [class.message-thread__item--delivery]="message.type === 'deliveryMethod'"
+  >
+    <ng-container [ngSwitch]="message.type">
+      <div *ngSwitchCase="'priceProposal'" class="message-thread__card">
+        <p class="message-thread__label">
+          <span aria-hidden="true">$</span>
+          {{ message.title }}
+        </p>
+        <strong>{{ message.amount | number: '1.2-2' }} €</strong>
+        <time>{{ message.time }}</time>
+      </div>
+
+      <div *ngSwitchCase="'deliveryMethod'" class="message-thread__card">
+        <p class="message-thread__label">
+          <span aria-hidden="true">[]</span>
+          {{ message.title }}
+        </p>
+        <strong>{{ message.text }}</strong>
+        <time>{{ message.time }}</time>
+      </div>
+
+      <div *ngSwitchDefault class="message-thread__bubble">
+        <p>{{ message.text }}</p>
+        <time>{{ message.time }}</time>
+      </div>
+    </ng-container>
+  </article>
+</section>

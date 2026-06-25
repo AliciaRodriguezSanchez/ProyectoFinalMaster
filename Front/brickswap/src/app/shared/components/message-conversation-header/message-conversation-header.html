@@ -1,0 +1,25 @@
+<header class="message-header">
+  <button class="message-header__back" type="button" aria-label="Volver" (click)="onBack()">
+    <span aria-hidden="true">‹</span>
+  </button>
+
+  <section class="message-header__contact" aria-label="Datos del vendedor">
+    <span class="message-header__avatar">{{ contact.initial }}</span>
+    <div class="message-header__copy">
+      <strong>{{ contact.name }}</strong>
+      <span>{{ product.title }}</span>
+    </div>
+  </section>
+
+  <a
+    class="message-header__product"
+    [routerLink]="['/article', product.id]"
+    aria-label="Ver detalle del articulo"
+  >
+    <img [src]="product.imageUrl" [alt]="product.title" />
+    <div>
+      <strong>{{ product.title }}</strong>
+      <span>{{ product.price | number: '1.2-2' }} €</span>
+    </div>
+  </a>
+</header>

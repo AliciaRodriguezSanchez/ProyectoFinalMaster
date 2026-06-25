@@ -1,0 +1,49 @@
+:host {
+  display: block;
+  overflow: hidden;
+}
+
+.conversation-page {
+  background: var(--brick-color-white);
+  box-sizing: border-box;
+  height: calc(100dvh - 64px - 3rem);
+  max-height: calc(100dvh - 64px - 3rem);
+  overflow: hidden;
+  padding: 18px 24px 24px;
+}
+
+.conversation-page__shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+  margin: 0 auto;
+  max-width: 674px;
+  overflow: hidden;
+}
+
+.conversation-page__footer {
+  display: grid;
+  flex-shrink: 0;
+}
+
+.conversation-page__loading {
+  align-self: start;
+  color: var(--brick-color-muted);
+  margin: 32px 0 0;
+  text-align: center;
+}
+
+app-message-thread,
+app-message-empty-state {
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 760px) {
+  .conversation-page {
+    height: calc(100dvh - 64px - 3rem);
+    max-height: calc(100dvh - 64px - 3rem);
+    padding: 12px 14px 16px;
+  }
+}

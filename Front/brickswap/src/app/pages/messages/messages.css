@@ -3,12 +3,51 @@
 }
 
 .messages-page {
-  padding: 32px;
+  background: var(--brick-color-white);
+  min-height: calc(100dvh - 64px - 3rem);
+  padding: 32px 24px;
 }
 
-.messages-page h1 {
-  margin: 0;
+.messages-page__intro {
+  display: grid;
+  gap: 12px;
+  margin: 0 auto;
+  max-width: 674px;
+}
+
+.messages-page__intro h1 {
   color: var(--brick-color-title);
   font-size: var(--brick-font-size-8xl);
-  font-weight: 900;
+  font-weight: var(--brick-font-weight-xl);
+  margin: 0;
+}
+
+.messages-page__intro p {
+  color: var(--brick-color-muted);
+  margin: 0;
+}
+
+.messages-page__intro a {
+  color: var(--brick-color-brand-dark);
+  font-weight: var(--brick-font-weight-l);
+  text-decoration: none;
+}
+
+.messages-page__conversation-link {
+  color: inherit;
+  display: block;
+  text-decoration: none;
+}
+
+.messages-page__conversation-link:hover {
+  text-decoration: none;
+}
+
+.messages-page__state {
+  color: var(--brick-color-muted);
+  margin: 0;
+}
+
+.messages-page__state--error {
+  color: var(--brick-color-danger);
 }

@@ -21,7 +21,7 @@ router.use('/categories', categoryRoutes);
 router.use('/articles', articleRoutes);
 router.use('/reviews', reviewRoutes);
 router.use('/favorites', favoriteRoutes);
-router.use('/messages', checkToken,  messageRoutes);
+router.use('/messages',   messageRoutes);
 router.use('/reports', checkToken, reportRoutes);
 router.use('/login', loginRoutes);
 router.use('/users', usersRoutes);

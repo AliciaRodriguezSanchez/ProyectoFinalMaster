@@ -153,3 +153,51 @@ UPDATE articulos
 SET in_promotion = 0
 WHERE id IN (2, 9, 11, 20, 33);
 
+## añadí tabla conversation
+CREATE TABLE conversations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  item_id INT NOT NULL,
+  buyer_id INT NOT NULL,
+  seller_id INT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  last_message_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE mensajes
+ADD COLUMN conversation_id INT NULL;
+
+ALTER TABLE mensajes
+ADD CONSTRAINT fk_mensajes_conversations
+FOREIGN KEY (conversation_id)
+REFERENCES conversations(id);
+
+
+Con esa tabla de mensajes puedes guardar mensajes, pero para recuperar el historial del hilo falta una entidad que agrupe la conversación.
+
+Cada conversación representa un hilo entre comprador y vendedor sobre un artículo.
+
+profiles
+    │
+    ├── conversations
+    │       │
+    │       └── messages
+    │
+articles
+
+1 conversación muchos mensajes 
+
+
+## añadir columna para saber tipo mensaje 
+ALTER TABLE mensajes
+ADD COLUMN tipo_mensaje ENUM(
+  'TEXT',
+  'PRICE_OFFER',
+  'DELIVERY_METHOD',
+  'SYSTEM'
+) NOT NULL DEFAULT 'TEXT';
+
+## borrar mensajes 
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE mensajes;
+TRUNCATE TABLE conversations;
+TRUNCATE TABLE conversations;

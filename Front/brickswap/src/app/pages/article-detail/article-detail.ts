@@ -1,8 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { Article } from '../../core/models/article/article.model';
 import { ArticleService } from '../../core/services/article/article.service';
+import { AuthService } from '../../core/services/auth/auth.service';
 import { FavoriteService } from '../../core/services/favorite/favorite.service';
 import { MessageService } from '../../core/services/message/message.service';
 import { ReportService } from '../../core/services/report/report.service';
@@ -29,6 +30,8 @@ export class ArticleDetail implements OnInit {
     private messageService: MessageService,
     private reportService: ReportService,
     private route: ActivatedRoute,
+    private router: Router,
+    private authService: AuthService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -93,10 +96,21 @@ export class ArticleDetail implements OnInit {
     const texto = prompt("Escribe tu mensaje para el vendedor:");
     if (!texto || !this.article) return;
 
-    const emisor_id = 1; // TU ID
+    const emisor_id = this.authService.getCurrentUserId();
+
+    if (!emisor_id) {
+      alert('Debes iniciar sesión para enviar un mensaje');
+      return;
+    }
+
+    if (emisor_id === this.article.perfil_id) {
+      alert('No puedes iniciar una conversación contigo mismo');
+      return;
+    }
+
     this.messageService.sendMessage(texto, emisor_id, this.article.perfil_id, this.article.id!).subscribe({
-      next: (res) => alert(res.message),
-      error: (err) => alert('Error al enviar el mensaje')
+      next: (res) => this.router.navigate(['/messages/conversation-thread', res.conversationId]),
+      error: (err) => alert(err.error?.message || 'Error al enviar el mensaje')
     });
   }
 
