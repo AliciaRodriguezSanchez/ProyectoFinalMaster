@@ -17,7 +17,7 @@ export class MessagesPage {
   messages = signal<any[]>([])
 
   loadData(){
-
+    // peticion a la data para que cambie la query de orden
   }
 
   onStatusChanged(id: number, status: MessageStatus) {
