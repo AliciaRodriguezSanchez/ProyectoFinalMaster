@@ -201,3 +201,11 @@ SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE mensajes;
 TRUNCATE TABLE conversations;
 TRUNCATE TABLE conversations;
+
+## añadir columna status en las conversaciones
+
+ALTER TABLE conversaciones 
+ADD COLUMN status ENUM('unreaded', 'readed', 'pending', 'resolved') 
+DEFAULT 'unreaded' NOT NULL;
+
+

@@ -1,12 +1,13 @@
 <main class="messages-page">
   <h1>Mensajes</h1>
+  <app-descriptions text="Tus conversaciones con compradores y vendedores" format="body"></app-descriptions>
   <div class="mt-5 d-flex flex-wrap gap-2 justify-content-between align-items-center">
     <div class="d-flex flex-wrap gap-2">
-      <app-pill class="mx-3" label="Todos" value="all" [active]="selectedTab() === 'all'" (selected)="selectedTab.set($event)"></app-pill>
-      <app-pill class="mx-3" label="Sin leer" value="unreaded" [active]="selectedTab() === 'unreaded'" (selected)="selectedTab.set($event)"></app-pill>
-      <app-pill class="mx-3" label="Leído" value="readed" [active]="selectedTab() === 'readed'" (selected)="selectedTab.set($event)"></app-pill>
-      <app-pill class="mx-3" label="Pendiente" value="pending" [active]="selectedTab() === 'pending'" (selected)="selectedTab.set($event)"></app-pill>
-      <app-pill class="mx-3" label="Resuelto" value="resolved" [active]="selectedTab() === 'resolved'" (selected)="selectedTab.set($event)"></app-pill>
+      <app-pill class="mx-1" label="Todos" value="all" [active]="selectedTab() === 'all'" (selected)="selectedTab.set($event)"></app-pill>
+      <app-pill class="mx-1" label="Sin leer" value="unreaded" [active]="selectedTab() === 'unreaded'" (selected)="selectedTab.set($event)"></app-pill>
+      <app-pill class="mx-1" label="Leído" value="readed" [active]="selectedTab() === 'readed'" (selected)="selectedTab.set($event)"></app-pill>
+      <app-pill class="mx-1" label="Pendiente" value="pending" [active]="selectedTab() === 'pending'" (selected)="selectedTab.set($event)"></app-pill>
+      <app-pill class="mx-1" label="Resuelto" value="resolved" [active]="selectedTab() === 'resolved'" (selected)="selectedTab.set($event)"></app-pill>
     </div>
     <app-ordenar-lista [active]="sortOrder()" (changed)="setOrder($event)"></app-ordenar-lista>
   </div>
@@ -22,7 +23,7 @@
       @for (conversation of filteredConversations(); track conversation.conversation_id) {
         <a
           class="messages-page__conversation-link"
-          [routerLink]="['/messages/conversation-thread', conversation.conversation_id]"
+          [routerLink]="['/messages/conversation-thread', conversation.conversation_id]" (click)="onConversationClick(conversation)"
         >
           <app-caja-mensaje
             [name]="otherUserName(conversation)"

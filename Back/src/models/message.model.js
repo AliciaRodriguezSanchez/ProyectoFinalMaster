@@ -132,6 +132,7 @@ const getConversationsByUser = async (userId) => {
         SELECT
             c.id AS conversation_id,
             c.item_id,
+            c.status,
             a.titulo,
             a.foto,
             a.precio,
@@ -374,9 +375,28 @@ const getConversationById = async ({ conversationId, userId }) => {
     };
 };
 
+//cambiar status de una conversación
+
+const editStatus = async (status, conversationId) => {
+    const [result] = await db.query(`UPDATE legobbdd.conversations SET status = ? WHERE id = ?`, 
+        [status, conversationId]);
+    console.log('affectedRows', result.affectedRows, typeof(conversationId))
+    return result;
+};
+
+const existsConversationById = async (conversationId) => {
+  const [rows] = await db.query(
+    `SELECT id FROM legobbdd.conversations WHERE id = ?`,
+    [conversationId]
+  );
+  return rows[0];
+};
+
 module.exports = {
     sendMessage,
     getConversationsByUser,
     getConversation,
-    getConversationById
+    getConversationById,
+    editStatus,
+    existsConversationById
 };

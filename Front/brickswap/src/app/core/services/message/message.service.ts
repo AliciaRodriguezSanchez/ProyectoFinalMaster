@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, firstValueFrom } from 'rxjs';
+import { Observable, firstValueFrom, lastValueFrom } from 'rxjs';
 import { API_URL, CONVERSATION } from '../api';
 import { IAConversation, IAConversationListItem } from '../../interfaces/iconversation.interfaces';
+import { MessageStatus } from '../../../shared/caja-mensaje/caja-mensaje.component';
 
 export interface SendMessageResponse {
   message: string;
   messageId: number;
   conversationId: number;
+}
+
+type UpdateStatusResponse = {
+  message: string
 }
 
 @Injectable({
@@ -48,8 +53,17 @@ export class MessageService {
   }
 
   getConversations(userId: number): Promise<IAConversationListItem[]> {
-    return firstValueFrom(
-      this.http.get<IAConversationListItem[]>(`${API_URL}/messages/conversations/${userId}`)
-    );
+  return lastValueFrom(
+    this.http.get<IAConversationListItem[]>(`${API_URL}/messages/conversations/${userId}`, {
+      headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+    })
+  );
+}
+
+  //cambiar estatus de la conversación
+  changeConversationStatus(conversationID: number, status: MessageStatus): Promise<UpdateStatusResponse> {
+    return lastValueFrom(this.http.put<UpdateStatusResponse>(`${API_URL}/messages/conversations/${conversationID}`, {
+      status
+    }))
   }
 }

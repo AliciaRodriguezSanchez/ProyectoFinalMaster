@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IAConversationListItem } from '../../core/interfaces/iconversation.interfaces';
 import { AuthService } from '../../core/services/auth/auth.service';
@@ -6,31 +6,63 @@ import { MessageService } from '../../core/services/message/message.service';
 import { PillComponent } from '../../shared/ui/pill/pill.component';
 import { OrdenarListaComponent, SortOrder } from '../../shared/ui/ordenar-lista/ordenar-lista.component';
 import { CajaMensajeComponent, MessageStatus } from '../../shared/caja-mensaje/caja-mensaje.component';
+import { DescriptionsComponent } from '../../shared/ui/descriptions/descriptions.component';
 
 @Component({
   selector: 'app-messages',
-  imports: [RouterLink, PillComponent, OrdenarListaComponent, CajaMensajeComponent],
+  imports: [RouterLink, PillComponent, OrdenarListaComponent, CajaMensajeComponent, DescriptionsComponent],
   templateUrl: './messages.html',
   styleUrl: './messages.css',
 })
-export class MessagesPage implements OnInit {
+export class MessagesPage {
   selectedTab = signal<string>('all');
   sortOrder = signal<SortOrder>('newest');
   conversations = signal<IAConversationListItem[]>([]);
   isLoading = signal(false);
   errorMessage = signal('');
 
-  filteredConversations = computed(() => {
-    const selectedTab = this.selectedTab();
-    const sortOrder = this.sortOrder();
+  authService = inject(AuthService);
+  messageService = inject(MessageService);
 
-  loadData(){
+ ngOnInit(): void {
+  this.loadData();
+} 
 
+ filteredConversations = computed(() => {
+  const selectedTab = this.selectedTab();
+  const sortOrder = this.sortOrder();
+
+  let conversations = [...this.conversations()];
+
+  // Filtrado por estado
+  if (selectedTab !== 'all') {
+    const status = this.tabToStatus(selectedTab);
+
+    conversations = conversations.filter(
+      conversation => this.statusValue(conversation) === status
+    );
   }
 
-  async loadData(): Promise<void> {
-    const userId = this.authService.getCurrentUserId();
+  // Ordenación por fecha del último mensaje
+  conversations.sort((a, b) => {
+    const dateA = new Date(
+      a.last_message_fecha_envio || a.conversation_last_message_at || 0
+    ).getTime();
 
+    const dateB = new Date(
+      b.last_message_fecha_envio || b.conversation_last_message_at || 0
+    ).getTime();
+
+    return sortOrder === 'newest'
+      ? dateB - dateA
+      : dateA - dateB;
+  });
+
+  return conversations;
+});
+
+  async loadData(): Promise<void> {
+    const userId = this.authService.getCurrentUserId()
     if (!userId) {
       this.errorMessage.set('No se ha podido identificar al usuario logueado');
       return;
@@ -50,13 +82,29 @@ export class MessagesPage implements OnInit {
     }
   }
 
-  onStatusChanged(id: number, status: MessageStatus) {
-    this.conversations.update(conversations =>
-      conversations.map(conversation =>
-        conversation.conversation_id === id ? { ...conversation, status } : conversation
-      )
-    );
+ async onStatusChanged(id: number, status: MessageStatus): Promise<void> {
+  const previous = this.conversations()
+    .find(c => c.conversation_id === id)?.status;
+
+  this.conversations.update(conversations =>
+    conversations.map(c =>
+      c.conversation_id === id ? { ...c, status } : c
+    )
+  );
+
+  try {
+    await this.messageService.changeConversationStatus(id, status);
+  } catch (error) {
+    console.error('Error al cambiar status:', error);
+    if (previous) {
+      this.conversations.update(conversations =>
+        conversations.map(c =>
+          c.conversation_id === id ? { ...c, status: previous } : c
+        )
+      );
+    }
   }
+}
 
   setOrder(order: SortOrder) {
     this.sortOrder.set(order);
@@ -109,7 +157,7 @@ export class MessagesPage implements OnInit {
   }
 
   statusValue(conversation: IAConversationListItem): MessageStatus {
-    return conversation.status || 'Sin leer';
+    return conversation.status || 'unreaded';
   }
 
   lastMessagePreview(conversation: IAConversationListItem): string {
@@ -124,14 +172,28 @@ export class MessagesPage implements OnInit {
     return conversation.last_message_text || '';
   }
 
+  onConversationClick(conversation: IAConversationListItem): void{
+    
+    const currentUserId = this.authService.getCurrentUserId();
+    const lastMessageIsFromMe = conversation.last_message_sender_id === currentUserId;
+
+    if (lastMessageIsFromMe) {
+    return;
+    }
+
+    if (conversation.status === 'unreaded') {
+      this.onStatusChanged(conversation.conversation_id, 'readed');
+    }
+  }
+
   private tabToStatus(tab: string): MessageStatus {
     const statusByTab: Record<string, MessageStatus> = {
-      unreaded: 'Sin leer',
-      readed: 'Leído',
-      pending: 'Pendiente',
-      resolved: 'Resuelto',
+      unreaded: 'unreaded',
+      readed: 'readed',
+      pending: 'pending',
+      resolved: 'resolved',
     };
 
-    return statusByTab[tab] || 'Sin leer';
+    return statusByTab[tab] || 'unreaded';
   }
 }
