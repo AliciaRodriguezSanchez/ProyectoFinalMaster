@@ -125,7 +125,12 @@ export class ArticleDetail implements OnInit {
   // 3. ACCIÓN: REPORTAR ANUNCIO / MODERACIÓN
   reportListing() {
     const motivo = prompt(MESSAGE_TEXT.articleDetail.reportReasonPrompt);
-    if (!motivo || !this.article) return;
+    if (!this.article) return;
+
+    if (!motivo?.trim()) {
+      alert(MESSAGE_TEXT.articleDetail.reportReasonRequired);
+      return;
+    }
 
     const denunciante_id = this.authService.getCurrentUserId();
 
@@ -134,7 +139,7 @@ export class ArticleDetail implements OnInit {
       return;
     }
 
-    this.reportService.createReport(motivo, denunciante_id, this.article.perfil_id, this.article.id!).subscribe({
+    this.reportService.createReport(motivo.trim(), denunciante_id, this.article.perfil_id, this.article.id!).subscribe({
       next: (res) => alert(res.message),
       error: (err) => alert(err.error?.message || MESSAGE_TEXT.articleDetail.sendReportError)
     });
@@ -143,7 +148,12 @@ export class ArticleDetail implements OnInit {
   // 4. ACCIÓN: AÑADIR A FAVORITOS
   addToFavorites() {
     if (!this.article || !this.article.id) return;
-    const mi_perfil_id = 1; // REEMPLAZA CON EL ID DE TU SESIÓN ACTUAL
+
+    const mi_perfil_id = this.requireLoggedUser(MESSAGE_TEXT.articleDetail.favoriteLoginRequired);
+
+    if (!mi_perfil_id) {
+      return;
+    }
     
     this.favoriteService.addFavorite(mi_perfil_id, this.article.id).subscribe({
       next: (res) => alert(res.message),

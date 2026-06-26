@@ -1,5 +1,6 @@
 export interface IReportsTable {
     id: number;
+    articulo_id?: number;
     titulo: string;
     nombre: string;
     motivo: string;

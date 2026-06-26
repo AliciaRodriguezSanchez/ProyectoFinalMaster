@@ -189,9 +189,9 @@ const sendReportMessage = async (req, res) => {
             });
         }
 
-        if (result.errorCode === 'REPORT_PARTICIPANT_REQUIRED') {
+        if (result.errorCode === 'REPORT_REPLY_NOT_ALLOWED') {
             return res.status(403).json({
-                message: 'Solo el denunciante o el equipo de moderación pueden responder a este reporte'
+                message: 'Solo el moderador puede responder a este reporte'
             });
         }
 
@@ -265,7 +265,6 @@ module.exports = {
     getConversation,
     getConversationById,
     getConversationByReport,
-    sendReportMessage
-    getConversationById,
+    sendReportMessage,
     changeStatus
 };

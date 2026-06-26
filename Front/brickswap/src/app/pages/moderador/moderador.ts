@@ -87,7 +87,7 @@ export class ModeradorPage {
 
       const datosMapeados = datosBackend.map((item: any) => ({
         id: item.id, 
-        title: item.titulo,
+        title: item.titulo || `Artículo #${item.articulo_id}`,
         customer: item.nombre,
         reason: item.motivo,
         time: item.fecha_reporte,

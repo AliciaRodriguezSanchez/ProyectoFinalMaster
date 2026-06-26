@@ -1,7 +1,9 @@
+import { MessageType } from '../constants/message';
+
 export interface IAConversationMessage {
   id: number;
   texto_mensaje: string;
-  tipo_mensaje?: 'TEXT' | 'PRICE_OFFER' | 'DELIVERY_METHOD' | 'SYSTEM';
+  tipo_mensaje?: MessageType;
   fecha_envio: string;
   emisor_id: number;
   emisor_rol_id?: number;
@@ -27,6 +29,7 @@ export interface IAConversation {
   report_id?: number;
   report_denunciante_id?: number;
   report_denunciado_id?: number;
+  report_status?: string;
   last_message_at: string;
   messages: IAConversationMessage[];
 }
@@ -48,7 +51,7 @@ export interface IAConversationListItem {
   conversation_last_message_at: string;
   last_message_id?: number;
   last_message_text?: string;
-  last_message_type?: 'TEXT' | 'PRICE_OFFER' | 'DELIVERY_METHOD' | 'SYSTEM';
+  last_message_type?: MessageType;
   last_message_fecha_envio?: string;
   last_message_sender_id?: number;
   status?: 'readed' | 'unreaded' | 'pending' | 'resolved';

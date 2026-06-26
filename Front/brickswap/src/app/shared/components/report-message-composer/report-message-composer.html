@@ -1,4 +1,4 @@
-<section class="report-message-composer" aria-label="Mensaje al denunciante">
-  <p>Enviar mensaje al denunciante</p>
+<section class="report-message-composer" [attr.aria-label]="text.sendToComplainant">
+  <p>{{ text.sendToComplainant }}</p>
   <app-message-composer (messageSent)="onMessageSent($event)"></app-message-composer>
 </section>

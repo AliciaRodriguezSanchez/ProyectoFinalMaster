@@ -2,14 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import { MESSAGE_ACTION, MESSAGE_TYPE, MessageAction, MessageType } from '../../../core/constants/message';
 import { MESSAGE_TEXT } from '../../../core/constants/message-text';
 import { UserRole } from '../../../core/constants/user-role';
 import { IAConversation } from '../../../core/interfaces/iconversation.interfaces';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { MessageService } from '../../../core/services/message/message.service';
-import {
-  MessageAction,
-} from '../../../shared/components/message-actions/message-actions';
 import {
   MessageContact,
   MessageProductSummary,
@@ -19,17 +17,15 @@ import {
 } from '../../../shared/components/message-thread/message-thread';
 import { SharedMessagesComponentsModule } from '../../../shared/components/shared-messages-components.module';
 
-type MessageType = 'TEXT' | 'PRICE_OFFER' | 'DELIVERY_METHOD' | 'SYSTEM';
-
 @Component({
   selector: 'app-conversation',
-  standalone: true,
   imports: [CommonModule, SharedMessagesComponentsModule],
   templateUrl: './conversation.html',
   styleUrl: './conversation.css',
 })
 export class ConversationPage implements OnInit {
-  emptyText = MESSAGE_TEXT.messages.emptyConversation;
+  protected readonly text = MESSAGE_TEXT.messages;
+  emptyText = this.text.emptyConversation;
 
   contact = signal<MessageContact | null>(null);
   product = signal<MessageProductSummary | null>(null);
@@ -41,6 +37,7 @@ export class ConversationPage implements OnInit {
   currentUserId = signal(0);
   currentRole = signal<UserRole | null>(null);
   reportComplainantId = signal(0);
+  reportStatus = signal('');
   receiveId = signal(0);
   sendId = signal(0);
 
@@ -56,6 +53,15 @@ export class ConversationPage implements OnInit {
     return role === UserRole.MODERATOR || role === UserRole.ADMIN;
   });
   isAdminViewer = computed(() => this.currentRole() === UserRole.ADMIN);
+  isReportResolved = computed(() => this.reportStatus() !== '' && this.reportStatus() !== 'Pendiente');
+  reportStatusLabel = computed(() =>
+    this.isReportResolved() ? this.text.reportResolved : this.text.reportPending
+  );
+  canReplyReport = computed(() =>
+    this.isModeratorView() &&
+    this.currentRole() === UserRole.MODERATOR &&
+    !this.isReportResolved()
+  );
 
   messageReceiverId = computed(() => {
     if (this.isReceiver()) {
@@ -134,17 +140,17 @@ export class ConversationPage implements OnInit {
       return;
     }
 
-    if (action === 'buy' && !this.isLoggedIn()) {
+    if (action === MESSAGE_ACTION.BUY && !this.isLoggedIn()) {
       alert(MESSAGE_TEXT.articleDetail.buyLoginRequired);
       return;
     }
 
-    if (action === 'price') {
+    if (action === MESSAGE_ACTION.PRICE) {
       this.sendPriceOffer();
       return;
     }
 
-    if (action === 'delivery') {
+    if (action === MESSAGE_ACTION.DELIVERY) {
       this.sendDeliveryMethod();
       return;
     }
@@ -153,11 +159,11 @@ export class ConversationPage implements OnInit {
   }
 
   onMessageSent(message: string): void {
-    this.send(message, 'TEXT');
+    this.send(message, MESSAGE_TYPE.TEXT);
   }
 
   private sendPriceOffer(): void {
-    const price = prompt('Introduce la propuesta de precio');
+    const price = prompt(this.text.priceOfferPrompt);
 
     if (!price?.trim()) {
       return;
@@ -166,24 +172,24 @@ export class ConversationPage implements OnInit {
     const normalizedPrice = price.trim().replace(',', '.');
 
     if (!/^\d+(\.\d{1,2})?$/.test(normalizedPrice)) {
-      alert('La propuesta de precio solo puede contener números');
+      alert(this.text.priceOfferNumericError);
       return;
     }
 
-    this.send(normalizedPrice, 'PRICE_OFFER');
+    this.send(normalizedPrice, MESSAGE_TYPE.PRICE_OFFER);
   }
 
   private sendDeliveryMethod(): void {
-    const method = prompt('Introduce el método de entrega');
+    const method = prompt(this.text.deliveryMethodPrompt);
 
     if (!method?.trim()) {
       return;
     }
 
-    this.send(method.trim(), 'DELIVERY_METHOD');
+    this.send(method.trim(), MESSAGE_TYPE.DELIVERY_METHOD);
   }
 
-  private send(message: string, tipoMensaje: MessageType = 'TEXT'): void {
+  private send(message: string, tipoMensaje: MessageType = MESSAGE_TYPE.TEXT): void {
     const senderId = this.currentUserId();
     const cleanMessage = message.trim();
 
@@ -192,6 +198,10 @@ export class ConversationPage implements OnInit {
     }
 
     if (this.isModeratorView()) {
+      if (!this.canReplyReport()) {
+        return;
+      }
+
       this.messageService
         .sendReportMessage(
           cleanMessage,
@@ -200,7 +210,7 @@ export class ConversationPage implements OnInit {
         )
         .subscribe({
           next: () => {
-            this.addLocalMessage(cleanMessage, 'SYSTEM');
+            this.addLocalMessage(cleanMessage, MESSAGE_TYPE.SYSTEM);
           },
           error: (error: unknown) => {
             console.error('Error al enviar mensaje de reporte:', error);
@@ -239,30 +249,30 @@ export class ConversationPage implements OnInit {
     let newMessage: ConversationMessage;
 
     switch (tipoMensaje) {
-      case 'PRICE_OFFER':
+      case MESSAGE_TYPE.PRICE_OFFER:
         newMessage = {
           id: Date.now(),
           type: 'priceProposal',
-          title: 'Propuesta de precio',
+          title: this.text.priceOfferLabel,
           amount: Number(message),
           time: this.getCurrentTime(),
           mine: true,
         };
         break;
 
-      case 'DELIVERY_METHOD':
+      case MESSAGE_TYPE.DELIVERY_METHOD:
         newMessage = {
           id: Date.now(),
           type: 'deliveryMethod',
-          title: 'Método de entrega',
+          title: this.text.deliveryMethodLabel,
           text: message,
           time: this.getCurrentTime(),
           mine: true,
         };
         break;
 
-      case 'SYSTEM':
-      case 'TEXT':
+      case MESSAGE_TYPE.SYSTEM:
+      case MESSAGE_TYPE.TEXT:
       default:
         newMessage = {
           id: Date.now(),
@@ -282,14 +292,15 @@ export class ConversationPage implements OnInit {
     this.articleId.set(Number(conversation.item_id));
     this.product.set(this.mapConversationProduct(conversation));
     this.reportComplainantId.set(Number(conversation.report_denunciante_id || 0));
+    this.reportStatus.set(conversation.report_status || '');
     this.receiveId.set(Number(conversation.buyer_id));
     this.sendId.set(Number(conversation.seller_id));
 
     this.contact.set(this.mapConversationContact(conversation));
 
     const visibleMessages = this.isModeratorView()
-      ? conversation.messages.filter((message) => message.tipo_mensaje === 'SYSTEM')
-      : conversation.messages.filter((message) => message.tipo_mensaje !== 'SYSTEM');
+      ? conversation.messages.filter((message) => message.tipo_mensaje === MESSAGE_TYPE.SYSTEM)
+      : conversation.messages.filter((message) => message.tipo_mensaje !== MESSAGE_TYPE.SYSTEM);
 
     this.messages.set(
       visibleMessages.map((message) => this.mapConversationMessage(message))
@@ -305,20 +316,20 @@ export class ConversationPage implements OnInit {
       mine: this.isMessageMine(message),
     };
 
-    if (message.tipo_mensaje === 'PRICE_OFFER') {
+    if (message.tipo_mensaje === MESSAGE_TYPE.PRICE_OFFER) {
       return {
         ...baseMessage,
         type: 'priceProposal',
-        title: 'Propuesta de precio',
+        title: this.text.priceOfferLabel,
         amount: Number(message.texto_mensaje),
       };
     }
 
-    if (message.tipo_mensaje === 'DELIVERY_METHOD') {
+    if (message.tipo_mensaje === MESSAGE_TYPE.DELIVERY_METHOD) {
       return {
         ...baseMessage,
         type: 'deliveryMethod',
-        title: 'Método de entrega',
+        title: this.text.deliveryMethodLabel,
         text: message.texto_mensaje,
       };
     }
@@ -354,7 +365,7 @@ export class ConversationPage implements OnInit {
 
     return {
       name,
-      initial: name.trim().charAt(0).toUpperCase() || 'U',
+      initial: name.trim().charAt(0).toUpperCase() || this.text.defaultUser.charAt(0),
     };
   }
 
@@ -375,7 +386,7 @@ export class ConversationPage implements OnInit {
 
     const fullName = `${name || ''} ${surname || ''}`.trim();
 
-    return fullName || username || `Usuario ${this.messageReceiverId()}`;
+    return fullName || username || `${this.text.defaultUser} ${this.messageReceiverId()}`;
   }
 
   private formatTime(date: string): string {

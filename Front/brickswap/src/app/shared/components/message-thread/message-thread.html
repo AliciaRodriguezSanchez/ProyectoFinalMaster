@@ -1,4 +1,4 @@
-<section class="message-thread" aria-label="Mensajes de la conversacion">
+<section class="message-thread" [attr.aria-label]="text.threadAria">
   <article
     class="message-thread__item"
     *ngFor="let message of messages"

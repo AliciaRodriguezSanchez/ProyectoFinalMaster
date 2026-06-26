@@ -7,5 +7,7 @@ import { MESSAGE_TEXT } from '../../../core/constants/message-text';
   styleUrl: './message-empty-state.css',
 })
 export class MessageEmptyStateComponent {
+  protected readonly ariaText = MESSAGE_TEXT.messages.emptyAria;
+
   @Input() text = MESSAGE_TEXT.messages.emptyConversation;
 }

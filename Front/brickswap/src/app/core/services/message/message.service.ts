@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, firstValueFrom, lastValueFrom } from 'rxjs';
 import { API_URL, CONVERSATION } from '../api';
+import { MESSAGE_TYPE, MessageType } from '../../constants/message';
 import { IAConversation, IAConversationListItem } from '../../interfaces/iconversation.interfaces';
 import { MessageStatus } from '../../../shared/caja-mensaje/caja-mensaje.component';
 
@@ -35,7 +36,7 @@ export class MessageService {
     emisor_id: number,
     receptor_id: number,
     articulo_id: number,
-    tipo_mensaje: 'TEXT' | 'PRICE_OFFER' | 'DELIVERY_METHOD' | 'SYSTEM' = 'TEXT'
+    tipo_mensaje: MessageType = MESSAGE_TYPE.TEXT
   ): Observable<SendMessageResponse> {
     return this.http.post<SendMessageResponse>(`${API_URL}/messages`, {
       texto_mensaje,
