@@ -56,10 +56,6 @@ const sendMessage = async (req, res) => {
             });
         }
 
-        // RESPUESTA DE ÉXITO
-
-        await Message.editStatus('pending', result.conversationId); //para cambiar el estado a pending cuando envías y estas esperando un mensaje
-
         res.status(201).json({
             message: '¡Mensaje enviado con éxito!',
             messageId: result.insertId,
@@ -143,10 +139,19 @@ const getConversationByReport = async (req, res) => {
             });
         }
 
-        const conversation = await Message.getConversationByReport(reportId);
+        const conversation = await Message.getConversationByReport({
+            reportId,
+            viewer: req.user
+        });
 
         if (!conversation) {
             return res.status(404).json({ message: 'Conversación no encontrada para este reporte' });
+        }
+
+        if (conversation.errorCode === 'REPORT_ACCESS_DENIED') {
+            return res.status(403).json({
+                message: 'No tienes permiso para ver esta conversación de reporte'
+            });
         }
 
         res.status(200).json(conversation);
@@ -180,7 +185,8 @@ const sendReportMessage = async (req, res) => {
         const result = await Message.sendReportMessage({
             reportId,
             senderId,
-            messageText: texto_mensaje
+            messageText: texto_mensaje,
+            viewer: req.user
         });
 
         if (!result) {

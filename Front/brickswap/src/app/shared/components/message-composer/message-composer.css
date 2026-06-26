@@ -6,7 +6,7 @@
   display: grid;
   gap: 8px;
   grid-template-columns: minmax(0, 1fr) 38px;
-  padding-top: 12px;
+  padding-top: 8px;
 }
 
 .message-composer__label {
@@ -40,15 +40,30 @@
 
 .message-composer button {
   align-items: center;
-  background: #ffdc85;
+  background: var(--brick-color-brand);
   border: 0;
   border-radius: var(--brick-radius-lg);
-  color: #4f6586;
+  color: var(--brick-color-text-strong);
   cursor: pointer;
   display: inline-flex;
   font-size: var(--brick-font-size-xl);
+  font-weight: var(--brick-font-weight-xl);
   height: 38px;
   justify-content: center;
   padding: 0;
+  transition:
+    background-color .2s ease,
+    transform .2s ease,
+    box-shadow .2s ease;
   width: 38px;
+}
+
+.message-composer button:hover {
+  background: var(--brick-color-brand-dark);
+  transform: translateY(-1px);
+}
+
+.message-composer button:focus-visible {
+  box-shadow: var(--brick-shadow-focus-input);
+  outline: 0;
 }

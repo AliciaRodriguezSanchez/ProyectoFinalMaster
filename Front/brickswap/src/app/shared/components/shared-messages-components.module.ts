@@ -1,7 +1,4 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
 
 import { MessageActionsComponent } from './message-actions/message-actions';
 import { MessageComposerComponent } from './message-composer/message-composer';
@@ -10,6 +7,8 @@ import { MessageEmptyStateComponent } from './message-empty-state/message-empty-
 import { MessageThreadComponent } from './message-thread/message-thread';
 import { ReportMessageComposerComponent } from './report-message-composer/report-message-composer';
 
+//Módulo agrupador para los componentes de mensajes.
+//importar uno a uno todos estos componentes
 @NgModule({
   exports: [
     MessageActionsComponent,
@@ -20,9 +19,6 @@ import { ReportMessageComposerComponent } from './report-message-composer/report
     ReportMessageComposerComponent,
   ],
   imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
     MessageActionsComponent,
     MessageComposerComponent,
     MessageConversationHeaderComponent,

@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { MESSAGE_ACTION, MessageAction } from '../../../core/constants/message';
@@ -6,7 +5,6 @@ import { MESSAGE_TEXT } from '../../../core/constants/message-text';
 
 @Component({
   selector: 'app-message-actions',
-  imports: [CommonModule],
   templateUrl: './message-actions.html',
   styleUrl: './message-actions.css',
 })

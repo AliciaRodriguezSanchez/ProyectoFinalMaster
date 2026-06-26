@@ -15,7 +15,7 @@
     class="carrousel__track"
   >
     @if (isLoading()) {
-      @for (item of [].constructor(skeletonItems()); track $index) {
+      @for (item of skeletonPlaceholders(); track $index) {
         <article
           class="carrousel__skeleton"
           [class.carrousel__skeleton--product]="skeletonVariant() === 'product'"

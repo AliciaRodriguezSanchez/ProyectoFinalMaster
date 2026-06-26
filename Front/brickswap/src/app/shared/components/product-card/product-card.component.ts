@@ -1,8 +1,7 @@
-
 import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
   Component,
+  computed,
   input,
 } from '@angular/core';
 import { Params, RouterLink } from '@angular/router';
@@ -12,7 +11,6 @@ import { Params, RouterLink } from '@angular/router';
   imports: [DecimalPipe, NgTemplateOutlet, RouterLink],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiProductCardComponent {
   imageUrl = input.required<string>();
@@ -27,12 +25,23 @@ export class UiProductCardComponent {
   condition = input('');
   fallbackImageUrl = input('https://placehold.co/400x300?text=No+Image');
 
-  hasMeta(): boolean {
-    return Boolean(this.location() || this.publishedAt());
-  }
+  publishedAgo = computed(() => this.getPublishedAgo(this.publishedAt()));
+  hasMeta = computed(() => Boolean(this.location() || this.publishedAgo()));
+  resolvedImageUrl = computed(() => {
+    const imageUrl = this.imageUrl()?.trim();
 
-  publishedAgo(): string {
-    const publishedAt = this.publishedAt();
+    if (!imageUrl) {
+      return this.fallbackImageUrl();
+    }
+
+    if (imageUrl.startsWith('http') || imageUrl.startsWith('/assets/')) {
+      return imageUrl;
+    }
+
+    return this.fallbackImageUrl();
+  });
+
+  private getPublishedAgo(publishedAt: string): string {
 
     if (!publishedAt) {
       return '';
@@ -64,20 +73,6 @@ export class UiProductCardComponent {
     }
 
     return `hace ${days} días`;
-  }
-
-  resolvedImageUrl(): string {
-    const imageUrl = this.imageUrl()?.trim();
-
-    if (!imageUrl) {
-      return this.fallbackImageUrl();
-    }
-
-    if (imageUrl.startsWith('http') || imageUrl.startsWith('/assets/')) {
-      return imageUrl;
-    }
-
-    return this.fallbackImageUrl();
   }
 
   onImageError(event: Event): void {

@@ -98,8 +98,8 @@ const sendMessage = async (messageData) => {
         );
 
         await connection.query(
-            'UPDATE conversations SET last_message_at = NOW() WHERE id = ?',
-            [conversationId]
+            'UPDATE conversations SET last_message_at = NOW(), status = ? WHERE id = ?',
+            ['pending', conversationId]
         );
 
         await connection.commit();
@@ -114,6 +114,26 @@ const sendMessage = async (messageData) => {
     } finally {
         connection.release();
     }
+};
+
+const canViewReportConversation = ({ report, viewer }) => {
+    if (!viewer?.id || !viewer?.rol_id) {
+        return false;
+    }
+
+    if (isStaffRole(viewer.rol_id)) {
+        return true;
+    }
+
+    return Number(viewer.id) === Number(report.denunciante_id);
+};
+
+const canReplyReportConversation = ({ report, viewer }) => {
+    if (!viewer?.id || !viewer?.rol_id) {
+        return false;
+    }
+
+    return Number(viewer.rol_id) === 2 && Number(viewer.id) !== Number(report.denunciante_id);
 };
 
 const getConversationMessages = async (conversationId) => {
@@ -133,8 +153,8 @@ const getConversationMessages = async (conversationId) => {
           AND tipo_mensaje <> 'SYSTEM'
         ORDER BY fecha_envio ASC, id ASC
         `,
-        [conversationId]
-    );
+            [conversationId]
+        );
 
     return messages;
 };
@@ -241,7 +261,13 @@ const getConversationsByUser = async (userId) => {
                 ORDER BY m.fecha_envio DESC, m.id DESC
                 LIMIT 1
             )
-        WHERE c.buyer_id = ? OR c.seller_id = ?
+        WHERE (c.buyer_id = ? OR c.seller_id = ?)
+          AND EXISTS (
+              SELECT 1
+              FROM mensajes normal_message
+              WHERE normal_message.conversation_id = c.id
+                AND normal_message.tipo_mensaje <> 'SYSTEM'
+          )
         ORDER BY c.last_message_at DESC
         `,
         [userId, userId]
@@ -369,6 +395,7 @@ const getConversation = async ({ articleId, userId }) => {
     SELECT
       c.id AS conversation_id,
       c.item_id,
+      c.status,
       a.titulo,
       a.foto,
       a.precio,
@@ -427,6 +454,7 @@ const getConversationById = async ({ conversationId, userId }) => {
     SELECT
       c.id AS conversation_id,
       c.item_id,
+      c.status,
       a.titulo,
       a.foto,
       a.precio,
@@ -467,7 +495,7 @@ const getConversationById = async ({ conversationId, userId }) => {
 };
 
 // RECUPERAR CONVERSACIÓN ASOCIADA A UN REPORTE
-const getConversationByReport = async (reportId) => {
+const getConversationByReport = async ({ reportId, viewer }) => {
     const [reportRows] = await db.query(
         `
         SELECT
@@ -499,21 +527,47 @@ const getConversationByReport = async (reportId) => {
     }
 
     const report = reportRows[0];
-    const staffUser = await getFirstStaffUser();
-    let conversationId = 0;
 
-    if (staffUser?.id) {
-        const [conversationRows] = await db.query(
+    if (!canViewReportConversation({ report, viewer })) {
+        return { errorCode: 'REPORT_ACCESS_DENIED' };
+    }
+
+    let staffUser = await getFirstStaffUser();
+    let conversationId = 0;
+    let conversationStaffId = staffUser?.id || report.denunciado_id;
+
+    const [conversationRows] = await db.query(
+        `
+        SELECT c.id, c.seller_id
+        FROM conversations c
+        LEFT JOIN perfiles staff
+          ON staff.id = c.seller_id
+        WHERE c.item_id = ?
+          AND c.buyer_id = ?
+          AND staff.rol_id IN (2, 3)
+        ORDER BY c.last_message_at DESC, c.id DESC
+        LIMIT 1
+        `,
+        [report.articulo_id, report.denunciante_id]
+    );
+
+    if (conversationRows.length > 0) {
+        conversationId = conversationRows[0]?.id || 0;
+        conversationStaffId = conversationRows[0]?.seller_id || conversationStaffId;
+    }
+
+    if (conversationStaffId && Number(conversationStaffId) !== Number(staffUser?.id)) {
+        const [staffRows] = await db.query(
             `
-            SELECT id
-            FROM conversations
-            WHERE item_id = ? AND buyer_id = ? AND seller_id = ?
+            SELECT id, nombre, apellidos, nombre_usuario, rol_id
+            FROM perfiles
+            WHERE id = ?
             LIMIT 1
             `,
-            [report.articulo_id, report.denunciante_id, staffUser.id]
+            [conversationStaffId]
         );
 
-        conversationId = conversationRows[0]?.id || 0;
+        staffUser = staffRows[0] || staffUser;
     }
 
     const reportMessages = await getReportModerationMessages({
@@ -532,7 +586,7 @@ const getConversationByReport = async (reportId) => {
         buyer_nombre: report.buyer_nombre,
         buyer_apellidos: report.buyer_apellidos,
         buyer_nombre_usuario: report.buyer_nombre_usuario,
-        seller_id: staffUser?.id || report.denunciado_id,
+        seller_id: conversationStaffId,
         seller_nombre: staffUser?.nombre,
         seller_apellidos: staffUser?.apellidos,
         seller_nombre_usuario: staffUser?.nombre_usuario,
@@ -546,7 +600,7 @@ const getConversationByReport = async (reportId) => {
 };
 
 // ENVIAR MENSAJE SYSTEM EN HILO DE REPORTE
-const sendReportMessage = async ({ reportId, senderId, messageText }) => {
+const sendReportMessage = async ({ reportId, senderId, messageText, viewer }) => {
     const [reportRows] = await db.query(
         `
         SELECT articulo_id, denunciante_id
@@ -562,21 +616,21 @@ const sendReportMessage = async ({ reportId, senderId, messageText }) => {
     }
 
     const report = reportRows[0];
-    const senderRole = await getUserRole(senderId);
     const staffUser = await getFirstStaffUser();
 
     if (!staffUser) {
         return { errorCode: 'ADMIN_NOT_FOUND' };
     }
 
-    if (Number(senderRole) === 3) {
+    if (Number(viewer?.rol_id) === 3) {
         return { errorCode: 'ADMIN_READ_ONLY' };
     }
 
-    if (Number(senderRole) !== 2) {
+    if (!canReplyReportConversation({ report, viewer })) {
         return { errorCode: 'REPORT_REPLY_NOT_ALLOWED' };
     }
 
+    const safeSenderId = Number(viewer.id);
     const receiverId = report.denunciante_id;
 
     const [conversationRows] = await db.query(
@@ -586,7 +640,7 @@ const sendReportMessage = async ({ reportId, senderId, messageText }) => {
         WHERE item_id = ? AND buyer_id = ? AND seller_id = ?
         LIMIT 1
         `,
-        [report.articulo_id, report.denunciante_id, staffUser.id]
+        [report.articulo_id, report.denunciante_id, safeSenderId]
     );
 
     let conversationId = conversationRows[0]?.id;
@@ -597,7 +651,7 @@ const sendReportMessage = async ({ reportId, senderId, messageText }) => {
             INSERT INTO conversations (item_id, buyer_id, seller_id, created_at, last_message_at)
             VALUES (?, ?, ?, NOW(), NOW())
             `,
-            [report.articulo_id, report.denunciante_id, staffUser.id]
+                [report.articulo_id, report.denunciante_id, safeSenderId]
         );
 
         conversationId = conversationResult.insertId;
@@ -611,7 +665,7 @@ const sendReportMessage = async ({ reportId, senderId, messageText }) => {
         `,
         [
             messageText.trim(),
-            senderId,
+            safeSenderId,
             receiverId,
             report.articulo_id,
             conversationId
@@ -634,15 +688,14 @@ const sendReportMessage = async ({ reportId, senderId, messageText }) => {
 //cambiar status de una conversación
 
 const editStatus = async (status, conversationId) => {
-    const [result] = await db.query(`UPDATE legobbdd.conversations SET status = ? WHERE id = ?`, 
+    const [result] = await db.query(`UPDATE conversations SET status = ? WHERE id = ?`,
         [status, conversationId]);
-    console.log('affectedRows', result.affectedRows, typeof(conversationId))
     return result;
 };
 
 const existsConversationById = async (conversationId) => {
   const [rows] = await db.query(
-    `SELECT id FROM legobbdd.conversations WHERE id = ?`,
+    `SELECT id FROM conversations WHERE id = ?`,
     [conversationId]
   );
   return rows[0];
