@@ -8,6 +8,9 @@ router.get('/', reportController.stateReports)
 // GET /api/reports/stadistics G2
 router.get('/stadistics', reportController.stateStadistics);
 
+// GET /api/reports/user/:userId
+router.get('/user/:userId', reportController.reportsByUser);
+
 // GET /api/reports/:id G2
 router.get('/:id', reportController.reportsById)
 

@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
-export type MessageAction = 'price' | 'delivery' | 'buy';
+import { MESSAGE_ACTION, MessageAction } from '../../../core/constants/message';
+import { MESSAGE_TEXT } from '../../../core/constants/message-text';
 
 @Component({
   selector: 'app-message-actions',
@@ -10,6 +11,9 @@ export type MessageAction = 'price' | 'delivery' | 'buy';
   styleUrl: './message-actions.css',
 })
 export class MessageActionsComponent {
+  protected readonly text = MESSAGE_TEXT.messages;
+  protected readonly action = MESSAGE_ACTION;
+
   @Input() showPrice = true;
   @Input() showDelivery = true;
   @Input() showBuy = true;

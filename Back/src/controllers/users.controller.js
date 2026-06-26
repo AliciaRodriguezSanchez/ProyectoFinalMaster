@@ -67,9 +67,9 @@ const register = async (req, res) => {
 
 const resetPassword = async (req, res) => {
     try {
-        const { email, newPassword, repeatPassword } = req.body;
+        const { email, username, newPassword, repeatPassword } = req.body;
 
-        if (!email || !newPassword || !repeatPassword) {
+        if (!email || !username || !newPassword || !repeatPassword) {
             return res.status(400).json({ message: 'Todos los campos son obligatorios' });
         }
 
@@ -77,14 +77,14 @@ const resetPassword = async (req, res) => {
             return res.status(400).json({ message: 'Las contraseñas no coinciden' });
         }
 
-        const user = await userModel.selectByEmail(email);
+        const user = await userModel.selectByEmailAndUsername(email, username);
 
         if (!user) {
-            return res.status(404).json({ message: 'No existe ningún usuario con ese email' });
+            return res.status(404).json({ message: 'No existe ningún usuario con ese email y nombre de usuario' });
         }
 
         const hashedPassword = bcrypt.hashSync(newPassword, 8);
-        await userModel.updatePasswordByEmail(email, hashedPassword);
+        await userModel.updatePasswordByEmailAndUsername(email, username, hashedPassword);
 
         res.status(200).json({ message: 'Contraseña actualizada correctamente' });
     } catch (error) {

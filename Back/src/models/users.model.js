@@ -18,6 +18,15 @@ const selectByEmail = async(email) =>{
     return result[0] || null;
 }
 
+const selectByEmailAndUsername = async(email, username) =>{
+    const [result] = await db.query(
+        'SELECT * FROM perfiles WHERE email = ? AND nombre_usuario = ?',
+        [email, username]
+    )
+
+    return result[0] || null;
+}
+
 const selectByUsername = async(username) =>{
     const [result] = await db.query(
         'SELECT * FROM perfiles WHERE nombre_usuario = ?',
@@ -36,9 +45,20 @@ const updatePasswordByEmail = async (email, password) => {
     return result;
 }
 
+const updatePasswordByEmailAndUsername = async (email, username, password) => {
+    const [result] = await db.query(
+        'UPDATE perfiles SET contraseña = ? WHERE email = ? AND nombre_usuario = ?',
+        [password, email, username]
+    );
+
+    return result;
+}
+
 module.exports = {
     insert,
     selectByEmail,
+    selectByEmailAndUsername,
     selectByUsername,
-    updatePasswordByEmail
+    updatePasswordByEmail,
+    updatePasswordByEmailAndUsername
 }

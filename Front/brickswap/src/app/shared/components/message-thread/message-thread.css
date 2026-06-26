@@ -29,6 +29,10 @@
 }
 
 .message-thread__bubble {
+  background: #eef0f3;
+}
+
+.message-thread__item--mine .message-thread__bubble {
   background: var(--brick-color-brand);
 }
 
@@ -45,16 +49,24 @@
 }
 
 .message-thread__card {
-  background: #fff9eb;
-  border: 2px solid #ffae00;
+  background: #eef0f3;
+  border: 2px solid #d7dce3;
   min-width: 205px;
   padding: 13px 16px 14px;
 }
 
+.message-thread__item--mine.message-thread__item--proposal .message-thread__card {
+  background: #fff9eb;
+  border-color: #ffae00;
+}
+
 .message-thread__item--delivery .message-thread__card {
+  min-width: 305px;
+}
+
+.message-thread__item--mine.message-thread__item--delivery .message-thread__card {
   background: #eef6ff;
   border-color: #2a7de1;
-  min-width: 305px;
 }
 
 .message-thread__label {
@@ -70,11 +82,15 @@
 }
 
 .message-thread__label span {
-  color: #ffae00;
+  color: #667085;
   font-size: var(--brick-font-size-sm);
 }
 
-.message-thread__item--delivery .message-thread__label span {
+.message-thread__item--mine.message-thread__item--proposal .message-thread__label span {
+  color: #ffae00;
+}
+
+.message-thread__item--mine.message-thread__item--delivery .message-thread__label span {
   color: #2a7de1;
 }
 
