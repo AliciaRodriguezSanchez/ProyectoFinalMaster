@@ -1,31 +1,34 @@
 <section class="message-actions" [attr.aria-label]="text.actionsAria">
-  <button
-    class="message-actions__button message-actions__button--price"
-    type="button"
-    *ngIf="showPrice"
-    (click)="selectAction(action.PRICE)"
-  >
-    <span aria-hidden="true">$</span>
-    {{ text.proposePrice }}
-  </button>
+  @if (showPrice) {
+    <button
+      class="message-actions__button message-actions__button--price"
+      type="button"
+      (click)="selectAction(action.PRICE)"
+    >
+      <span aria-hidden="true">$</span>
+      {{ text.proposePrice }}
+    </button>
+  }
 
-  <button
-    class="message-actions__button message-actions__button--delivery"
-    type="button"
-    *ngIf="showDelivery"
-    (click)="selectAction(action.DELIVERY)"
-  >
-    <span aria-hidden="true">[]</span>
-    {{ text.proposeDelivery }}
-  </button>
+  @if (showDelivery) {
+    <button
+      class="message-actions__button message-actions__button--delivery"
+      type="button"
+      (click)="selectAction(action.DELIVERY)"
+    >
+      <span aria-hidden="true">[]</span>
+      {{ text.proposeDelivery }}
+    </button>
+  }
 
-  <button
-    class="message-actions__button message-actions__button--buy"
-    type="button"
-    *ngIf="showBuy"
-    (click)="selectAction(action.BUY)"
-  >
-    <span aria-hidden="true">o</span>
-    {{ text.buy }}
-  </button>
+  @if (showBuy) {
+    <button
+      class="message-actions__button message-actions__button--buy"
+      type="button"
+      (click)="selectAction(action.BUY)"
+    >
+      <span aria-hidden="true">o</span>
+      {{ text.buy }}
+    </button>
+  }
 </section>

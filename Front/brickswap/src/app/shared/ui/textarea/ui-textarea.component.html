@@ -1,0 +1,26 @@
+<label class="ui-textarea">
+  @if (label()) {
+    <span class="ui-textarea__label">
+      {{ label() }}
+      @if (required()) {
+        <span class="ui-textarea__required" aria-hidden="true">*</span>
+      }
+    </span>
+  }
+
+  <textarea
+    class="ui-textarea__control"
+    [class.ui-textarea__control--invalid]="invalid()"
+    [rows]="rows()"
+    [placeholder]="placeholder()"
+    [value]="currentValue()"
+    [disabled]="isDisabled()"
+    [required]="required()"
+    [attr.aria-required]="required()"
+    (input)="onInput($event)"
+  ></textarea>
+
+  @if (invalid() && errorMessage()) {
+    <span class="ui-textarea__error" role="alert">{{ errorMessage() }}</span>
+  }
+</label>

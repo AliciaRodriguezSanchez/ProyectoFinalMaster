@@ -1,5 +1,5 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { NgFor } from '@angular/common';
+import { Component, HostListener, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs';
 import { UserRole } from '../../../core/constants/user-role';
@@ -7,23 +7,11 @@ import { decodeJwtPayload } from '../../../core/utils/jwt';
 import { CatalogFiltersService } from '../../../core/services/catalog-filters/catalog-filters.service';
 import { UiLogoComponent } from '../../ui/logo/ui-logo.component';
 import { TOKEN_KEY } from '../../../core/constants/auth';
-
-interface HeaderTokenPayload {
-  role: UserRole;
-  name?: string;
-  surname?: string;
-  username?: string;
-}
-
-interface HeaderNavItem {
-  label: string;
-  route: string;
-  icon?: 'home' | 'search' | 'messages';
-}
+import { HeaderNavItem, HeaderTokenPayload } from './header.interface';
 
 @Component({
   selector: 'app-header',
-  imports: [NgFor, RouterLink, RouterLinkActive, UiLogoComponent],
+  imports: [RouterLink, RouterLinkActive, UiLogoComponent],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
@@ -36,7 +24,10 @@ export class Header {
     //  al finalizar cada cambio de ruta, actualiza la URL actual y refresca el estado de autenticación/autorización del usuario.
     //Usuario pulsa "Catálogo". => Router navega a /catalog => NavigationEnd => currentUrl = "/catalog" => refreshUserState() => Se recalculan login, rol y permisos => Navbar se actualiza
     this.router.events
-      .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntilDestroyed()
+      )
       .subscribe((event) => {
         this.currentUrl.set(event.urlAfterRedirects);
         this.refreshUserState();
@@ -55,6 +46,13 @@ export class Header {
 
   toggleMenu(): void {
     this.isMenuOpen.update((isOpen) => !isOpen);
+  }
+
+  @HostListener('window:resize')
+  onWindowResize(): void {
+    if (window.innerWidth > 991.98) {
+      this.closeMenu();
+    }
   }
 
   closeMenu(): void {

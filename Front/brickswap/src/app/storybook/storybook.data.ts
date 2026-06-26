@@ -1,4 +1,4 @@
-import type { UiCarrouselItem } from '../shared/components/carrousel/carrousel.component';
+import type { UiCarrouselItem } from '../shared/components/carrousel/carrousel.interface';
 
 export const brickImage =
   'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320"%3E%3Crect width="320" height="320" fill="%23f8fafc"/%3E%3Crect x="58" y="104" width="204" height="128" rx="18" fill="%23e11d48"/%3E%3Crect x="82" y="76" width="48" height="42" rx="12" fill="%23fb7185"/%3E%3Crect x="136" y="76" width="48" height="42" rx="12" fill="%23fb7185"/%3E%3Crect x="190" y="76" width="48" height="42" rx="12" fill="%23fb7185"/%3E%3Cpath d="M84 160h152M84 196h108" stroke="%23fff" stroke-width="16" stroke-linecap="round" opacity=".75"/%3E%3C/svg%3E';

@@ -1,5 +1,7 @@
 import { MessageType } from '../constants/message';
 
+export type ConversationStatus = 'readed' | 'unreaded' | 'pending' | 'resolved';
+
 export interface IAConversationMessage {
   id: number;
   texto_mensaje: string;
@@ -15,6 +17,7 @@ export interface IAConversationMessage {
 export interface IAConversation {
   conversation_id: number;
   item_id: number;
+  status?: ConversationStatus;
   titulo: string;
   foto: string;
   precio: string | number;
@@ -54,5 +57,5 @@ export interface IAConversationListItem {
   last_message_type?: MessageType;
   last_message_fecha_envio?: string;
   last_message_sender_id?: number;
-  status?: 'readed' | 'unreaded' | 'pending' | 'resolved';
+  status?: ConversationStatus;
 }

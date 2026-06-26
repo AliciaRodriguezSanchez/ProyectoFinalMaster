@@ -1,17 +1,20 @@
-import { ChangeDetectionStrategy, Component, forwardRef, input, output } from '@angular/core';
+import { Component, forwardRef, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 export type UiInputType = 'email' | 'password' | 'text';
 export type UiInputIcon = 'email' | 'lock' | 'profile';
 
+let nextUiInputId = 0;
+
 @Component({
   selector: 'ui-input',
   imports: [RouterLink],
   templateUrl: './ui-input.component.html',
   styleUrl: './ui-input.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
+  providers: [// necesario para cuando hay un formularios 
+  // Si quitas ese providers, Angular no sabe cómo meter o sacar el valor de ui-input.
+  //Entonces fallaría algo como: this.form.get('email')?.value
     {
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => UiInputComponent),
@@ -20,6 +23,7 @@ export type UiInputIcon = 'email' | 'lock' | 'profile';
   ],
 })
 export class UiInputComponent implements ControlValueAccessor {
+  inputId = input(`ui-input-${nextUiInputId++}`);
   label = input.required<string>();
   type = input<UiInputType>('text');
   icon = input<UiInputIcon>('email');
@@ -29,19 +33,18 @@ export class UiInputComponent implements ControlValueAccessor {
   actionLink = input('');
   required = input(false);
   invalid = input(false);
-  errorMessage = input('') //lo añado para que se me muestre un texto con error en el registro
-  
+  errorMessage = input('');
 
   actionClicked = output<void>();
 
-  value = '';
-  disabled = false;
+  value = signal('');
+  disabled = signal(false);
 
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
   writeValue(value: string | null): void {
-    this.value = value ?? '';
+    this.value.set(value ?? '');
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -53,13 +56,15 @@ export class UiInputComponent implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
+    this.disabled.set(isDisabled);
   }
 
   onInput(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
-    this.value = inputElement.value;
-    this.onChange(this.value);
+    const value = inputElement.value;
+
+    this.value.set(value);
+    this.onChange(value);
   }
 
   onBlur(): void {

@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { UiCarrouselComponent, type UiCarrouselItem } from '../../shared/components/carrousel/carrousel.component';
+import { UiCarrouselComponent } from '../../shared/components/carrousel/carrousel.component';
+import { UiCarrouselItem } from '../../shared/components/carrousel/carrousel.interface';
 import { UiProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { UiCategoryCardComponent } from '../../shared/components/category-card/category-card.component';
 import { PromotionBannerComponent } from '../../shared/components/promotion-banner/promotion-banner.component';

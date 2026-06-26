@@ -23,7 +23,7 @@
     @if (showStatusSelect()) {
       <select class="message-card__select form-select form-select-sm" [value]="currentStatus()" (change)="onStatusChange($event)">
         @for (opt of statusOptions; track opt) {
-          <option [value]="opt">{{ opt }}</option>
+          <option [value]="opt" [selected]="opt === currentStatus()">{{ opt | statusLabel }}</option>
         }
       </select>
     }

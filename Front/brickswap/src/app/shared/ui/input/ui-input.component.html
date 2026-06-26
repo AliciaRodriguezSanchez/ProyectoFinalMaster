@@ -1,11 +1,11 @@
-<label class="ui-input">
+<div class="ui-input">
   <span class="ui-input__top">
-    <span>
+    <label [for]="inputId()">
       {{ label() }}
       @if (required()) {
         <span class="ui-input__required" aria-hidden="true">*</span>
       }
-    </span>
+    </label>
 
     @if (actionText() && actionLink()) {
       <a [routerLink]="actionLink()">{{ actionText() }}</a>
@@ -42,11 +42,12 @@
     }
 
     <input
+      [id]="inputId()"
       [type]="type()"
-      [value]="value"
+      [value]="value()"
       [placeholder]="placeholder()"
       [autocomplete]="autocomplete()"
-      [disabled]="disabled"
+      [disabled]="disabled()"
       [required]="required()"
       [attr.aria-required]="required()"
       (input)="onInput($event)"
@@ -57,4 +58,4 @@
   @if (invalid() && errorMessage()) {
     <span class="ui-input__error" role="alert">{{ errorMessage() }}</span>
   }
-</label>
+</div>

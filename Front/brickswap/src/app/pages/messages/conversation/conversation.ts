@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
@@ -8,18 +7,21 @@ import { UserRole } from '../../../core/constants/user-role';
 import { IAConversation } from '../../../core/interfaces/iconversation.interfaces';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { MessageService } from '../../../core/services/message/message.service';
+import { ReportService } from '../../../core/services/report/report.service';
 import {
   MessageContact,
   MessageProductSummary,
-} from '../../../shared/components/message-conversation-header/message-conversation-header';
+} from '../../../shared/components/message-conversation-header/message-conversation-header.interface';
 import {
   ConversationMessage,
-} from '../../../shared/components/message-thread/message-thread';
+} from '../../../shared/components/message-thread/message-threads.interface';
 import { SharedMessagesComponentsModule } from '../../../shared/components/shared-messages-components.module';
+import { UiButtonComponent } from '../../../shared/ui/button/ui-button.component';
+import { UiTextareaComponent } from '../../../shared/ui/textarea/ui-textarea.component';
 
 @Component({
   selector: 'app-conversation',
-  imports: [CommonModule, SharedMessagesComponentsModule],
+  imports: [SharedMessagesComponentsModule, UiButtonComponent, UiTextareaComponent],
   templateUrl: './conversation.html',
   styleUrl: './conversation.css',
 })
@@ -38,6 +40,9 @@ export class ConversationPage implements OnInit {
   currentRole = signal<UserRole | null>(null);
   reportComplainantId = signal(0);
   reportStatus = signal('');
+  conversationStatus = signal('');
+  reportResolution = signal('');
+  isUpdatingReport = signal(false);
   receiveId = signal(0);
   sendId = signal(0);
 
@@ -47,13 +52,15 @@ export class ConversationPage implements OnInit {
   isLoggedIn = computed(() => this.currentUserId() > 0);
   isReceiver = computed(() => this.currentUserId() === this.receiveId());
   isSender = computed(() => this.currentUserId() === this.sendId());
-  isModeratorView = computed(() => this.reportId() > 0);
+  isReportConversation = computed(() => this.reportId() > 0 || this.reportComplainantId() > 0);
+  isModeratorView = computed(() => this.isReportConversation());
   isStaffViewer = computed(() => {
     const role = this.currentRole();
     return role === UserRole.MODERATOR || role === UserRole.ADMIN;
   });
   isAdminViewer = computed(() => this.currentRole() === UserRole.ADMIN);
   isReportResolved = computed(() => this.reportStatus() !== '' && this.reportStatus() !== 'Pendiente');
+  isConversationResolved = computed(() => this.conversationStatus() === 'resolved');
   reportStatusLabel = computed(() =>
     this.isReportResolved() ? this.text.reportResolved : this.text.reportPending
   );
@@ -78,6 +85,7 @@ export class ConversationPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private messageService: MessageService,
+    private reportService: ReportService,
     private authService: AuthService
   ) { }
 
@@ -160,6 +168,32 @@ export class ConversationPage implements OnInit {
 
   onMessageSent(message: string): void {
     this.send(message, MESSAGE_TYPE.TEXT);
+  }
+
+  async updateReportStatus(status: 'Revisado_Mantenido' | 'Revisado_Retirado'): Promise<void> {
+    const resolution = this.reportResolution().trim();
+
+    if (!this.reportId() || !this.canReplyReport() || !resolution) {
+      return;
+    }
+
+    this.isUpdatingReport.set(true);
+
+    try {
+      await this.reportService.actualizarReporte({
+        id: this.reportId(),
+        estado: status,
+        resolucion: resolution,
+      });
+
+      this.reportResolution.set('');
+      await this.loadConversation();
+    } catch (error) {
+      console.error('Error al actualizar estado de reporte:', error);
+      alert(this.text.updateReportError);
+    } finally {
+      this.isUpdatingReport.set(false);
+    }
   }
 
   private sendPriceOffer(): void {
@@ -289,8 +323,10 @@ export class ConversationPage implements OnInit {
 
   private setConversation(conversation: IAConversation): void {
     this.conversationId.set(Number(conversation.conversation_id));
+    this.conversationStatus.set(conversation.status || '');
     this.articleId.set(Number(conversation.item_id));
     this.product.set(this.mapConversationProduct(conversation));
+    this.reportId.set(Number(conversation.report_id || this.reportId()));
     this.reportComplainantId.set(Number(conversation.report_denunciante_id || 0));
     this.reportStatus.set(conversation.report_status || '');
     this.receiveId.set(Number(conversation.buyer_id));

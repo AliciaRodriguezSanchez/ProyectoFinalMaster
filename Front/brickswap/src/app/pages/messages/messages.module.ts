@@ -16,6 +16,10 @@ const routes: Routes = [
     component: ConversationPage,
   },
   {
+    path: 'conversation-report/:reportId',
+    component: ConversationPage,
+  },
+  {
     path: 'conversation/:articleId',
     component: ConversationPage,
   },

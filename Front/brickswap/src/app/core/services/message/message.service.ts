@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, firstValueFrom, lastValueFrom } from 'rxjs';
 import { API_URL, CONVERSATION } from '../api';
 import { MESSAGE_TYPE, MessageType } from '../../constants/message';
+import { TOKEN_KEY } from '../../constants/auth';
 import { IAConversation, IAConversationListItem } from '../../interfaces/iconversation.interfaces';
 import { MessageStatus } from '../../../shared/caja-mensaje/caja-mensaje.component';
 
@@ -29,6 +30,14 @@ export interface SendReportMessageResponse {
 })
 export class MessageService {
   constructor(private http: HttpClient) { }
+
+  private authHeaders(): HttpHeaders {
+    const token = localStorage.getItem(TOKEN_KEY);
+
+    return new HttpHeaders({
+      Authorization: token || ''
+    });
+  }
 
   // POST /api/messages
   sendMessage(
@@ -63,7 +72,10 @@ export class MessageService {
 
   getConversationByReport(reportId: number): Promise<IAConversation> {
     return firstValueFrom(
-      this.http.get<IAConversation>(`${API_URL}/messages/conversation-by-report/${reportId}`)
+      this.http.get<IAConversation>(
+        `${API_URL}/messages/conversation-by-report/${reportId}`,
+        { headers: this.authHeaders() }
+      )
     );
   }
 
@@ -72,11 +84,15 @@ export class MessageService {
     emisor_id: number,
     report_id: number
   ): Observable<SendReportMessageResponse> {
-    return this.http.post<SendReportMessageResponse>(`${API_URL}/messages/report-message`, {
-      texto_mensaje,
-      emisor_id,
-      report_id
-    });
+    return this.http.post<SendReportMessageResponse>(
+      `${API_URL}/messages/report-message`,
+      {
+        texto_mensaje,
+        emisor_id,
+        report_id
+      },
+      { headers: this.authHeaders() }
+    );
   }
 
   getConversations(userId: number): Promise<IAConversationListItem[]> {
