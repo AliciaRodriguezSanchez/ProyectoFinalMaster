@@ -1,0 +1,62 @@
+<div class="category-modal-backdrop">
+  <section class="category-modal">
+    <button
+      class="category-modal__close"
+      type="button"
+      (click)="cancel()"
+    >
+      ×
+    </button>
+
+    <h2>{{ title }}</h2>
+
+    <div class="category-modal__field">
+      <label for="category-name">Nombre</label>
+      <input
+        id="category-name"
+        type="text"
+        [(ngModel)]="name"
+        placeholder="Nombre de la categoría"
+      />
+    </div>
+
+    <div class="category-modal__field">
+      <label for="category-description">Descripción</label>
+      <input
+        id="category-description"
+        type="text"
+        [(ngModel)]="description"
+        placeholder="Descripción breve"
+      />
+    </div>
+
+    <div class="category-modal__field">
+      <label for="category-icon">Emoji / Icono</label>
+      <input
+        id="category-icon"
+        type="text"
+        [(ngModel)]="icon"
+        placeholder="🧱"
+      />
+    </div>
+
+    <div class="category-modal__actions">
+      <button
+        class="category-modal__button"
+        type="button"
+        (click)="cancel()"
+      >
+        Cancelar
+      </button>
+
+      <button
+        class="category-modal__button category-modal__button--save"
+        type="button"
+        [disabled]="!name.trim()"
+        (click)="save()"
+      >
+        Guardar
+      </button>
+    </div>
+  </section>
+</div>
