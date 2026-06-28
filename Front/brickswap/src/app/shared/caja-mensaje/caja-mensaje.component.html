@@ -20,10 +20,12 @@
 
   <div class="d-flex flex-column align-items-end gap-2 flex-shrink-0">
     <span class="text-muted" style="font-size: 12px;">{{ timeAgo() }}</span>
-    <select class="message-card__select form-select form-select-sm" (click)="onSelectClick($event)" (change)="onStatusChange($event)">
-      @for (opt of statusOptions; track opt) {
-        <option [value]="opt" [selected]="opt === currentStatus()">{{ opt | statusLabel }}</option>
-      }
-    </select>
+    @if (showStatusSelect()) {
+      <select class="message-card__select form-select form-select-sm" [value]="currentStatus()" (change)="onStatusChange($event)">
+        @for (opt of statusOptions; track opt) {
+          <option [value]="opt" [selected]="opt === currentStatus()">{{ opt | statusLabel }}</option>
+        }
+      </select>
+    }
   </div>
 </div>

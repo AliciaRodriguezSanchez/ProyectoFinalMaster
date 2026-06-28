@@ -61,6 +61,21 @@ export class AuthService {
     }
   }
 
+  getCurrentRole(): UserRole | null {
+    const token = localStorage.getItem(TOKEN_KEY);
+
+    if (!token) {
+      return null;
+    }
+
+    try {
+      return this.getTokenPayload(token).role;
+    } catch {
+      localStorage.removeItem(TOKEN_KEY);
+      return null;
+    }
+  }
+
   private navigateByRole(role: UserRole): Promise<boolean> {
     const routesByRole: Record<UserRole, string> = {
       [UserRole.USER]: '/catalog',

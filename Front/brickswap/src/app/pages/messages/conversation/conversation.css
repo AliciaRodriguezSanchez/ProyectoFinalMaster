@@ -21,9 +21,22 @@
   overflow: hidden;
 }
 
+.conversation-page__shell--report {
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+
 .conversation-page__footer {
   display: grid;
   flex-shrink: 0;
+}
+
+.conversation-page__footer--chat {
+  align-self: end;
+  gap: 0;
+}
+
+.conversation-page__footer--report {
+  gap: 10px;
 }
 
 .conversation-page__loading {
@@ -33,11 +46,71 @@
   text-align: center;
 }
 
+.conversation-page__report-status {
+  align-self: start;
+  background: #fff8e1;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  color: #7a5400;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 12px 0 0;
+  padding: 8px 12px;
+}
+
+.conversation-page__report-status--resolved {
+  background: #edf7ed;
+  border-color: #4caf50;
+  color: #1f6f2f;
+}
+
+.conversation-page__report-resolution {
+  border-top: 1px solid #e5e7eb;
+  display: grid;
+  gap: 8px;
+  padding-top: 10px;
+}
+
+.conversation-page__report-textarea {
+  display: block;
+}
+
+.conversation-page__report-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.conversation-page__report-action-button {
+  flex: 1;
+}
+
+:host ::ng-deep .conversation-page__report-action-button .ui-button {
+  border-radius: 8px;
+  font-size: var(--brick-font-size-md);
+  min-height: 40px;
+  width: 100%;
+}
+
+:host ::ng-deep .conversation-page__report-action-button--secondary .ui-button--secondary {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+:host ::ng-deep .conversation-page__report-action-button--secondary .ui-button--secondary:hover:not(:disabled) {
+  background: #fff1f2;
+  border-color: #dc3545;
+}
+
 app-message-thread,
-app-message-empty-state {
+app-message-empty-state,
+.conversation-page__empty-thread {
   min-height: 0;
   overflow-y: auto;
   scrollbar-gutter: stable;
+}
+
+.conversation-page__empty-thread {
+  display: block;
 }
 
 @media (max-width: 760px) {

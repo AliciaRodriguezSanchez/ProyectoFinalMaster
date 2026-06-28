@@ -37,6 +37,17 @@
 
     @if (showResetPasswordFields()) {
       <ui-input
+        formControlName="username"
+        label="Nombre de usuario"
+        type="text"
+        icon="profile"
+        placeholder="tu usuario"
+        autocomplete="username"
+        [required]="true"
+        [invalid]="showRequiredError('username')"
+      ></ui-input>
+
+      <ui-input
         formControlName="newPassword"
         label="Nueva contraseña"
         type="password"

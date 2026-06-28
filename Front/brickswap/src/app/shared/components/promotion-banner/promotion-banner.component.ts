@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { UiButtonComponent } from '../../ui/button/ui-button.component';
@@ -8,10 +8,9 @@ import { UiButtonComponent } from '../../ui/button/ui-button.component';
   imports: [UiButtonComponent],
   templateUrl: './promotion-banner.component.html',
   styleUrl: './promotion-banner.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PromotionBannerComponent {
-  constructor(private router: Router) {}
+  private router = inject(Router);
 
   title = input.required<string>();
   description = input.required<string>();

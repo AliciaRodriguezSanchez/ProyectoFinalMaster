@@ -1,6 +1,8 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { MESSAGE_TEXT } from '../../../core/constants/message-text';
+
 @Component({
   selector: 'app-message-composer',
   imports: [FormsModule],
@@ -8,6 +10,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './message-composer.css',
 })
 export class MessageComposerComponent {
+  protected readonly text = MESSAGE_TEXT.messages;
+
   @Output() messageSent = new EventEmitter<string>();
 
   message = '';

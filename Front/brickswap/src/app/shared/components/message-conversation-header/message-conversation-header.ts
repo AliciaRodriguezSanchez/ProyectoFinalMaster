@@ -2,17 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-export interface MessageContact {
-  name: string;
-  initial: string;
-}
-
-export interface MessageProductSummary {
-  id: number;
-  title: string;
-  price: number;
-  imageUrl: string;
-}
+import { MessageContact, MessageProductSummary } from './message-conversation-header.interface';
 
 @Component({
   selector: 'app-message-conversation-header',

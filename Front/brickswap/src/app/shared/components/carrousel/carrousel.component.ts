@@ -1,17 +1,12 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   ElementRef,
-  ViewChild,
+  computed,
   input,
+  viewChild,
 } from '@angular/core';
 
-export interface UiCarrouselItem {
-  id?: number;
-  icon: string;
-  color: string;
-  text: string;
-}
+import { UiCarrouselItem } from './carrousel.interface';
 
 export type UiCarrouselSkeletonVariant = 'category' | 'product';
 
@@ -19,19 +14,18 @@ export type UiCarrouselSkeletonVariant = 'category' | 'product';
   selector: 'ui-carrousel',
   templateUrl: './carrousel.component.html',
   styleUrl: './carrousel.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiCarrouselComponent {
   items = input<UiCarrouselItem[]>([]);
   isLoading = input(false);
   skeletonItems = input(7);
   skeletonVariant = input<UiCarrouselSkeletonVariant>('category');
+  skeletonPlaceholders = computed(() => Array.from({ length: this.skeletonItems() }));
 
-  @ViewChild('track')
-  private track?: ElementRef<HTMLElement>;
+  private track = viewChild<ElementRef<HTMLElement>>('track');
 
   scrollBy(direction: -1 | 1): void {
-    this.track?.nativeElement.scrollBy({
+    this.track()?.nativeElement.scrollBy({
       left: direction * 260,
       behavior: 'smooth',
     });

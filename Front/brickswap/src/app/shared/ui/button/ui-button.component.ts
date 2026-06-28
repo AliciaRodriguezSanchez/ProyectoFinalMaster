@@ -1,29 +1,15 @@
 import {
-  ChangeDetectionStrategy,
   Component,
   input,
   output,
 } from '@angular/core';
 
-export type ButtonVariant =
-  | 'primary'
-  | 'secondary';
-
-export type ButtonSize =
-  | 'sm'
-  | 'md'
-  | 'lg';
-
-export type ButtonType =
-  | 'button'
-  | 'submit'
-  | 'reset';
+import { ButtonSize, ButtonType, ButtonVariant } from './types';
 
 @Component({
   selector: 'ui-button',
   templateUrl: './ui-button.component.html',
   styleUrl: './ui-button.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UiButtonComponent {
   label = input.required<string>();

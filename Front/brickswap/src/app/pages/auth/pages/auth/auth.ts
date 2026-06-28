@@ -35,6 +35,9 @@ export class AuthPage {
       nonNullable: true,
       validators: [Validators.required],
     }),
+    username: new FormControl('', {
+      nonNullable: true,
+    }),
     newPassword: new FormControl('', {
       nonNullable: true,
     }),
@@ -104,7 +107,7 @@ export class AuthPage {
     this.recoverySuccessMessage = '';
 
     this.clearLoginError();
-    const { email, newPassword, repeatPassword } = this.loginForm.getRawValue();
+    const { email, username, newPassword, repeatPassword } = this.loginForm.getRawValue();
 
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -120,6 +123,7 @@ export class AuthPage {
     try {
       await this.authService.resetPassword({
         email,
+        username,
         newPassword,
         repeatPassword,
       });
@@ -148,6 +152,7 @@ export class AuthPage {
 
   private configureLoginValidators(): void {
     this.loginForm.controls.password.setValidators([Validators.required]);
+    this.loginForm.controls.username.clearValidators();
     this.loginForm.controls.newPassword.clearValidators();
     this.loginForm.controls.repeatPassword.clearValidators();
     this.updatePasswordControlsValidity();
@@ -155,6 +160,7 @@ export class AuthPage {
 
   private configurePasswordRecoveryValidators(): void {
     this.loginForm.controls.password.clearValidators();
+    this.loginForm.controls.username.setValidators([Validators.required]);
     this.loginForm.controls.newPassword.setValidators([
       Validators.required,
       Validators.minLength(8),
@@ -166,6 +172,7 @@ export class AuthPage {
 
   private updatePasswordControlsValidity(): void {
     this.loginForm.controls.password.updateValueAndValidity();
+    this.loginForm.controls.username.updateValueAndValidity();
     this.loginForm.controls.newPassword.updateValueAndValidity();
     this.loginForm.controls.repeatPassword.updateValueAndValidity();
   }

@@ -1,45 +1,75 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
+import { MESSAGE_ACTION, MESSAGE_TYPE, MessageAction, MessageType } from '../../../core/constants/message';
 import { MESSAGE_TEXT } from '../../../core/constants/message-text';
+import { UserRole } from '../../../core/constants/user-role';
 import { IAConversation } from '../../../core/interfaces/iconversation.interfaces';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { MessageService } from '../../../core/services/message/message.service';
-import {
-  MessageAction,
-} from '../../../shared/components/message-actions/message-actions';
+import { ReportService } from '../../../core/services/report/report.service';
 import {
   MessageContact,
   MessageProductSummary,
-} from '../../../shared/components/message-conversation-header/message-conversation-header';
+} from '../../../shared/components/message-conversation-header/message-conversation-header.interface';
 import {
   ConversationMessage,
-} from '../../../shared/components/message-thread/message-thread';
+} from '../../../shared/components/message-thread/message-threads.interface';
 import { SharedMessagesComponentsModule } from '../../../shared/components/shared-messages-components.module';
+import { UiButtonComponent } from '../../../shared/ui/button/ui-button.component';
+import { UiTextareaComponent } from '../../../shared/ui/textarea/ui-textarea.component';
 
 @Component({
   selector: 'app-conversation',
-  standalone: true,
-  imports: [CommonModule, SharedMessagesComponentsModule],
+  imports: [SharedMessagesComponentsModule, UiButtonComponent, UiTextareaComponent],
   templateUrl: './conversation.html',
   styleUrl: './conversation.css',
 })
 export class ConversationPage implements OnInit {
-  emptyText = MESSAGE_TEXT.messages.emptyConversation;
+  protected readonly text = MESSAGE_TEXT.messages;
+  emptyText = this.text.emptyConversation;
 
   contact = signal<MessageContact | null>(null);
   product = signal<MessageProductSummary | null>(null);
   messages = signal<ConversationMessage[]>([]);
+
   conversationId = signal(0);
+  reportId = signal(0);
   articleId = signal(0);
   currentUserId = signal(0);
+  currentRole = signal<UserRole | null>(null);
+  reportComplainantId = signal(0);
+  reportStatus = signal('');
+  conversationStatus = signal('');
+  reportResolution = signal('');
+  isUpdatingReport = signal(false);
   receiveId = signal(0);
   sendId = signal(0);
+
   isLoading = signal(false);
+
   hasMessages = computed(() => this.messages().length > 0);
+  isLoggedIn = computed(() => this.currentUserId() > 0);
   isReceiver = computed(() => this.currentUserId() === this.receiveId());
   isSender = computed(() => this.currentUserId() === this.sendId());
+  isReportConversation = computed(() => this.reportId() > 0 || this.reportComplainantId() > 0);
+  isModeratorView = computed(() => this.isReportConversation());
+  isStaffViewer = computed(() => {
+    const role = this.currentRole();
+    return role === UserRole.MODERATOR || role === UserRole.ADMIN;
+  });
+  isAdminViewer = computed(() => this.currentRole() === UserRole.ADMIN);
+  isReportResolved = computed(() => this.reportStatus() !== '' && this.reportStatus() !== 'Pendiente');
+  isConversationResolved = computed(() => this.conversationStatus() === 'resolved');
+  reportStatusLabel = computed(() =>
+    this.isReportResolved() ? this.text.reportResolved : this.text.reportPending
+  );
+  canReplyReport = computed(() =>
+    this.isModeratorView() &&
+    this.currentRole() === UserRole.MODERATOR &&
+    !this.isReportResolved()
+  );
+
   messageReceiverId = computed(() => {
     if (this.isReceiver()) {
       return this.sendId();
@@ -55,32 +85,54 @@ export class ConversationPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private messageService: MessageService,
+    private reportService: ReportService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.conversationId.set(Number(this.route.snapshot.paramMap.get('conversationId')));
+    this.reportId.set(Number(this.route.snapshot.paramMap.get('reportId')));
     this.articleId.set(Number(this.route.snapshot.paramMap.get('articleId')));
+
     this.currentUserId.set(
-      this.authService.getCurrentUserId() ?? Number(this.route.snapshot.paramMap.get('userId'))
+      this.authService.getCurrentUserId() ??
+      Number(this.route.snapshot.paramMap.get('userId'))
     );
+    this.currentRole.set(this.authService.getCurrentRole());
+
     this.loadConversation();
   }
 
   async loadConversation(): Promise<void> {
-    if ((!this.conversationId() && !this.articleId()) || !this.currentUserId()) {
+    if (
+      !this.reportId() &&
+      ((!this.conversationId() && !this.articleId()) || !this.currentUserId())
+    ) {
       return;
     }
 
     this.isLoading.set(true);
 
     try {
-      const conversation = this.conversationId()
-        ? await this.messageService.getConversationById(this.conversationId(), this.currentUserId())
-        : await this.messageService.getConversation(this.articleId(), this.currentUserId());
+      let conversation: IAConversation;
+
+      if (this.reportId()) {
+        conversation = await this.messageService.getConversationByReport(this.reportId());
+      } else if (this.conversationId()) {
+        conversation = await this.messageService.getConversationById(
+          this.conversationId(),
+          this.currentUserId()
+        );
+      } else {
+        conversation = await this.messageService.getConversation(
+          this.articleId(),
+          this.currentUserId()
+        );
+      }
+
       this.setConversation(conversation);
     } catch (error) {
-      console.error('Error al cargar la conversacion:', error);
+      console.error('Error al cargar la conversación:', error);
       this.messages.set([]);
     } finally {
       this.isLoading.set(false);
@@ -92,161 +144,228 @@ export class ConversationPage implements OnInit {
   }
 
   onActionSelected(action: MessageAction): void {
-    if (action === 'price') {
+    if (this.isModeratorView()) {
+      return;
+    }
+
+    if (action === MESSAGE_ACTION.BUY && !this.isLoggedIn()) {
+      alert(MESSAGE_TEXT.articleDetail.buyLoginRequired);
+      return;
+    }
+
+    if (action === MESSAGE_ACTION.PRICE) {
       this.sendPriceOffer();
       return;
     }
 
-    if (action === 'delivery') {
+    if (action === MESSAGE_ACTION.DELIVERY) {
       this.sendDeliveryMethod();
       return;
     }
 
-    console.log('Accion de mensaje seleccionada:', action);
+    console.log('Acción de mensaje seleccionada:', action);
   }
 
   onMessageSent(message: string): void {
-    const senderId = this.currentUserId();
+    this.send(message, MESSAGE_TYPE.TEXT);
+  }
 
-    const receiverId = this.messageReceiverId();
-    const articleId = this.articleId();
+  async updateReportStatus(status: 'Revisado_Mantenido' | 'Revisado_Retirado'): Promise<void> {
+    const resolution = this.reportResolution().trim();
 
-    if (!senderId || !receiverId || !articleId) {
+    if (!this.reportId() || !this.canReplyReport() || !resolution) {
       return;
     }
 
-    this.messageService
-      .sendMessage(message, senderId, receiverId, articleId)
-      .subscribe({
-        next: () => {
-          this.messages.update((messages) => [
-            ...messages,
-            {
-              id: Date.now(),
-              type: 'text',
-              text: message,
-              time: this.getCurrentTime(),
-              mine: true,
-            },
-          ]);
-        },
-        error: (error) => console.error('Error al enviar mensaje:', error),
+    this.isUpdatingReport.set(true);
+
+    try {
+      await this.reportService.actualizarReporte({
+        id: this.reportId(),
+        estado: status,
+        resolucion: resolution,
       });
+
+      this.reportResolution.set('');
+      await this.loadConversation();
+    } catch (error) {
+      console.error('Error al actualizar estado de reporte:', error);
+      alert(this.text.updateReportError);
+    } finally {
+      this.isUpdatingReport.set(false);
+    }
   }
 
   private sendPriceOffer(): void {
-    const offer = prompt('Introduce tu propuesta de precio:');
+    const price = prompt(this.text.priceOfferPrompt);
 
-    if (!offer) {
+    if (!price?.trim()) {
       return;
     }
 
-    const amount = Number(offer.replace(',', '.'));
+    const normalizedPrice = price.trim().replace(',', '.');
 
-    if (!Number.isFinite(amount) || amount <= 0) {
-      alert('Introduce un precio válido');
+    if (!/^\d+(\.\d{1,2})?$/.test(normalizedPrice)) {
+      alert(this.text.priceOfferNumericError);
       return;
     }
 
-    const senderId = this.currentUserId();
-    const receiverId = this.messageReceiverId();
-    const articleId = this.articleId();
-
-    if (!senderId || !receiverId || !articleId) {
-      return;
-    }
-
-    this.messageService
-      .sendMessage(amount.toFixed(2), senderId, receiverId, articleId, 'PRICE_OFFER')
-      .subscribe({
-        next: () => {
-          this.messages.update((messages) => [
-            ...messages,
-            {
-              id: Date.now(),
-              type: 'priceProposal',
-              title: 'Propuesta de precio',
-              amount,
-              time: this.getCurrentTime(),
-              mine: true,
-            },
-          ]);
-        },
-        error: (error) => console.error('Error al enviar propuesta de precio:', error),
-      });
+    this.send(normalizedPrice, MESSAGE_TYPE.PRICE_OFFER);
   }
 
   private sendDeliveryMethod(): void {
-    const deliveryMethod = prompt(
-      'Introduce el método de entrega:',
-      'Envío por mensajería (MRW, SEUR, etc.)'
-    );
+    const method = prompt(this.text.deliveryMethodPrompt);
 
-    if (!deliveryMethod?.trim()) {
+    if (!method?.trim()) {
       return;
     }
 
+    this.send(method.trim(), MESSAGE_TYPE.DELIVERY_METHOD);
+  }
+
+  private send(message: string, tipoMensaje: MessageType = MESSAGE_TYPE.TEXT): void {
     const senderId = this.currentUserId();
+    const cleanMessage = message.trim();
+
+    if (!senderId || !cleanMessage) {
+      return;
+    }
+
+    if (this.isModeratorView()) {
+      if (!this.canReplyReport()) {
+        return;
+      }
+
+      this.messageService
+        .sendReportMessage(
+          cleanMessage,
+          senderId,
+          this.reportId()
+        )
+        .subscribe({
+          next: () => {
+            this.addLocalMessage(cleanMessage, MESSAGE_TYPE.SYSTEM);
+          },
+          error: (error: unknown) => {
+            console.error('Error al enviar mensaje de reporte:', error);
+          },
+        });
+
+      return;
+    }
+
     const receiverId = this.messageReceiverId();
     const articleId = this.articleId();
 
-    if (!senderId || !receiverId || !articleId) {
+    if (!receiverId || !articleId) {
       return;
     }
 
     this.messageService
-      .sendMessage(deliveryMethod.trim(), senderId, receiverId, articleId, 'DELIVERY_METHOD')
+      .sendMessage(
+        cleanMessage,
+        senderId,
+        receiverId,
+        articleId,
+        tipoMensaje
+      )
       .subscribe({
         next: () => {
-          this.messages.update((messages) => [
-            ...messages,
-            {
-              id: Date.now(),
-              type: 'deliveryMethod',
-              title: 'Método de entrega',
-              text: deliveryMethod.trim(),
-              time: this.getCurrentTime(),
-              mine: true,
-            },
-          ]);
+          this.addLocalMessage(cleanMessage, tipoMensaje);
         },
-        error: (error) => console.error('Error al enviar método de entrega:', error),
+        error: (error: unknown) => {
+          console.error('Error al enviar mensaje:', error);
+        },
       });
+  }
+
+  private addLocalMessage(message: string, tipoMensaje: MessageType): void {
+    let newMessage: ConversationMessage;
+
+    switch (tipoMensaje) {
+      case MESSAGE_TYPE.PRICE_OFFER:
+        newMessage = {
+          id: Date.now(),
+          type: 'priceProposal',
+          title: this.text.priceOfferLabel,
+          amount: Number(message),
+          time: this.getCurrentTime(),
+          mine: true,
+        };
+        break;
+
+      case MESSAGE_TYPE.DELIVERY_METHOD:
+        newMessage = {
+          id: Date.now(),
+          type: 'deliveryMethod',
+          title: this.text.deliveryMethodLabel,
+          text: message,
+          time: this.getCurrentTime(),
+          mine: true,
+        };
+        break;
+
+      case MESSAGE_TYPE.SYSTEM:
+      case MESSAGE_TYPE.TEXT:
+      default:
+        newMessage = {
+          id: Date.now(),
+          type: 'text',
+          text: message,
+          time: this.getCurrentTime(),
+          mine: true,
+        };
+        break;
+    }
+
+    this.messages.update((messages) => [...messages, newMessage]);
   }
 
   private setConversation(conversation: IAConversation): void {
     this.conversationId.set(Number(conversation.conversation_id));
+    this.conversationStatus.set(conversation.status || '');
     this.articleId.set(Number(conversation.item_id));
     this.product.set(this.mapConversationProduct(conversation));
+    this.reportId.set(Number(conversation.report_id || this.reportId()));
+    this.reportComplainantId.set(Number(conversation.report_denunciante_id || 0));
+    this.reportStatus.set(conversation.report_status || '');
     this.receiveId.set(Number(conversation.buyer_id));
     this.sendId.set(Number(conversation.seller_id));
 
     this.contact.set(this.mapConversationContact(conversation));
 
-    this.messages.set(conversation.messages.map((message) => this.mapConversationMessage(message)));
+    const visibleMessages = this.isModeratorView()
+      ? conversation.messages.filter((message) => message.tipo_mensaje === MESSAGE_TYPE.SYSTEM)
+      : conversation.messages.filter((message) => message.tipo_mensaje !== MESSAGE_TYPE.SYSTEM);
+
+    this.messages.set(
+      visibleMessages.map((message) => this.mapConversationMessage(message))
+    );
   }
 
-  private mapConversationMessage(message: IAConversation['messages'][number]): ConversationMessage {
+  private mapConversationMessage(
+    message: IAConversation['messages'][number]
+  ): ConversationMessage {
     const baseMessage = {
       id: message.id,
       time: this.formatTime(message.fecha_envio),
-      mine: Number(message.emisor_id) === this.currentUserId(),
+      mine: this.isMessageMine(message),
     };
 
-    if (message.tipo_mensaje === 'PRICE_OFFER') {
+    if (message.tipo_mensaje === MESSAGE_TYPE.PRICE_OFFER) {
       return {
         ...baseMessage,
         type: 'priceProposal',
-        title: 'Propuesta de precio',
+        title: this.text.priceOfferLabel,
         amount: Number(message.texto_mensaje),
       };
     }
 
-    if (message.tipo_mensaje === 'DELIVERY_METHOD') {
+    if (message.tipo_mensaje === MESSAGE_TYPE.DELIVERY_METHOD) {
       return {
         ...baseMessage,
         type: 'deliveryMethod',
-        title: 'Método de entrega',
+        title: this.text.deliveryMethodLabel,
         text: message.texto_mensaje,
       };
     }
@@ -258,7 +377,9 @@ export class ConversationPage implements OnInit {
     };
   }
 
-  private mapConversationProduct(conversation: IAConversation): MessageProductSummary {
+  private mapConversationProduct(
+    conversation: IAConversation
+  ): MessageProductSummary {
     return {
       id: conversation.item_id,
       title: conversation.titulo,
@@ -267,24 +388,41 @@ export class ConversationPage implements OnInit {
     };
   }
 
+  private isMessageMine(message: IAConversation['messages'][number]): boolean {
+    if (this.isModeratorView() && this.isStaffViewer()) {
+      return message.emisor_rol_id === UserRole.MODERATOR || message.emisor_rol_id === UserRole.ADMIN;
+    }
+
+    return Number(message.emisor_id) === this.currentUserId();
+  }
+
   private mapConversationContact(conversation: IAConversation): MessageContact {
     const name = this.getConversationContactName(conversation);
 
     return {
       name,
-      initial: name.trim().charAt(0).toUpperCase() || 'U',
+      initial: name.trim().charAt(0).toUpperCase() || this.text.defaultUser.charAt(0),
     };
   }
+
   private getConversationContactName(conversation: IAConversation): string {
     const isCurrentUserBuyer = Number(conversation.buyer_id) === this.currentUserId();
-    const name = isCurrentUserBuyer ? conversation.seller_nombre : conversation.buyer_nombre;
-    const surname = isCurrentUserBuyer ? conversation.seller_apellidos : conversation.buyer_apellidos;
+
+    const name = isCurrentUserBuyer
+      ? conversation.seller_nombre
+      : conversation.buyer_nombre;
+
+    const surname = isCurrentUserBuyer
+      ? conversation.seller_apellidos
+      : conversation.buyer_apellidos;
+
     const username = isCurrentUserBuyer
       ? conversation.seller_nombre_usuario
       : conversation.buyer_nombre_usuario;
+
     const fullName = `${name || ''} ${surname || ''}`.trim();
 
-    return fullName || username || `Usuario ${this.messageReceiverId()}`;
+    return fullName || username || `${this.text.defaultUser} ${this.messageReceiverId()}`;
   }
 
   private formatTime(date: string): string {

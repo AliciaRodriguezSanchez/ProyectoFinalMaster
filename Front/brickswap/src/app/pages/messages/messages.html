@@ -1,24 +1,50 @@
 <main class="messages-page">
-  <h1>Mensajes</h1>
-  <app-descriptions text="Tus conversaciones con compradores y vendedores" format="body"></app-descriptions>
+  <h1>{{ text.pageTitle }}</h1>
+  <app-descriptions
+    [text]="isReportsMode() ? text.staffDescription : text.userDescription"
+    format="body"
+  ></app-descriptions>
   <div class="mt-5 d-flex flex-wrap gap-2 justify-content-between align-items-center">
     <div class="d-flex flex-wrap gap-2">
-      <app-pill class="mx-1" label="Todos" value="all" [active]="selectedTab() === 'all'" (selected)="selectedTab.set($event)"></app-pill>
-      <app-pill class="mx-1" label="Sin leer" value="unreaded" [active]="selectedTab() === 'unreaded'" (selected)="selectedTab.set($event)"></app-pill>
-      <app-pill class="mx-1" label="Leído" value="readed" [active]="selectedTab() === 'readed'" (selected)="selectedTab.set($event)"></app-pill>
-      <app-pill class="mx-1" label="Pendiente" value="pending" [active]="selectedTab() === 'pending'" (selected)="selectedTab.set($event)"></app-pill>
-      <app-pill class="mx-1" label="Resuelto" value="resolved" [active]="selectedTab() === 'resolved'" (selected)="selectedTab.set($event)"></app-pill>
+      <app-pill class="mx-1" [label]="text.tabAll" value="all" [active]="selectedTab() === 'all'" (selected)="selectedTab.set($event)"></app-pill>
+      @if (isReportsMode()) {
+        <app-pill class="mx-1" [label]="text.tabPending" value="pending" [active]="selectedTab() === 'pending'" (selected)="selectedTab.set($event)"></app-pill>
+        <app-pill class="mx-1" [label]="text.tabResolved" value="resolved" [active]="selectedTab() === 'resolved'" (selected)="selectedTab.set($event)"></app-pill>
+      } @else {
+        <app-pill class="mx-1" [label]="text.tabUnread" value="unreaded" [active]="selectedTab() === 'unreaded'" (selected)="selectedTab.set($event)"></app-pill>
+        <app-pill class="mx-1" [label]="text.tabRead" value="readed" [active]="selectedTab() === 'readed'" (selected)="selectedTab.set($event)"></app-pill>
+        <app-pill class="mx-1" [label]="text.tabPending" value="pending" [active]="selectedTab() === 'pending'" (selected)="selectedTab.set($event)"></app-pill>
+        <app-pill class="mx-1" [label]="text.tabResolved" value="resolved" [active]="selectedTab() === 'resolved'" (selected)="selectedTab.set($event)"></app-pill>
+      }
     </div>
     <app-ordenar-lista [active]="sortOrder()" (changed)="setOrder($event)"></app-ordenar-lista>
   </div>
 
   <div class="mt-5 d-flex flex-column gap-3 w-100">
     @if (isLoading()) {
-      <p class="messages-page__state">Cargando conversaciones...</p>
+      <p class="messages-page__state">{{ text.loadingData }}</p>
     } @else if (errorMessage()) {
       <p class="messages-page__state messages-page__state--error">{{ errorMessage() }}</p>
-    } @else if (filteredConversations().length === 0) {
-      <p class="messages-page__state">No hay conversaciones para mostrar.</p>
+    } @else if (isReportsMode() && filteredReports().length === 0) {
+      <p class="messages-page__state">{{ text.noReports }}</p>
+    } @else if (!isReportsMode() && filteredConversations().length === 0 && filteredReports().length === 0) {
+      <p class="messages-page__state">{{ text.noConversations }}</p>
+    } @else if (isReportsMode()) {
+      @for (report of filteredReports(); track report.id) {
+        <a
+          class="messages-page__conversation-link"
+          [routerLink]="['/messages/conversation-report', report.id]"
+        >
+          <app-caja-mensaje
+            [name]="report.nombre || text.defaultUser"
+            [product]="reportTitle(report)"
+            [timeAgo]="reportTimeAgo(report)"
+            [status]="reportStatusValue(report)"
+            [lastMsg]="reportPreview(report)"
+            [showStatusSelect]="false"
+          ></app-caja-mensaje>
+        </a>
+      }
     } @else {
       @for (conversation of filteredConversations(); track conversation.conversation_id) {
         <a
@@ -32,6 +58,21 @@
             [status]="statusValue(conversation)"
             [lastMsg]="lastMessagePreview(conversation)"
             (statusChanged)="onStatusChanged(conversation.conversation_id, $event)"
+          ></app-caja-mensaje>
+        </a>
+      }
+      @for (report of filteredReports(); track report.id) {
+        <a
+          class="messages-page__conversation-link"
+          [routerLink]="['/messages/conversation-report', report.id]"
+        >
+          <app-caja-mensaje
+            [name]="text.moderationContact"
+            [product]="reportTitle(report)"
+            [timeAgo]="reportTimeAgo(report)"
+            [status]="reportStatusValue(report)"
+            [lastMsg]="reportPreview(report)"
+            [showStatusSelect]="false"
           ></app-caja-mensaje>
         </a>
       }

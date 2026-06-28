@@ -7,6 +7,7 @@ import { AuthService } from '../../core/services/auth/auth.service';
 import { FavoriteService } from '../../core/services/favorite/favorite.service';
 import { MessageService } from '../../core/services/message/message.service';
 import { ReportService } from '../../core/services/report/report.service';
+import { MESSAGE_TEXT } from '../../core/constants/message-text';
 
 @Component({
   selector: 'app-article-detail',
@@ -84,7 +85,13 @@ export class ArticleDetail implements OnInit {
   // 1. ACCIÓN: COMPRA DIRECTA
   buyArticle() {
     if (!this.article || !this.article.id) return;
-    if (!this.article || !this.article.id) return;
+
+    const userId = this.requireLoggedUser(MESSAGE_TEXT.articleDetail.buyLoginRequired);
+
+    if (!userId) {
+      return;
+    }
+
     this.articleService.buyArticle(this.article.id).subscribe({
       next: (res) => alert(res.message),
       error: (err) => alert(err.error.message)
@@ -93,56 +100,91 @@ export class ArticleDetail implements OnInit {
 
   // 2. ACCIÓN: ABRIR CHAT / MENSAJERÍA
   sendMessage() {
-    const texto = prompt("Escribe tu mensaje para el vendedor:");
-    if (!texto || !this.article) return;
+    if (!this.article) return;
 
-    const emisor_id = this.authService.getCurrentUserId();
+    const emisor_id = this.requireLoggedUser(MESSAGE_TEXT.articleDetail.messageLoginRequired);
 
     if (!emisor_id) {
-      alert('Debes iniciar sesión para enviar un mensaje');
       return;
     }
 
     if (emisor_id === this.article.perfil_id) {
-      alert('No puedes iniciar una conversación contigo mismo');
+      alert(MESSAGE_TEXT.articleDetail.ownConversationError);
       return;
     }
 
+    const texto = prompt(MESSAGE_TEXT.articleDetail.sellerMessagePrompt);
+    if (!texto) return;
+
     this.messageService.sendMessage(texto, emisor_id, this.article.perfil_id, this.article.id!).subscribe({
       next: (res) => this.router.navigate(['/messages/conversation-thread', res.conversationId]),
-      error: (err) => alert(err.error?.message || 'Error al enviar el mensaje')
+      error: (err) => alert(err.error?.message || MESSAGE_TEXT.articleDetail.sendMessageError)
     });
   }
 
   // 3. ACCIÓN: REPORTAR ANUNCIO / MODERACIÓN
   reportListing() {
-    const motivo = prompt("Motivo del reporte:");
-    if (!motivo || !this.article) return;
+    const motivo = prompt(MESSAGE_TEXT.articleDetail.reportReasonPrompt);
+    if (!this.article) return;
 
-    const denunciante_id = 1; // TU ID
-    this.reportService.createReport(motivo, denunciante_id, this.article.perfil_id, this.article.id!).subscribe({
+    if (!motivo?.trim()) {
+      alert(MESSAGE_TEXT.articleDetail.reportReasonRequired);
+      return;
+    }
+
+    const denunciante_id = this.authService.getCurrentUserId();
+
+    if (!denunciante_id) {
+      alert(MESSAGE_TEXT.articleDetail.reportLoginRequired);
+      return;
+    }
+
+    this.reportService.createReport(motivo.trim(), denunciante_id, this.article.perfil_id, this.article.id!).subscribe({
       next: (res) => alert(res.message),
-      error: (err) => alert('Error al enviar el reporte')
+      error: (err) => alert(err.error?.message || MESSAGE_TEXT.articleDetail.sendReportError)
     });
   }
 
   // 4. ACCIÓN: AÑADIR A FAVORITOS
   addToFavorites() {
     if (!this.article || !this.article.id) return;
-    const mi_perfil_id = 1; // REEMPLAZA CON EL ID DE TU SESIÓN ACTUAL
+
+    const mi_perfil_id = this.requireLoggedUser(MESSAGE_TEXT.articleDetail.favoriteLoginRequired);
+
+    if (!mi_perfil_id) {
+      return;
+    }
     
     this.favoriteService.addFavorite(mi_perfil_id, this.article.id).subscribe({
       next: (res) => alert(res.message),
-      error: (err) => alert(err.error.message || 'Error al añadir a favoritos')
+      error: (err) => alert(err.error.message || MESSAGE_TEXT.articleDetail.favoriteError)
     });
   }
 
   // 5. ACCIÓN: RESERVAR
   reserveArticle() {
     if (!this.article || !this.article.id) return;
+
+    const userId = this.requireLoggedUser(MESSAGE_TEXT.articleDetail.reserveLoginRequired);
+
+    if (!userId) {
+      return;
+    }
+
     this.articleService.reserveArticle(this.article.id).subscribe({
       next: (res) => alert(res.message),
       error: (err) => alert(err.error.message)
     });
+  }
+
+  private requireLoggedUser(message: string): number | null {
+    const userId = this.authService.getCurrentUserId();
+
+    if (!userId) {
+      alert(message);
+      return null;
+    }
+
+    return userId;
   }
 }

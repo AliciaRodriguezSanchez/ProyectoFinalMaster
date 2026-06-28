@@ -1,33 +1,93 @@
 <main class="conversation-page">
-  <section class="conversation-page__shell" aria-label="Conversacion">
-    <ng-container *ngIf="product() as loadedProduct">
-      <app-message-conversation-header
-        *ngIf="contact() as loadedContact"
-        [contact]="loadedContact"
-        [product]="loadedProduct"
-        (back)="onBack()"
-      ></app-message-conversation-header>
-    </ng-container>
+  <section
+    class="conversation-page__shell"
+    [class.conversation-page__shell--report]="isModeratorView()"
+    [attr.aria-label]="text.conversationAria"
+  >
+    @if (product(); as loadedProduct) {
+      @if (contact(); as loadedContact) {
+        <app-message-conversation-header
+          [contact]="loadedContact"
+          [product]="loadedProduct"
+          (back)="onBack()"
+        ></app-message-conversation-header>
+      }
+    }
 
-    <p class="conversation-page__loading" *ngIf="isLoading()">Cargando conversación...</p>
+    @if (isLoading()) {
+      <p class="conversation-page__loading">{{ text.loadingConversation }}</p>
+    }
 
-    <app-message-thread
-      *ngIf="!isLoading() && hasMessages(); else emptyConversation"
-      [messages]="messages()"
-    ></app-message-thread>
+    @if (!isLoading() && isModeratorView()) {
+      <p
+        class="conversation-page__report-status"
+        [class.conversation-page__report-status--resolved]="isReportResolved()"
+      >
+        {{ reportStatusLabel() }}
+      </p>
+    }
 
-    <ng-template #emptyConversation>
-      <app-message-empty-state *ngIf="!isLoading()" [text]="emptyText"></app-message-empty-state>
-    </ng-template>
+    @if (!isLoading() && hasMessages()) {
+      <app-message-thread [messages]="messages()"></app-message-thread>
+    } @else {
+      @if (!isLoading() && !isModeratorView()) {
+        <app-message-empty-state [text]="emptyText"></app-message-empty-state>
+      }
 
-    <footer class="conversation-page__footer">
-      <app-message-actions
-        [showPrice]="isReceiver()"
-        [showDelivery]="isSender()"
-        [showBuy]="!hasMessages()"
-        (actionSelected)="onActionSelected($event)"
-      ></app-message-actions>
-      <app-message-composer (messageSent)="onMessageSent($event)"></app-message-composer>
-    </footer>
+      @if (!isLoading() && isModeratorView()) {
+        <div
+          class="conversation-page__empty-thread"
+          aria-hidden="true"
+        ></div>
+      }
+    }
+
+    @if (canReplyReport()) {
+      <footer class="conversation-page__footer conversation-page__footer--report">
+        <section class="conversation-page__report-resolution">
+          <ui-textarea
+            class="conversation-page__report-textarea"
+            [rows]="3"
+            [placeholder]="text.reportDecisionPlaceholder"
+            [value]="reportResolution()"
+            (valueChange)="reportResolution.set($event)"
+          ></ui-textarea>
+          <div class="conversation-page__report-actions">
+            <ui-button
+              class="conversation-page__report-action-button"
+              type="button"
+              variant="primary"
+              size="md"
+              [label]="text.keepReportedArticle"
+              [disabled]="!reportResolution().trim() || isUpdatingReport()"
+              (clicked)="updateReportStatus('Revisado_Mantenido')"
+            ></ui-button>
+            <ui-button
+              class="conversation-page__report-action-button conversation-page__report-action-button--secondary"
+              type="button"
+              variant="secondary"
+              size="md"
+              [label]="text.removeReportedArticle"
+              [disabled]="!reportResolution().trim() || isUpdatingReport()"
+              (clicked)="updateReportStatus('Revisado_Retirado')"
+            ></ui-button>
+          </div>
+        </section>
+      </footer>
+    }
+
+    @if (!isModeratorView() && !isConversationResolved()) {
+      <footer class="conversation-page__footer conversation-page__footer--chat">
+        <app-message-actions
+          [showPrice]="isReceiver()"
+          [showDelivery]="isSender()"
+          [showBuy]="isReceiver() && isLoggedIn()"
+          (actionSelected)="onActionSelected($event)"
+        ></app-message-actions>
+        <app-message-composer
+          (messageSent)="onMessageSent($event)"
+        ></app-message-composer>
+      </footer>
+    }
   </section>
 </main>

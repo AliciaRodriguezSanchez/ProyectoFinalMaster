@@ -20,6 +20,7 @@ export class CajaMensajeComponent {
   currentStatus = linkedSignal(() => this.status());
   lastMsg = input<string>('');
   previewLength = input<number>(80);
+  showStatusSelect = input<boolean>(true);
 
   statusChanged = output<MessageStatus>();
 

@@ -4,11 +4,10 @@ import { DescriptionsComponent } from '../../shared/ui/descriptions/descriptions
 import { IStat } from '../../interfaces/istat.interface';
 import { ReportService } from '../../core/services/report/report.service';
 import { CardPanelComponent } from '../../shared/card-panel/card-panel.component';
-import { IReportsTable } from '../../interfaces/ireports-table.interface';
+
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPendingTable } from '../../interfaces/ipending-table.interface';
 import { TableComponent } from '../../shared/table/table.component';
-import { ReportViewComponent } from '../../shared/components/report-view/report-view.component';
 
 // Define los estados exactos que te devuelve la base de datos
 const CONFIGURACION_ESTADOS: Record<string, { icon: string, color: string }> = {
@@ -32,7 +31,7 @@ const CONFIGURACION_ESTADOS: Record<string, { icon: string, color: string }> = {
 
 @Component({
   selector: 'app-moderador',
-  imports:[TitleComponent, DescriptionsComponent, CardPanelComponent, TableComponent, ReportViewComponent],
+  imports:[TitleComponent, DescriptionsComponent, CardPanelComponent, TableComponent],
   templateUrl: './moderador.html',
   styleUrl: './moderador.css',
 })
@@ -88,7 +87,7 @@ export class ModeradorPage {
 
       const datosMapeados = datosBackend.map((item: any) => ({
         id: item.id, 
-        title: item.titulo,
+        title: item.titulo || `Artículo #${item.articulo_id}`,
         customer: item.nombre,
         reason: item.motivo,
         time: item.fecha_reporte,

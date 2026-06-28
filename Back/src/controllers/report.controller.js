@@ -3,7 +3,7 @@ const Report = require('../models/report.model');
 // GET /api/reports?estado=pendiente G2
 const stateReports = async (req, res) => {
     try{
-        const state = req.query.estado;
+        const state = req.query.estado?.trim() || null;
         const reports = await Report.getStateReports(state);
         res.json(reports);
     }catch (error){
@@ -14,13 +14,34 @@ const stateReports = async (req, res) => {
     }
 };
 
+// GET /api/reports/user/:userId
+const reportsByUser = async (req, res) => {
+    try {
+        const userId = Number(req.params.userId);
+
+        if (!Number.isInteger(userId)) {
+            return res.status(400).json({
+                message: 'El identificador del usuario debe ser un número válido'
+            });
+        }
+
+        const reports = await Report.getReportsByComplainant(userId);
+        res.json(reports);
+    } catch (error) {
+        console.log("ERROR REAL:", error);
+        res.status(500).json({
+            message: 'Error al cargar los reportes del usuario'
+        });
+    }
+};
+
 // GET /api/reports/:id G2
 const reportsById = async (req, res) => {
     try{
         const id = req.params.id;
         const report = await Report.getReportsById(id);
         if(!report){
-            res.status(404).json({
+            return res.status(404).json({
                 message: 'Reporte no encontrado'
             })
         }
@@ -104,5 +125,10 @@ const createReport = async (req, res) => {
 };
 
 module.exports = {
-    createReport, stateReports, reportsById, updateReportStatus, stateStadistics
+    createReport,
+    stateReports,
+    reportsByUser,
+    reportsById,
+    updateReportStatus,
+    stateStadistics
 };
