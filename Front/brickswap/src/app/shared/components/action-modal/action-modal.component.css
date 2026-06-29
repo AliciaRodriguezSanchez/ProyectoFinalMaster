@@ -1,0 +1,76 @@
+.action-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(17, 24, 39, .42);
+}
+
+.action-modal {
+  position: relative;
+  width: min(100%, 460px);
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  border: 1px solid var(--brick-color-border);
+  border-radius: var(--brick-radius-xl);
+  background: var(--brick-color-white);
+  box-shadow: var(--brick-shadow-card-hover);
+}
+
+.action-modal h2 {
+  margin: 0;
+  padding-right: 36px;
+  color: var(--brick-color-title);
+  font-size: var(--brick-font-size-3xl);
+  font-weight: var(--brick-font-weight-xl);
+  line-height: 1.2;
+}
+
+.action-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--brick-radius-pill);
+  background: transparent;
+  color: var(--brick-color-muted);
+  font-size: var(--brick-font-size-2xl);
+  line-height: 1;
+  cursor: pointer;
+}
+
+.action-modal__close:hover {
+  background: var(--brick-color-surface-muted);
+  color: var(--brick-color-text);
+}
+
+.action-modal__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+:host ::ng-deep .action-modal__actions .ui-button {
+  min-height: 40px;
+  border-radius: var(--brick-radius-sm);
+  font-size: var(--brick-font-size-md);
+}
+
+@media (max-width: 520px) {
+  .action-modal {
+    padding: 20px;
+  }
+
+  .action-modal__actions {
+    grid-template-columns: 1fr;
+  }
+}

@@ -2,8 +2,8 @@ import { Component, forwardRef, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
-export type UiInputType = 'email' | 'password' | 'text';
-export type UiInputIcon = 'email' | 'lock' | 'profile';
+export type UiInputType = 'email' | 'password' | 'text' | 'number';
+export type UiInputIcon = 'email' | 'lock' | 'profile' | 'currency';
 
 let nextUiInputId = 0;
 
@@ -34,8 +34,11 @@ export class UiInputComponent implements ControlValueAccessor {
   required = input(false);
   invalid = input(false);
   errorMessage = input('');
+  min = input<string | number | null>(null);
+  step = input<string | number | null>(null);
 
   actionClicked = output<void>();
+  valueChange = output<string>();
 
   value = signal('');
   disabled = signal(false);
@@ -61,10 +64,59 @@ export class UiInputComponent implements ControlValueAccessor {
 
   onInput(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
-    const value = inputElement.value;
+    const value = this.type() === 'number'
+      ? inputElement.value.replace(/[^\d.,]/g, '')
+      : inputElement.value;
+
+    if (value !== inputElement.value) {
+      inputElement.value = value;
+    }
 
     this.value.set(value);
     this.onChange(value);
+    this.valueChange.emit(value);
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    if (this.type() !== 'number') {
+      return;
+    }
+
+    const allowedKeys = [
+      'Backspace',
+      'Delete',
+      'Tab',
+      'Escape',
+      'Enter',
+      'ArrowLeft',
+      'ArrowRight',
+      'Home',
+      'End',
+    ];
+
+    if (
+      allowedKeys.includes(event.key) ||
+      event.metaKey ||
+      event.ctrlKey
+    ) {
+      return;
+    }
+
+    if (!/[\d.,]/.test(event.key)) {
+      event.preventDefault();
+    }
+  }
+
+  onPaste(event: ClipboardEvent): void {
+    if (this.type() !== 'number') {
+      return;
+    }
+
+    const pastedText = event.clipboardData?.getData('text') ?? '';
+
+    if (/[^\d.,]/.test(pastedText)) {
+      event.preventDefault();
+    }
   }
 
   onBlur(): void {

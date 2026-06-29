@@ -1,0 +1,13 @@
+<button
+  class="ui-favorite-button"
+  type="button"
+  [class.ui-favorite-button--pressed]="isPressed()"
+  [class.ui-favorite-button--selected]="selected()"
+  [disabled]="disabled()"
+  (click)="onClick()"
+>
+  <span class="ui-favorite-button__icon" aria-hidden="true">
+    {{ selected() ? '♥' : '♡' }}
+  </span>
+  <span>{{ label() }}</span>
+</button>

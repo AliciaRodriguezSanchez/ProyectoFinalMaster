@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { ReviewService } from '../../../core/services/review/review.service';
 import { AuthService } from '../../../core/services/auth/auth.service';
+import { MESSAGE_TEXT } from '../../../core/constants/message-text';
+import { UiToastService } from '../../../core/services/toast/ui-toast.service';
 
 @Component({
   selector: 'app-valoracion-modal',
@@ -20,13 +22,14 @@ export class ValoracionModalComponent {
 
   constructor(
     private reviewService: ReviewService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: UiToastService
   ) { }
 
   guardarValoracion() {
     const emisorId = this.authService.getCurrentUserId();
     if (!emisorId) {
-      alert("Debes estar logueado para valorar.");
+      this.toastService.warning(MESSAGE_TEXT.review.loginRequired);
       return;
     }
 
@@ -40,10 +43,10 @@ export class ValoracionModalComponent {
 
     this.reviewService.createReview(reviewData).subscribe({
       next: (res) => {
-        alert(res.message);
+        this.toastService.success(res.message);
       },
       error: (err) => {
-        alert(err.error?.message || "Error al enviar la valoración");
+        this.toastService.error(err.error?.message || MESSAGE_TEXT.review.sendError);
       }
     });
   }
