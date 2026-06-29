@@ -1,0 +1,62 @@
+<div class="action-modal-backdrop" (click)="onCancel()">
+  <section
+    class="action-modal"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="title()"
+    (click)="$event.stopPropagation()"
+  >
+    <button
+      class="action-modal__close"
+      type="button"
+      [attr.aria-label]="cancelLabel()"
+      (click)="onCancel()"
+    >
+      ×
+    </button>
+
+    <h2>{{ title() }}</h2>
+
+    @if (fieldType() === 'input') {
+      <ui-input
+        [label]="textareaLabel()"
+        [type]="inputType()"
+        [icon]="inputIcon()"
+        [placeholder]="textareaPlaceholder()"
+        [required]="true"
+        [min]="inputMin()"
+        [step]="inputStep()"
+        [invalid]="isInvalid"
+        [errorMessage]="requiredError()"
+        (valueChange)="onValueChange($event)"
+      />
+    } @else {
+      <ui-textarea
+        [label]="textareaLabel()"
+        [placeholder]="textareaPlaceholder()"
+        [required]="true"
+        [rows]="5"
+        [value]="value()"
+        [invalid]="isInvalid"
+        [errorMessage]="requiredError()"
+        (valueChange)="onValueChange($event)"
+      />
+    }
+
+    <div class="action-modal__actions">
+      <ui-button
+        [label]="cancelLabel()"
+        variant="outline"
+        size="sm"
+        (clicked)="onCancel()"
+      />
+
+      <ui-button
+        [label]="submitLabel()"
+        variant="primary"
+        size="sm"
+        (clicked)="onSubmit()"
+      />
+    </div>
+  </section>
+</div>

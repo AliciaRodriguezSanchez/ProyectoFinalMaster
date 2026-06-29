@@ -231,6 +231,7 @@ const getConversationsByUser = async (userId) => {
             a.titulo,
             a.foto,
             a.precio,
+            a.estado_venta,
             c.buyer_id,
             buyer.nombre AS buyer_nombre,
             buyer.apellidos AS buyer_apellidos,
@@ -399,6 +400,7 @@ const getConversation = async ({ articleId, userId }) => {
       a.titulo,
       a.foto,
       a.precio,
+      a.estado_venta,
       c.buyer_id,
       buyer.nombre AS buyer_nombre,
       buyer.apellidos AS buyer_apellidos,
@@ -458,6 +460,7 @@ const getConversationById = async ({ conversationId, userId }) => {
       a.titulo,
       a.foto,
       a.precio,
+      a.estado_venta,
       c.buyer_id,
       buyer.nombre AS buyer_nombre,
       buyer.apellidos AS buyer_apellidos,
@@ -503,11 +506,13 @@ const getConversationByReport = async ({ reportId, viewer }) => {
           r.articulo_id,
           r.denunciante_id,
           r.denunciado_id,
+          r.motivo,
           r.fecha_reporte,
           r.estado_reporte,
           a.titulo,
           a.foto,
           a.precio,
+          a.estado_venta,
           reporter.nombre AS buyer_nombre,
           reporter.apellidos AS buyer_apellidos,
           reporter.nombre_usuario AS buyer_nombre_usuario
@@ -575,6 +580,17 @@ const getConversationByReport = async ({ reportId, viewer }) => {
         complainantId: report.denunciante_id,
         conversationId
     });
+    const initialReportMessage = {
+        id: -Number(report.id),
+        texto_mensaje: report.motivo,
+        fecha_envio: report.fecha_reporte,
+        emisor_id: report.denunciante_id,
+        receptor_id: conversationStaffId,
+        articulo_id: report.articulo_id,
+        conversation_id: conversationId,
+        tipo_mensaje: 'SYSTEM',
+        emisor_rol_id: 1
+    };
 
     return {
         conversation_id: conversationId,
@@ -595,7 +611,7 @@ const getConversationByReport = async ({ reportId, viewer }) => {
         report_denunciado_id: report.denunciado_id,
         report_status: report.estado_reporte,
         last_message_at: report.fecha_reporte,
-        messages: reportMessages
+        messages: sortMessagesByDate([initialReportMessage, ...reportMessages])
     };
 };
 

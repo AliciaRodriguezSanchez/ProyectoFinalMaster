@@ -1,13 +1,30 @@
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 
-import { MESSAGE_ACTION, MESSAGE_TYPE, MessageAction, MessageType } from '../../../core/constants/message';
+import {
+  MESSAGE_ACTION,
+  MESSAGE_SEND_ICON,
+  MESSAGE_TYPE,
+  MessageAction,
+  MessageType,
+} from '../../../core/constants/message';
 import { MESSAGE_TEXT } from '../../../core/constants/message-text';
+import { APP_ASSETS } from '../../../core/constants/app-assets';
+import {
+  ARTICLE_SALE_STATUS,
+  CONVERSATION_STATUS,
+  REPORT_STATUS,
+  ReportStatus,
+} from '../../../core/constants/status';
 import { UserRole } from '../../../core/constants/user-role';
 import { IAConversation } from '../../../core/interfaces/iconversation.interfaces';
+import { ArticleService } from '../../../core/services/article/article.service';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { MessageService } from '../../../core/services/message/message.service';
 import { ReportService } from '../../../core/services/report/report.service';
+import { UiToastService } from '../../../core/services/toast/ui-toast.service';
+import { buyArticleWithToast } from '../../../core/utils/article-actions';
 import {
   MessageContact,
   MessageProductSummary,
@@ -15,18 +32,27 @@ import {
 import {
   ConversationMessage,
 } from '../../../shared/components/message-thread/message-threads.interface';
+import { ActionModalComponent } from '../../../shared/components/action-modal/action-modal.component';
 import { SharedMessagesComponentsModule } from '../../../shared/components/shared-messages-components.module';
 import { UiButtonComponent } from '../../../shared/ui/button/ui-button.component';
 import { UiTextareaComponent } from '../../../shared/ui/textarea/ui-textarea.component';
 
 @Component({
   selector: 'app-conversation',
-  imports: [SharedMessagesComponentsModule, UiButtonComponent, UiTextareaComponent],
+  imports: [
+    SharedMessagesComponentsModule,
+    ActionModalComponent,
+    UiButtonComponent,
+    UiTextareaComponent
+  ],
   templateUrl: './conversation.html',
   styleUrl: './conversation.css',
 })
 export class ConversationPage implements OnInit {
   protected readonly text = MESSAGE_TEXT.messages;
+  protected readonly saleStatus = ARTICLE_SALE_STATUS;
+  protected readonly reportStatusValue = REPORT_STATUS;
+  protected readonly sendIcon = MESSAGE_SEND_ICON;
   emptyText = this.text.emptyConversation;
 
   contact = signal<MessageContact | null>(null);
@@ -41,10 +67,13 @@ export class ConversationPage implements OnInit {
   reportComplainantId = signal(0);
   reportStatus = signal('');
   conversationStatus = signal('');
+  articleSaleStatus = signal('');
   reportResolution = signal('');
   isUpdatingReport = signal(false);
+  isSendingReportMessage = signal(false);
   receiveId = signal(0);
   sendId = signal(0);
+  actionModalType = signal<'price' | 'delivery' | null>(null);
 
   isLoading = signal(false);
 
@@ -59,8 +88,9 @@ export class ConversationPage implements OnInit {
     return role === UserRole.MODERATOR || role === UserRole.ADMIN;
   });
   isAdminViewer = computed(() => this.currentRole() === UserRole.ADMIN);
-  isReportResolved = computed(() => this.reportStatus() !== '' && this.reportStatus() !== 'Pendiente');
-  isConversationResolved = computed(() => this.conversationStatus() === 'resolved');
+  isReportResolved = computed(() => this.reportStatus() !== '' && this.reportStatus() !== REPORT_STATUS.pending);
+  isConversationResolved = computed(() => this.conversationStatus() === CONVERSATION_STATUS.resolved);
+  isArticleSold = computed(() => this.articleSaleStatus() === ARTICLE_SALE_STATUS.sold);
   reportStatusLabel = computed(() =>
     this.isReportResolved() ? this.text.reportResolved : this.text.reportPending
   );
@@ -84,9 +114,11 @@ export class ConversationPage implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private articleService: ArticleService,
     private messageService: MessageService,
     private reportService: ReportService,
-    private authService: AuthService
+    private authService: AuthService,
+    private toastService: UiToastService
   ) { }
 
   ngOnInit(): void {
@@ -132,7 +164,7 @@ export class ConversationPage implements OnInit {
 
       this.setConversation(conversation);
     } catch (error) {
-      console.error('Error al cargar la conversación:', error);
+      console.error(error);
       this.messages.set([]);
     } finally {
       this.isLoading.set(false);
@@ -149,28 +181,104 @@ export class ConversationPage implements OnInit {
     }
 
     if (action === MESSAGE_ACTION.BUY && !this.isLoggedIn()) {
-      alert(MESSAGE_TEXT.articleDetail.buyLoginRequired);
+      this.toastService.warning(MESSAGE_TEXT.articleDetail.actionLoginRequired);
+      return;
+    }
+
+    if (action === MESSAGE_ACTION.BUY) {
+      this.buyCurrentArticle();
       return;
     }
 
     if (action === MESSAGE_ACTION.PRICE) {
-      this.sendPriceOffer();
+      this.actionModalType.set('price');
       return;
     }
 
     if (action === MESSAGE_ACTION.DELIVERY) {
-      this.sendDeliveryMethod();
+      this.actionModalType.set('delivery');
       return;
     }
 
-    console.log('Acción de mensaje seleccionada:', action);
+    console.log({ action });
+  }
+
+  buyCurrentArticle(): void {
+    const articleId = this.articleId();
+
+    if (!articleId) {
+      return;
+    }
+
+    void buyArticleWithToast({
+      articleService: this.articleService,
+      toastService: this.toastService,
+      articleId,
+      onSuccess: () => {
+        this.conversationStatus.set(CONVERSATION_STATUS.resolved);
+        this.articleSaleStatus.set(ARTICLE_SALE_STATUS.sold);
+        this.resolveCurrentConversation();
+      },
+    });
+  }
+
+  private resolveCurrentConversation(): void {
+    const conversationId = this.conversationId();
+
+    if (!conversationId) {
+      return;
+    }
+
+    this.messageService.changeConversationStatus(conversationId, CONVERSATION_STATUS.resolved)
+      .catch((error: unknown) => {
+        console.error(error);
+      });
   }
 
   onMessageSent(message: string): void {
     this.send(message, MESSAGE_TYPE.TEXT);
   }
 
-  async updateReportStatus(status: 'Revisado_Mantenido' | 'Revisado_Retirado'): Promise<void> {
+  closeActionModal(): void {
+    this.actionModalType.set(null);
+  }
+
+  submitActionModal(value: string): void {
+    if (this.actionModalType() === 'price') {
+      this.sendPriceOffer(value);
+      return;
+    }
+
+    if (this.actionModalType() === 'delivery') {
+      this.sendDeliveryMethod(value);
+    }
+  }
+
+  getActionModalTitle(): string {
+    return this.actionModalType() === 'price'
+      ? this.text.priceOfferModalTitle
+      : this.text.deliveryMethodModalTitle;
+  }
+
+  getActionModalTextareaLabel(): string {
+    return this.actionModalType() === 'price'
+      ? this.text.priceOfferModalLabel
+      : this.text.deliveryMethodModalLabel;
+  }
+
+  getActionModalPlaceholder(): string {
+    return this.actionModalType() === 'price'
+      ? this.text.priceOfferPrompt
+      : this.text.deliveryMethodPrompt;
+  }
+
+  getActionModalSubmitLabel(): string {
+    return this.actionModalType() === 'price'
+      ? this.text.priceOfferModalSubmit
+      : this.text.deliveryMethodModalSubmit;
+  }
+
+  async updateReportStatus(status: ReportStatus): Promise<void> {
     const resolution = this.reportResolution().trim();
 
     if (!this.reportId() || !this.canReplyReport() || !resolution) {
@@ -189,41 +297,60 @@ export class ConversationPage implements OnInit {
       this.reportResolution.set('');
       await this.loadConversation();
     } catch (error) {
-      console.error('Error al actualizar estado de reporte:', error);
-      alert(this.text.updateReportError);
+      console.error(error);
+      this.toastService.error(this.text.updateReportError);
     } finally {
       this.isUpdatingReport.set(false);
     }
   }
 
-  private sendPriceOffer(): void {
-    const price = prompt(this.text.priceOfferPrompt);
+  async sendReportReply(): Promise<void> {
+    const message = this.reportResolution().trim();
+    const senderId = this.currentUserId();
 
-    if (!price?.trim()) {
+    if (!this.reportId() || !this.canReplyReport() || !senderId || !message) {
       return;
     }
 
+    this.isSendingReportMessage.set(true);
+
+    try {
+      await firstValueFrom(
+        this.messageService.sendReportMessage(
+          message,
+          senderId,
+          this.reportId()
+        )
+      );
+
+      this.addLocalMessage(message, MESSAGE_TYPE.SYSTEM);
+      this.reportResolution.set('');
+    } catch (error) {
+      console.error(error);
+      this.toastService.error(this.text.sendReportMessageError);
+    } finally {
+      this.isSendingReportMessage.set(false);
+    }
+  }
+
+  private sendPriceOffer(price: string): void {
     const normalizedPrice = price.trim().replace(',', '.');
 
     if (!/^\d+(\.\d{1,2})?$/.test(normalizedPrice)) {
-      alert(this.text.priceOfferNumericError);
+      this.toastService.warning(this.text.priceOfferNumericError);
       return;
     }
 
-    this.send(normalizedPrice, MESSAGE_TYPE.PRICE_OFFER);
+    this.closeActionModal();
+    void this.send(normalizedPrice, MESSAGE_TYPE.PRICE_OFFER);
   }
 
-  private sendDeliveryMethod(): void {
-    const method = prompt(this.text.deliveryMethodPrompt);
-
-    if (!method?.trim()) {
-      return;
-    }
-
-    this.send(method.trim(), MESSAGE_TYPE.DELIVERY_METHOD);
+  private sendDeliveryMethod(method: string): void {
+    this.closeActionModal();
+    void this.send(method.trim(), MESSAGE_TYPE.DELIVERY_METHOD);
   }
 
-  private send(message: string, tipoMensaje: MessageType = MESSAGE_TYPE.TEXT): void {
+  private async send(message: string, tipoMensaje: MessageType = MESSAGE_TYPE.TEXT): Promise<void> {
     const senderId = this.currentUserId();
     const cleanMessage = message.trim();
 
@@ -236,20 +363,19 @@ export class ConversationPage implements OnInit {
         return;
       }
 
-      this.messageService
-        .sendReportMessage(
-          cleanMessage,
-          senderId,
-          this.reportId()
-        )
-        .subscribe({
-          next: () => {
-            this.addLocalMessage(cleanMessage, MESSAGE_TYPE.SYSTEM);
-          },
-          error: (error: unknown) => {
-            console.error('Error al enviar mensaje de reporte:', error);
-          },
-        });
+      try {
+        await firstValueFrom(
+          this.messageService.sendReportMessage(
+            cleanMessage,
+            senderId,
+            this.reportId()
+          )
+        );
+
+        this.addLocalMessage(cleanMessage, MESSAGE_TYPE.SYSTEM);
+      } catch (error) {
+        console.error(error);
+      }
 
       return;
     }
@@ -261,22 +387,21 @@ export class ConversationPage implements OnInit {
       return;
     }
 
-    this.messageService
-      .sendMessage(
-        cleanMessage,
-        senderId,
-        receiverId,
-        articleId,
-        tipoMensaje
-      )
-      .subscribe({
-        next: () => {
-          this.addLocalMessage(cleanMessage, tipoMensaje);
-        },
-        error: (error: unknown) => {
-          console.error('Error al enviar mensaje:', error);
-        },
-      });
+    try {
+      await firstValueFrom(
+        this.messageService.sendMessage(
+          cleanMessage,
+          senderId,
+          receiverId,
+          articleId,
+          tipoMensaje
+        )
+      );
+
+      this.addLocalMessage(cleanMessage, tipoMensaje);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   private addLocalMessage(message: string, tipoMensaje: MessageType): void {
@@ -324,6 +449,7 @@ export class ConversationPage implements OnInit {
   private setConversation(conversation: IAConversation): void {
     this.conversationId.set(Number(conversation.conversation_id));
     this.conversationStatus.set(conversation.status || '');
+    this.articleSaleStatus.set(conversation.estado_venta || '');
     this.articleId.set(Number(conversation.item_id));
     this.product.set(this.mapConversationProduct(conversation));
     this.reportId.set(Number(conversation.report_id || this.reportId()));
@@ -384,7 +510,7 @@ export class ConversationPage implements OnInit {
       id: conversation.item_id,
       title: conversation.titulo,
       price: Number(conversation.precio),
-      imageUrl: conversation.foto || '/assets/logo/logo.png',
+      imageUrl: conversation.foto || APP_ASSETS.logo,
     };
   }
 

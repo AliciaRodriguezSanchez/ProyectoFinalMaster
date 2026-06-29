@@ -76,8 +76,9 @@
 }
 
 .conversation-page__report-actions {
-  display: flex;
+  display: grid;
   gap: 8px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 48px;
 }
 
 .conversation-page__report-action-button {
@@ -101,6 +102,41 @@
   border-color: #dc3545;
 }
 
+.conversation-page__report-send-button {
+  align-items: center;
+  background: var(--brick-color-brand);
+  border: 0;
+  border-radius: var(--brick-radius-lg);
+  color: var(--brick-color-text-strong);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: var(--brick-font-size-xl);
+  font-weight: var(--brick-font-weight-xl);
+  height: 40px;
+  justify-content: center;
+  padding: 0;
+  transition:
+    background-color .2s ease,
+    transform .2s ease,
+    box-shadow .2s ease;
+  width: 48px;
+}
+
+.conversation-page__report-send-button:hover:not(:disabled) {
+  background: var(--brick-color-brand-dark);
+  transform: translateY(-1px);
+}
+
+.conversation-page__report-send-button:focus-visible {
+  box-shadow: var(--brick-shadow-focus-input);
+  outline: 0;
+}
+
+.conversation-page__report-send-button:disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
 app-message-thread,
 app-message-empty-state,
 .conversation-page__empty-thread {
@@ -118,5 +154,13 @@ app-message-empty-state,
     height: calc(100dvh - 64px - 3rem);
     max-height: calc(100dvh - 64px - 3rem);
     padding: 12px 14px 16px;
+  }
+
+  .conversation-page__report-actions {
+    grid-template-columns: minmax(0, 1fr) 48px;
+  }
+
+  .conversation-page__report-action-button {
+    grid-column: span 1;
   }
 }

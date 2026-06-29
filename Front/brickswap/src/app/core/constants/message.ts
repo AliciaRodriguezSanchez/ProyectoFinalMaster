@@ -14,3 +14,5 @@ export const MESSAGE_ACTION = {
 } as const;
 
 export type MessageAction = typeof MESSAGE_ACTION[keyof typeof MESSAGE_ACTION];
+
+export const MESSAGE_SEND_ICON = '>' as const;

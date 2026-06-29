@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 
-export type UiToastType = 'error' | 'success' | 'info';
+export type UiToastType = 'error' | 'success' | 'info' | 'warning';
 
 export interface UiToastMessage {
   id: number;
@@ -23,7 +23,10 @@ export class UiToastService {
     };
 
     this.nextId += 1;
-    this.messages.update((messages) => [...messages, toast]);
+    this.messages.update((messages) => [
+      ...messages.filter((message) => message.type !== type),
+      toast,
+    ]);
 
     setTimeout(() => this.remove(toast.id), 4000);
   }
@@ -34,6 +37,10 @@ export class UiToastService {
 
   success(message: string): void {
     this.show(message, 'success');
+  }
+
+  warning(message: string): void {
+    this.show(message, 'warning');
   }
 
   remove(id: number): void {

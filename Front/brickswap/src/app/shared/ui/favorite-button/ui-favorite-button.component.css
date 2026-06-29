@@ -1,0 +1,60 @@
+.ui-favorite-button {
+  width: fit-content;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: var(--brick-radius-pill);
+  background: transparent;
+  color: var(--brick-color-danger);
+  font: inherit;
+  font-weight: var(--brick-font-weight-m);
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    color .18s ease,
+    background-color .18s ease,
+    border-color .18s ease,
+    transform .18s ease;
+}
+
+.ui-favorite-button:hover:not(:disabled) {
+  border-color: rgba(220, 53, 69, .24);
+  background: rgba(220, 53, 69, .07);
+  color: var(--brick-color-danger);
+}
+
+.ui-favorite-button--selected {
+  border-color: rgba(220, 53, 69, .28);
+  background: rgba(220, 53, 69, .08);
+  color: var(--brick-color-danger);
+}
+
+.ui-favorite-button:active:not(:disabled),
+.ui-favorite-button--pressed {
+  transform: scale(.96);
+}
+
+.ui-favorite-button:focus-visible {
+  outline: none;
+  box-shadow: var(--brick-shadow-focus-danger);
+}
+
+.ui-favorite-button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.ui-favorite-button__icon {
+  font-size: var(--brick-font-size-xl);
+  line-height: 1;
+  transition: transform .18s ease;
+}
+
+.ui-favorite-button:hover:not(:disabled) .ui-favorite-button__icon,
+.ui-favorite-button--pressed .ui-favorite-button__icon {
+  transform: scale(1.16);
+}

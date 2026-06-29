@@ -1,6 +1,8 @@
 export type ButtonVariant =
   | 'primary'
-  | 'secondary';
+  | 'secondary'
+  | 'outline'
+  | 'danger';
 
 export type ButtonSize =
   | 'sm'
