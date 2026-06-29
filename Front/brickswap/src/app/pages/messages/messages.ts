@@ -9,7 +9,7 @@ import { AuthService } from '../../core/services/auth/auth.service';
 import { MessageService } from '../../core/services/message/message.service';
 import { ReportService } from '../../core/services/report/report.service';
 import { IReportsTable } from '../../interfaces/ireports-table.interface';
-import { CajaMensajeComponent, MessageStatus } from '../../shared/caja-mensaje/caja-mensaje.component';
+import { CajaMensajeComponent, MessageStatus } from '../../shared/components/caja-mensaje/caja-mensaje.component';
 import { DescriptionsComponent } from '../../shared/ui/descriptions/descriptions.component';
 import { OrdenarListaComponent, SortOrder } from '../../shared/ui/ordenar-lista/ordenar-lista.component';
 import { PillComponent } from '../../shared/ui/pill/pill.component';
