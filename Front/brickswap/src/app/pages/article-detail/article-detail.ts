@@ -8,11 +8,12 @@ import { FavoriteService } from '../../core/services/favorite/favorite.service';
 import { MessageService } from '../../core/services/message/message.service';
 import { ReportService } from '../../core/services/report/report.service';
 import { MESSAGE_TEXT } from '../../core/constants/message-text';
+import { ValoracionModalComponent } from '../../shared/components/valoracion-modal/valoracion-modal';
 
 @Component({
   selector: 'app-article-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ValoracionModalComponent],
   templateUrl: './article-detail.html',
   styleUrl: './article-detail.css'
 })
@@ -40,7 +41,7 @@ export class ArticleDetail implements OnInit {
     this.loadBackendArticle();
   }
 
-  // CARGA DINÁMICA BASADA EN TU MÉTODO DE CATÁLOGO
+  // CARGA DINÁMICA DE CATÁLOGO
   loadBackendArticle() {
 
     const articleId = Number(this.route.snapshot.paramMap.get('id'));
@@ -175,6 +176,12 @@ export class ArticleDetail implements OnInit {
       next: (res) => alert(res.message),
       error: (err) => alert(err.error.message)
     });
+  }
+
+  // 6.LÓGICA AUXILIAR PARA VALORACIONES: ¿ES EL USUARIO ACTUAL EL COMPRADOR?
+  isCurrentUserTheBuyer(): boolean {
+    if (!this.article) return false;
+    return this.authService.getCurrentUserId() === this.article.perfil_id; 
   }
 
   private requireLoggedUser(message: string): number | null {
