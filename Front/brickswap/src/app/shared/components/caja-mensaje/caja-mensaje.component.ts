@@ -1,5 +1,5 @@
 import { Component, effect, input, linkedSignal, output, signal } from '@angular/core';
-import { StatusLabelPipe } from '../pipes/status-label-pipe';
+import { StatusLabelPipe } from '../../pipes/status-label-pipe';
 
 export type MessageStatus =  'unreaded' | 'readed' | 'pending' | 'resolved';
 

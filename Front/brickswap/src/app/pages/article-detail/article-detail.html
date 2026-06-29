@@ -94,12 +94,19 @@
           </button>
         </div>
 
-        <!-- <div class="col-12 mt-3" *ngIf="article.estado_venta === 'Vendido' && isCurrentUserTheBuyer()">
-          <button type="button" class="btn btn-outline-primary btn-lg w-100 fw-bold py-3 shadow-sm"
-            data-bs-toggle="modal" data-bs-target="#modalValoracion">
-            ⭐ Valorar mi compra
-          </button> 
-        </div> -->
+        @if (article.estado_venta === 'Vendido' && isCurrentUserTheBuyer()) {
+          <div class="col-12 mt-3">
+            <button type="button" class="btn btn-outline-primary btn-lg w-100 fw-bold py-3 shadow-sm"
+              data-bs-toggle="modal" data-bs-target="#modalValoracion">
+              ⭐ Valorar mi compra
+           </button>
+          </div>
+        }
+
+        <app-valoracion-modal 
+          [articleId]="article.id!" 
+          [vendedorId]="article.perfil_id">
+        </app-valoracion-modal>
         
         <p class="text-muted text-center small mt-3 m-0">
           ¡Pago seguro en BrickSwap gracias a Shopify!
