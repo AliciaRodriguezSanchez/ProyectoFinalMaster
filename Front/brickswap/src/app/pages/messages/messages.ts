@@ -178,7 +178,7 @@ export class MessagesPage implements OnInit {
       conversation.status === 'unreaded' &&
       conversation.last_message_sender_id === currentUserId
     ) {
-      return 'readed';
+      return 'pending';
     }
 
     return conversation.status || 'unreaded';

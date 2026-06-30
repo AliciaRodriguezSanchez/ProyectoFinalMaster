@@ -57,7 +57,7 @@
             [timeAgo]="timeAgo(conversation)"
             [status]="statusValue(conversation)"
             [lastMsg]="lastMessagePreview(conversation)"
-            (statusChanged)="onStatusChanged(conversation.conversation_id, $event)"
+            [showStatusSelect]="false"
           ></app-caja-mensaje>
         </a>
       }
