@@ -43,6 +43,35 @@ const addFavorite = async (req, res) => {
     }
 };
 
+// GET /api/favorites/profile/:profileId
+const getFavoritesByProfileId = async (req, res) => {
+  try {
+    const { profileId } = req.params;
+
+    if (!profileId || Number.isNaN(Number(profileId))) {
+      return res.status(400).json({
+        message: 'El identificador del perfil no es válido'
+      });
+    }
+
+    const favorites =
+      await Favorite.getFavoritesByProfileId(Number(profileId));
+
+    return res.status(200).json(favorites);
+
+  } catch (error) {
+    console.error(
+      'Error al obtener los favoritos del usuario:',
+      error.message
+    );
+
+    return res.status(500).json({
+      message: 'Error del servidor al obtener los favoritos'
+    });
+  }
+};
+
 module.exports = {
-    addFavorite
+  addFavorite,
+  getFavoritesByProfileId
 };

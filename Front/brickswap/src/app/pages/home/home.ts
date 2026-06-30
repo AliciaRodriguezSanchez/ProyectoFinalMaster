@@ -46,7 +46,7 @@ export class Home implements OnInit {
 
       return {
         id: category.id,
-        icon: style.icon,
+        icon: category.icono?.trim() || style.icon,
         color: style.color,
         text: category.nombre,
       };
@@ -134,5 +134,5 @@ export class Home implements OnInit {
     ...this.latestProducts,
   ];*/
 
- 
+
 }

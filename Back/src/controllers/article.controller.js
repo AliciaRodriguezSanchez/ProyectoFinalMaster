@@ -162,6 +162,32 @@ const getArticlesInPromotion = async (req, res) => {
     }
 }
 
+// GET /api/articles/profile/:profileId
+const getArticlesByProfileId = async (req, res) => {
+  try {
+    const { profileId } = req.params;
+
+    if (!profileId || Number.isNaN(Number(profileId))) {
+      return res.status(400).json({
+        message: 'El identificador del perfil no es válido'
+      });
+    }
+
+    const articles = await Article.getArticlesByProfileId(profileId);
+
+    res.status(200).json(articles);
+  } catch (error) {
+    console.error(
+      'Error al obtener los artículos del usuario:',
+      error.message
+    );
+
+    res.status(500).json({
+      message: 'Error del servidor al obtener los artículos del usuario'
+    });
+  }
+};
+
 module.exports = {
     getAllArticles,
     getArticleById,
@@ -169,5 +195,6 @@ module.exports = {
     getArticlesInPromotion,
     createArticle,
     buyArticle,
-    reserveArticle
+    reserveArticle,
+    getArticlesByProfileId
 };

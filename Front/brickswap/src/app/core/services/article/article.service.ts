@@ -76,4 +76,23 @@ export class ArticleService {
       this.http.get<IArticle[]>(`${API_URL}/${ARTICLES}/${IN_PROMOTIONS}`)
     );
   }
+
+  // 10. GET artículos de un usuario
+  getArticlesByProfileId(profileId: number): Promise<IArticle[]> {
+    return firstValueFrom(
+      this.http.get<IArticle[]>(
+        `${API_URL}/articles/profile/${profileId}`
+      )
+    );
+  }
+
+    // 11. GET favoritos de un usuario
+  getFavoritesByProfileId(profileId: number): Promise<IArticle[]> {
+    return firstValueFrom(
+      this.http.get<IArticle[]>(
+        `${API_URL}/favorites/profile/${profileId}`
+      )
+    );
+  }
+
 }
