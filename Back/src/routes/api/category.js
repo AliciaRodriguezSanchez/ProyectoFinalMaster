@@ -3,7 +3,7 @@ const router = express.Router();
 
 const categoryController = require('../../controllers/category.controller');
 
-// Obtener todas las categorías
+// RUTA PARA OBTENER TODAS LAS CATEGORÍAS
 router.get('/', categoryController.getAllCategories);
 
 // Crear una categoría

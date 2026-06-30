@@ -4,7 +4,7 @@ import { AuthHeroStat } from '../../interfaces/auth/auth-hero.interface';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RegisterForm } from './components/register-form/register-form';
 import { RegisterService } from '../../core/services/register/register.service';
-import { Iuser } from '../../core/interfaces/iuser.interfaces';
+import { Iuser } from '../../interfaces/iuser.interfaces';
 import { AuthService } from '../../core/services/auth/auth.service';
 
 @Component({

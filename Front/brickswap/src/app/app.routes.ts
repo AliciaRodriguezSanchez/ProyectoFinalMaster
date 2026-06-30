@@ -4,7 +4,7 @@ import { ArticleDetail } from './pages/article-detail/article-detail';
 import { ArticleForm } from './pages/article-form/article-form';
 import { AuthPage } from './pages/auth/pages/auth/auth';
 import { Register } from './pages/register/register';
-import { Home } from './pages/home/home';
+import { Home } from './interfaces/home';
 import { ModeradorPage } from './pages/moderador/moderador';
 import { AdminPage } from './pages/admin/admin';
 import { UserPanelPage } from './pages/user-panel/user-panel';

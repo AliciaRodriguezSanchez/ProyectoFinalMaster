@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { CategoryService } from '../../core/services/category/category.service';
-import type { ICategory } from '../../core/interfaces/icategory.interface';
+import type { ICategory } from '../../interfaces/icategory.interface';
 
 @Component({
   selector: 'app-admin',

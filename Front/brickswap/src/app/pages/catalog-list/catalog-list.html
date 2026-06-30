@@ -1,7 +1,8 @@
 <div class="container my-4">
   <div class="row">
-    
-    <div class="catalog-filter-overlay" [class.catalog-filter-overlay--open]="catalogFiltersService.isOpen()" (click)="closeFilters()"></div>
+
+    <div class="catalog-filter-overlay" [class.catalog-filter-overlay--open]="catalogFiltersService.isOpen()"
+      (click)="closeFilters()"></div>
 
     <aside class="catalog-filters col-12 col-lg-3 mb-4" [class.catalog-filters--open]="catalogFiltersService.isOpen()">
       <button class="catalog-filters__close" type="button" aria-label="Cerrar filtros" (click)="closeFilters()">
@@ -10,13 +11,9 @@
         </svg>
       </button>
 
-      <app-filter-sidebar 
-        [hasActiveFilters]="filtersApplied()"
-        [activeFiltersCount]="activeFiltersCount()"
-        [searchTextValue]="searchKeyword"
-        (onFilterChange)="onApplyCatalogFilters($event)" 
-        (onReset)="onResetCatalog()">
-        
+      <app-filter-sidebar [hasActiveFilters]="filtersApplied()" [activeFiltersCount]="activeFiltersCount()"
+        [searchTextValue]="searchKeyword" (onFilterChange)="onApplyCatalogFilters($event)" (onReset)="onResetCatalog()">
+
         <div class="mb-3">
           <label class="form-label small fw-semibold text-secondary">Categoría LEGO®</label>
           <select class="form-select form-select-sm" [(ngModel)]="selectedCategory">
@@ -50,25 +47,25 @@
             <label class="form-label small fw-semibold text-secondary">Precio máximo</label>
             <span class="badge bg-dark text-warning small">{{ maxPrice }}€</span>
           </div>
-          <input type="range" 
-                 class="form-range" 
-                 min="0" 
-                 max="1000" 
-                 step="10" 
-                 [(ngModel)]="maxPrice">
+          <input type="range" class="form-range" min="0" max="1000" step="10" [(ngModel)]="maxPrice">
         </div>
 
       </app-filter-sidebar>
     </aside>
 
     <main class="col-12 col-lg-9">
-      
-      <div class="d-flex justify-content-between align-items-center mb-3">
+
+      <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
         <h4 class="fw-bold text-dark m-0">Available Sets</h4>
-        <div class="catalog-toolbar__actions">
+
+        <div class="d-flex align-items-center gap-4">
           <span class="text-muted small fw-semibold">
-            Showing {{ filteredArticles().length }} results
+            {{ filteredArticles().length }} resultados
           </span>
+
+          <a class="btn btn-danger btn-sm text-white px-3" routerLink="/sell-article" routerLinkActive="btn-dark">
+            + ¡Vende tu set de Lego!
+          </a>
         </div>
       </div>
 
@@ -76,25 +73,19 @@
         <p class="m-0 fw-bold">Cargando artículos...</p>
       </div>
 
-      <div *ngIf="!isLoading() && filtersApplied() && filteredArticles().length === 0" class="alert alert-warning text-center border-0 shadow-sm rounded-3 py-4">
+      <div *ngIf="!isLoading() && filtersApplied() && filteredArticles().length === 0"
+        class="alert alert-warning text-center border-0 shadow-sm rounded-3 py-4">
         <p class="m-0 fw-bold">🧩 No hay sets de LEGO® que cumplan tus requerimientos.</p>
         <small class="text-muted">¡Intenta ajustar tus filtros o resetéalos y prueba de nuevo!</small>
       </div>
 
       <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
         <div class="col" *ngFor="let item of filteredArticles()">
-          
-          <ui-product-card
-            [imageUrl]="item.foto"
-            [title]="item.titulo"
-            [price]="item.precio"
-            [condition]="item.estado_articulo"
-            [showBadge]="true"
-            [badgeText]="item.estado_venta"
-            [publishedAt]="item.fecha_publicacion || ''"
-            [detailRoute]="['/article', item.id]"
-          ></ui-product-card>
-          
+
+          <ui-product-card [imageUrl]="item.foto" [title]="item.titulo" [price]="item.precio"
+            [condition]="item.estado_articulo" [showBadge]="true" [badgeText]="item.estado_venta"
+            [publishedAt]="item.fecha_publicacion || ''" [detailRoute]="['/article', item.id]"></ui-product-card>
+
         </div>
       </div>
 

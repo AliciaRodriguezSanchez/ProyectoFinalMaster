@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { MESSAGE_TYPE } from '../../core/constants/message';
 import { MESSAGE_TEXT } from '../../core/constants/message-text';
 import { UserRole } from '../../core/constants/user-role';
-import { IAConversationListItem } from '../../core/interfaces/iconversation.interfaces';
+import { IAConversationListItem } from '../../interfaces/iconversation.interfaces';
 import { AuthService } from '../../core/services/auth/auth.service';
 import { MessageService } from '../../core/services/message/message.service';
 import { ReportService } from '../../core/services/report/report.service';

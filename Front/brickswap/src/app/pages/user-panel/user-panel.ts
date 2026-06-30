@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 
 import { ArticleService } from '../../core/services/article/article.service';
 import { AuthService } from '../../core/services/auth/auth.service';
-import type { IArticle } from '../../core/interfaces/iarticles.interface';
+import type { IArticle } from '../../interfaces/iarticles.interface';
 
 type ManagementTab = 'selling' | 'sold' | 'favorites' | 'drafts';
 

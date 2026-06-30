@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { API_URL } from '../api';
-import type { ICategory } from '../../interfaces/icategory.interface';
+import type { ICategory } from '../../../interfaces/icategory.interface';
 
 interface CategoryResponse {
   message: string;

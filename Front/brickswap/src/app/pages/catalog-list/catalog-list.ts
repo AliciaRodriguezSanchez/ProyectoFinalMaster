@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { FilterSidebar } from '../../shared/components/filter-sidebar/filter-sidebar';
 import { UiProductCardComponent } from '../../shared/components/product-card/product-card.component';
@@ -11,7 +12,7 @@ import { CatalogFiltersService } from '../../core/services/catalog-filters/catal
 @Component({
   selector: 'app-catalog-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, FilterSidebar, UiProductCardComponent],
+  imports: [CommonModule, FormsModule, RouterModule, FilterSidebar, UiProductCardComponent],
   templateUrl: './catalog-list.html',
   styleUrl: './catalog-list.css'
 })

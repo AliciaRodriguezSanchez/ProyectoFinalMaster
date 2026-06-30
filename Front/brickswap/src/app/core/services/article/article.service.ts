@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, firstValueFrom } from "rxjs";
 import { Article } from "../../models/article/article.model";
-import { ICategory } from "../../interfaces/icategory.interface";
-import { IArticle } from "../../interfaces/iarticles.interface";
+import { ICategory } from "../../../interfaces/icategory.interface";
+import { IArticle } from "../../../interfaces/iarticles.interface";
 import { API_URL , ARTICLES, LAST_PUBLICATIONS, IN_PROMOTIONS} from "../api";
 
 @Injectable({
