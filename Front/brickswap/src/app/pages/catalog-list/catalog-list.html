@@ -63,12 +63,14 @@
             {{ filteredArticles().length }} resultados
           </span>
 
-          <ui-button
-            [label]="text.publishLabel"
-            variant="primary"
-            size="sm"
-            (clicked)="goToSellArticle()"
-          ></ui-button>
+          @if (canPublish()) {
+            <ui-button
+              [label]="text.publishLabel"
+              variant="primary"
+              size="sm"
+              (clicked)="goToSellArticle()"
+            ></ui-button>
+          }
         </div>
       </div>
 

@@ -8,8 +8,10 @@ import { UiProductCardComponent } from '../../shared/components/product-card/pro
 import { UiButtonComponent } from '../../shared/ui/button/ui-button.component';
 import { Article } from '../../core/models/article/article.model';
 import { ArticleService } from '../../core/services/article/article.service';
+import { AuthService } from '../../core/services/auth/auth.service';
 import { CatalogFiltersService } from '../../core/services/catalog-filters/catalog-filters.service';
 import { MESSAGE_TEXT } from '../../core/constants/message-text';
+import { UserRole } from '../../core/constants/user-role';
 
 @Component({
   selector: 'app-catalog-list',
@@ -26,6 +28,7 @@ export class CatalogList implements OnInit {
   filteredArticles = signal<Article[]>([]);
   isLoading = signal(false);
   filtersApplied = signal(false);
+  canPublish = signal(false);
   catalogFiltersService = inject(CatalogFiltersService);
 
   searchKeyword: string = '';
@@ -36,11 +39,13 @@ export class CatalogList implements OnInit {
   // INYECCIÓN DEL SERVICIO
   constructor(
     private articleService: ArticleService,
+    private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit() {
+    this.canPublish.set(this.authService.getCurrentRole() === UserRole.USER);
     this.catalogFiltersService.close();
     this.catalogFiltersService.setHasActiveFilters(false);
 
