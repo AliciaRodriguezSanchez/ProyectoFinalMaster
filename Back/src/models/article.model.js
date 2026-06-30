@@ -161,6 +161,43 @@ const getArticlesInPromotion = async () => {
 
 }
 
+//PUT /aritcles/:id
+
+const reportStateRefresh = async (id, nuevo_estado) =>{
+    const [result] = await db.query(`
+        UPDATE articulos 
+        SET estado_revision = ? 
+        WHERE id= ? 
+        `, [nuevo_estado, parseInt(id)]);
+    return result;
+}   
+
+const getArticlesNumber = async () => {
+    const [result] = await db.query(`
+        SELECT COUNT(*)
+        FROM articulos
+        `);
+    return result;
+}
+
+const getArticlesSoldNumber = async () => {
+    const [result] = await db.query(`
+        SELECT COUNT(*)
+        FROM articulos
+        WHERE estado_venta= 'Vendido'
+    `);
+    return result;
+}
+
+const getArticlesReviewNumber = async () => {
+    const [result] = await db.query(`
+        SELECT COUNT(*)
+        FROM articulos
+        WHERE estado_revision = 'Pendiente_Revision'        
+    `);
+    return result;
+}
+
 module.exports = {
     getAllArticles,
     getArticleById,
@@ -168,5 +205,9 @@ module.exports = {
     getArticlesInPromotion,
     createArticle,
     buyArticle,
-    reserveArticle
+    reserveArticle,
+    reportStateRefresh,
+    getArticlesNumber,
+    getArticlesSoldNumber,
+    getArticlesReviewNumber
 };

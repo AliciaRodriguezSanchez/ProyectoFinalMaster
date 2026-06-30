@@ -7,6 +7,10 @@ const articleController = require('../../controllers/article.controller');
 // RUTA BASE PARA CATÁLOGO GET /api/articles
 router.get('/', articleController.getAllArticles);
 
+router.get('/stadistic', articleController.getNumberArticles);
+router.get('/sold', articleController.getNumberArticlesSold);
+router.get('/review', articleController.getNumberArticlesReview);
+
 // obtener los últimos articulos publicados
 router.get('/lastPublications', articleController.getLastArticles);
 
@@ -27,5 +31,7 @@ router.put('/:id/reserve', articleController.reserveArticle);
 
 // RUTA PARA DETALLE ARTÍCULO POR ID GET /api/articles/:id
 router.get('/:id', articleController.getArticleById);
+
+router.put('/:id', articleController.updateState);
 
 module.exports = router;

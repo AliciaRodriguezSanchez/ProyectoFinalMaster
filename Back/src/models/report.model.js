@@ -236,11 +236,21 @@ const createReport = async (reportData) => {
     }
 };
 
+const getReportsNumber = async () => {
+    const [result] = await db.query(`
+        SELECT COUNT(*)
+        FROM reportes
+        WHERE estado_reporte = 'Pendiente'
+        `);
+    return result;
+}
+
 module.exports = {
     createReport,
     getStateReports,
     getReportsByComplainant,
     getReportsById,
     updateReportState,
-    getAllStadicticsState
+    getAllStadicticsState,
+    getReportsNumber
 };

@@ -16,7 +16,7 @@ export class TableComponent {
   typeTable = input<string>('pendientes');
   data = input<TableItem[]>([]); 
 
-  @Output() onGuardarResolucion = new EventEmitter<{id: number, estado: string, resolucion: string}>();
+  @Output() onGuardarResolucion = new EventEmitter<{id: number, estado: string, resolucion: string, estado_revision:string}>();
   @Output() ordenarEvent = new EventEmitter<void>();
 
   emitirOrden() {
@@ -37,7 +37,7 @@ export class TableComponent {
     this.reporteSeleccionado = null;
   }
 
-  procesarResolucion(datosResolucion: {id: number, estado: string, resolucion: string}){
+  procesarResolucion(datosResolucion: {id: number, estado: string, resolucion: string, estado_revision:string}){
     this.onGuardarResolucion.emit(datosResolucion);
     this.cerrarModal();
   }

@@ -3,7 +3,7 @@
 ########################################
 
 @baseUrl = http://localhost:3000/api
-@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMwLCJyb2xlIjoxLCJuYW1lIjoiQWRtaW4iLCJzdXJuYW1lIjoiQWRtaW4gQWRtaW4iLCJ1c2VybmFtZSI6ImRhbmlyb290IiwiaWF0IjoxNzgyMjI4ODI5fQ.N5k7VEBOwS-XEo6RJnrkRDq6ppsZHJq-5M3A6yvh72M
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIxLCJyb2xlIjoyLCJuYW1lIjoiQWRtaW4iLCJzdXJuYW1lIjoiQWRtaW4gQWRtaW4iLCJ1c2VybmFtZSI6ImRhbmlyb290IiwiaWF0IjoxNzgyNzI3NDE3fQ.dKmrAAdXWRhhMxeBcfhpidStlKiK4zb46mIxZKX6etg
 
 ########################################
 # TEST SERVER
@@ -26,12 +26,25 @@ GET {{baseUrl}}/categories
 ### Obtener todos los artículos (con filtros opcionales)
 GET {{baseUrl}}/articles
 
-###
+### 
+GET {{baseUrl}}/articles/stadistic
+
+### 
+GET {{baseUrl}}/articles/sold
+
+### 
+GET {{baseUrl}}/articles/review
 
 ### Obtener artículo por ID
 GET {{baseUrl}}/articles/1
 
-###
+### Obtener artículo por ID
+PUT {{baseUrl}}/articles/1
+Content-Type: application/json
+
+{
+  "estado_revision":"Rechazado"
+}
 
 ### Crear artículo
 POST {{baseUrl}}/articles
@@ -124,6 +137,10 @@ GET {{baseUrl}}/messages/conversation/{{messageArticleId}}/{{messageSellerId}}
 
 ### Todos los reportes
 GET {{baseUrl}}/reports
+Authorization: {{TOKEN}}
+
+### Todos los reportes
+GET {{baseUrl}}/reports/count
 Authorization: {{TOKEN}}
 
 ### Reportes pendientes
@@ -238,3 +255,6 @@ GET  {{baseUrl}}/messages/conversation/1/1
 ### Recuperar reportes de moderador/admin
 
 GET  {{baseUrl}}/reports
+
+###
+GET {{baseUrl}}/users/count

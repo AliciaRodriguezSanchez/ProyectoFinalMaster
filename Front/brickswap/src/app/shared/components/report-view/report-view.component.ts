@@ -13,7 +13,7 @@ export class ReportViewComponent {
   reporte = input<any>();
   estado= input<string>('Pendiente');
   @Output() onClose = new EventEmitter<void>();
-  @Output() onResolve = new EventEmitter<{id: number, estado: string, resolucion: string}>();
+  @Output() onResolve = new EventEmitter<{id: number, estado: string, resolucion: string, estado_revision: string}>();
 
   resolucionText: string ='';
 
@@ -29,11 +29,13 @@ export class ReportViewComponent {
     if (!this.resolucionText.trim()) return;
 
     const estadoReporte = accion === 'aprobar' ? 'Revisado_Mantenido' : 'Revisado_Retirado';
-
+    const estadoArticulo = accion === 'aprobar' ? 'Publicado' : 'Rechazado';
+ 
     this.onResolve.emit({
       id: this.reporte().id,
       estado: estadoReporte,
-      resolucion: this.resolucionText
+      resolucion: this.resolucionText,
+      estado_revision: estadoArticulo
     })
   }
 }

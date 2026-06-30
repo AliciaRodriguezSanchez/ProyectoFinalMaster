@@ -1,3 +1,12 @@
-<main class="admin-page">
-  <h1>Panel de administracion</h1>
-</main>
+<section class="container">
+    <app-title size="medium" text="Panel de Administración"></app-title> 
+    <app-descriptions format="label" text="Hola Administrador, gestiona todos los aspectos del sistema."></app-descriptions>
+    <div class="row row-cols-1 row-cols-lg-5 g-4 mt-4">
+      @for(stadistic of totalStadistics(); track $index){
+        <div class="col">
+          <app-card-panel class="w-100 d-block h-100" [stat]="stadistic"></app-card-panel>
+        </div>
+      }
+    </div>
+</section>
+
