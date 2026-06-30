@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/angular';
 
-import { TagComponent } from '../shared/tag/tag.component';
+import { TagComponent } from '../shared/ui/tag/tag.component';
 
 const meta: Meta<TagComponent> = {
   title: 'Shared/UI/Tag',
