@@ -42,8 +42,9 @@ export class Home implements OnInit {
   isLoadingProductsInPromotion = signal(true);
   categoryItems = computed<UiCarrouselItem[]>(() =>
     this.categories().map((category, index) => {
+      // Sirve para repetir estilos en bucle sin salirse del array.
       const style = CATEGORY_STYLES[index % CATEGORY_STYLES.length];
-
+      // si en la bbdd tenemos el icono se mapea el de bbdd si no usa
       return {
         id: category.id,
         icon: category.icono?.trim() || style.icon,

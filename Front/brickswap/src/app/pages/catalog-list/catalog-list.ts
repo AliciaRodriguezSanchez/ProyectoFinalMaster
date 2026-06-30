@@ -2,21 +2,24 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FilterSidebar } from '../../shared/components/filter-sidebar/filter-sidebar';
 import { UiProductCardComponent } from '../../shared/components/product-card/product-card.component';
+import { UiButtonComponent } from '../../shared/ui/button/ui-button.component';
 import { Article } from '../../core/models/article/article.model';
 import { ArticleService } from '../../core/services/article/article.service';
 import { CatalogFiltersService } from '../../core/services/catalog-filters/catalog-filters.service';
+import { MESSAGE_TEXT } from '../../core/constants/message-text';
 
 @Component({
   selector: 'app-catalog-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, FilterSidebar, UiProductCardComponent],
+  imports: [CommonModule, FormsModule, RouterModule, FilterSidebar, UiProductCardComponent, UiButtonComponent],
   templateUrl: './catalog-list.html',
   styleUrl: './catalog-list.css'
 })
 export class CatalogList implements OnInit {
+  protected readonly text = MESSAGE_TEXT.catalog;
   
   // ARRAY PRINCIPAL
   articles: Article[] = [];
@@ -33,7 +36,8 @@ export class CatalogList implements OnInit {
   // INYECCIÓN DEL SERVICIO
   constructor(
     private articleService: ArticleService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -104,6 +108,10 @@ export class CatalogList implements OnInit {
 
   closeFilters() {
     this.catalogFiltersService.close();
+  }
+
+  goToSellArticle(): void {
+    this.router.navigate(['/sell-article']);
   }
 
   activeFiltersCount(): number {

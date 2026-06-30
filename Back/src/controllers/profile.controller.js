@@ -1,13 +1,14 @@
 const bcrypt = require('bcryptjs');
 const Profile = require('../models/profile.model');
 const { createAuthToken } = require('../utils/auth-token');
+const { ERROR_MESSAGE_TEXT } = require('../constants/error-message.text');
 
 const getMe = async (req, res) => {
     try {
         const profile = await getProfileResponse(req.user.id);
 
         if (!profile) {
-            return res.status(404).json({ message: 'Perfil no encontrado' });
+            return res.status(404).json({ message: ERROR_MESSAGE_TEXT.profile.notFound });
         }
 
         res.json(profile);
@@ -21,19 +22,19 @@ const updateMe = async (req, res) => {
         const { name, lastname, username, email, photoUrl } = req.body;
 
         if (!name || !lastname || !username || !email) {
-            return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.common.requiredFields });
         }
 
         const emailExists = await Profile.selectByEmailOtherUser(email, req.user.id);
 
         if (emailExists) {
-            return res.status(409).json({ message: 'Ese email ya está registrado' });
+            return res.status(409).json({ message: ERROR_MESSAGE_TEXT.user.duplicatedEmail });
         }
 
         const usernameExists = await Profile.selectByUsernameOtherUser(username, req.user.id);
 
         if (usernameExists) {
-            return res.status(409).json({ message: 'Ese nombre de usuario ya está registrado' });
+            return res.status(409).json({ message: ERROR_MESSAGE_TEXT.user.duplicatedUsername });
         }
 
         const formattedName = capitalizar(name);
@@ -50,7 +51,7 @@ const updateMe = async (req, res) => {
         const profile = await getProfileResponse(req.user.id);
 
         if (!profile) {
-            return res.status(404).json({ message: 'Perfil no encontrado' });
+            return res.status(404).json({ message: ERROR_MESSAGE_TEXT.profile.notFound });
         }
 
         const token = createAuthToken({
@@ -76,13 +77,13 @@ const checkPassword = async (req, res) => {
         const { currentPassword } = req.body;
 
         if (!currentPassword) {
-            return res.status(400).json({ message: 'Introduce la contraseña actual' });
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.profile.currentPasswordRequired });
         }
 
         const isPasswordOk = await isCurrentPasswordOk(req.user.id, currentPassword);
 
         if (!isPasswordOk) {
-            return res.status(400).json({ message: 'La contraseña actual no es correcta' });
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.profile.invalidCurrentPassword });
         }
 
         res.json({ message: 'Contraseña actual correcta' });
@@ -96,17 +97,17 @@ const changePassword = async (req, res) => {
         const { currentPassword, newPassword, repeatPassword } = req.body;
 
         if (!currentPassword || !newPassword || !repeatPassword) {
-            return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.common.requiredFields });
         }
 
         if (newPassword !== repeatPassword) {
-            return res.status(400).json({ message: 'Las contraseñas no coinciden' });
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.user.passwordMismatch });
         }
 
         const isPasswordOk = await isCurrentPasswordOk(req.user.id, currentPassword);
 
         if (!isPasswordOk) {
-            return res.status(400).json({ message: 'La contraseña actual no es correcta' });
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.profile.invalidCurrentPassword });
         }
 
         const hashedPassword = bcrypt.hashSync(newPassword, 8);

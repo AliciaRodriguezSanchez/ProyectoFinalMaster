@@ -1,4 +1,5 @@
 const Favorite = require('../models/favorite.model');
+const { ERROR_MESSAGE_TEXT } = require('../constants/error-message.text');
 
 // POST /api/favorites AÑADIR ARTÍCULO A LISTA DE FAVORITOS
 const addFavorite = async (req, res) => {
@@ -8,7 +9,7 @@ const addFavorite = async (req, res) => {
 
         // VALIDACIÓN BÁSICA
         if (!perfil_id || !articulo_id) {
-            return res.status(400).json({ message: 'Todos los campos son obligatorios'});
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.common.requiredFields});
         }
 
         // CONTROLAR DUPLICADOS Y SI YA ESTÁ EN TU LISTA DE FAVORITOS
@@ -19,7 +20,7 @@ const addFavorite = async (req, res) => {
 
         if (existing.length > 0) {
             return res.status(400).json({
-                message: 'Este artículo ya se encuentra en tu lista de favoritos'
+                message: ERROR_MESSAGE_TEXT.favorite.duplicated
             });
         }
 
@@ -38,7 +39,7 @@ const addFavorite = async (req, res) => {
         console.error('Error crítico al añadir a favoritos:', error.message);
 
         return res.status(500).json({
-            message: 'Server error al guardar a favoritos'
+            message: ERROR_MESSAGE_TEXT.favorite.saveError
         });
     }
 };
@@ -50,7 +51,7 @@ const getFavoritesByProfileId = async (req, res) => {
 
     if (!profileId || Number.isNaN(Number(profileId))) {
       return res.status(400).json({
-        message: 'El identificador del perfil no es válido'
+        message: ERROR_MESSAGE_TEXT.common.invalidProfileId
       });
     }
 
@@ -66,7 +67,7 @@ const getFavoritesByProfileId = async (req, res) => {
     );
 
     return res.status(500).json({
-      message: 'Error del servidor al obtener los favoritos'
+      message: ERROR_MESSAGE_TEXT.favorite.loadError
     });
   }
 };

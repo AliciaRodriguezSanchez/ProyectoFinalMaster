@@ -1,4 +1,6 @@
 const Category = require('../models/category.model');
+const { ERROR_CODES } = require('../constants/error-codes');
+const { ERROR_MESSAGE_TEXT } = require('../constants/error-message.text');
 
 // GET /api/categories
 const getAllCategories = async (req, res) => {
@@ -10,7 +12,7 @@ const getAllCategories = async (req, res) => {
         console.error('Error al obtener categorías:', error.message);
 
         res.status(500).json({
-            message: 'Error del servidor al obtener las categorías'
+            message: ERROR_MESSAGE_TEXT.category.loadError
         });
     }
 };
@@ -23,7 +25,7 @@ const createCategory = async (req, res) => {
         // Validamos que exista un nombre
         if (!nombre || nombre.trim() === '') {
             return res.status(400).json({
-                message: 'El nombre de la categoría es obligatorio'
+                message: ERROR_MESSAGE_TEXT.category.nameRequired
             });
         }
 
@@ -46,14 +48,14 @@ const createCategory = async (req, res) => {
         console.error('Error al crear categoría:', error.message);
 
         // MySQL devuelve este código si intentamos repetir un valor UNIQUE
-        if (error.code === 'ER_DUP_ENTRY') {
+        if (error.code === ERROR_CODES.duplicateEntry) {
             return res.status(409).json({
-                message: 'Ya existe una categoría con ese nombre'
+                message: ERROR_MESSAGE_TEXT.category.duplicatedName
             });
         }
 
         res.status(500).json({
-            message: 'Error del servidor al crear la categoría'
+            message: ERROR_MESSAGE_TEXT.category.createError
         });
     }
 };
@@ -66,7 +68,7 @@ const updateCategory = async (req, res) => {
 
         if (!nombre || nombre.trim() === '') {
             return res.status(400).json({
-                message: 'El nombre de la categoría es obligatorio'
+                message: ERROR_MESSAGE_TEXT.category.nameRequired
             });
         }
 
@@ -78,7 +80,7 @@ const updateCategory = async (req, res) => {
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
-                message: 'Categoría no encontrada'
+                message: ERROR_MESSAGE_TEXT.category.notFound
             });
         }
 
@@ -94,14 +96,14 @@ const updateCategory = async (req, res) => {
     } catch (error) {
         console.error('Error al actualizar categoría:', error.message);
 
-        if (error.code === 'ER_DUP_ENTRY') {
+        if (error.code === ERROR_CODES.duplicateEntry) {
             return res.status(409).json({
-                message: 'Ya existe una categoría con ese nombre'
+                message: ERROR_MESSAGE_TEXT.category.duplicatedName
             });
         }
 
         res.status(500).json({
-            message: 'Error del servidor al actualizar la categoría'
+            message: ERROR_MESSAGE_TEXT.category.updateError
         });
     }
 };
@@ -115,7 +117,7 @@ const deleteCategory = async (req, res) => {
 
         if (result.affectedRows === 0) {
             return res.status(404).json({
-                message: 'Categoría no encontrada'
+                message: ERROR_MESSAGE_TEXT.category.notFound
             });
         }
 
@@ -126,14 +128,14 @@ const deleteCategory = async (req, res) => {
         console.error('Error al eliminar categoría:', error.message);
 
         // Ocurre si la categoría está siendo utilizada por artículos
-        if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+        if (error.code === ERROR_CODES.rowIsReferenced) {
             return res.status(409).json({
-                message: 'No se puede eliminar porque la categoría está siendo utilizada'
+                message: ERROR_MESSAGE_TEXT.category.deleteInUse
             });
         }
 
         res.status(500).json({
-            message: 'Error del servidor al eliminar la categoría'
+            message: ERROR_MESSAGE_TEXT.category.deleteError
         });
     }
 };

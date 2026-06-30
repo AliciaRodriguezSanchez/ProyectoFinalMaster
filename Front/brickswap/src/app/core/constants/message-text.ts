@@ -12,7 +12,13 @@ export const MESSAGE_TEXT = {
     latestProductsLoadError: 'No se han podido cargar los últimos productos',
     promotionProductsLoadError: 'No se han podido cargar los productos en promoción',
   },
+  catalog: {
+    publishLabel: 'Publicar',
+  },
   articleForm: {
+    categoriesLoadError: 'No se han podido cargar las categorías',
+    loginRequired: 'Necesitas haber iniciado sesión antes de querer hacer esta acción',
+    imageUrlInvalid: 'La foto debe ser una URL válida de máximo 200 caracteres',
     createSuccess: '¡Éxito! Gracias por utilizar Brickswap. El artículo se ha subido correctamente.',
     createError: '¡Error! El artículo no se ha podido subir a Brickswap.',
   },

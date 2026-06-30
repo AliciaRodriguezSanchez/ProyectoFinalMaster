@@ -7,10 +7,9 @@
   display: block;
   margin-bottom: 9px;
   color: var(--brick-color-label);
-  font-size: var(--brick-font-size-sm);
-  font-weight: 900;
-  letter-spacing: var(--brick-letter-spacing-label);
-  text-transform: uppercase;
+  font-size: var(--brick-font-size-md);
+  font-weight: var(--brick-font-weight-l);
+  letter-spacing: var(--brick-letter-spacing-none);
 }
 
 .ui-textarea__required {
@@ -30,6 +29,8 @@
   box-shadow: var(--brick-shadow-md);
   color: var(--brick-color-text);
   font: inherit;
+  font-size: var(--brick-font-size-base);
+  line-height: 1.35;
   resize: vertical;
 }
 
@@ -63,5 +64,5 @@
   margin-top: 6px;
   color: var(--brick-color-danger);
   font-size: var(--brick-font-size-sm);
-  font-weight: 700;
+  font-weight: var(--brick-font-weight-l);
 }

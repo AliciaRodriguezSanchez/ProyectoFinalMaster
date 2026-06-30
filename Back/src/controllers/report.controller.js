@@ -1,4 +1,5 @@
 const Report = require('../models/report.model');
+const { ERROR_MESSAGE_TEXT } = require('../constants/error-message.text');
 
 // GET /api/reports?estado=pendiente G2
 const stateReports = async (req, res) => {
@@ -9,7 +10,7 @@ const stateReports = async (req, res) => {
     }catch (error){
         console.log("ERROR REAL:", error);
         res.status(500).json({
-            message: 'Error al cargar los Reportes pendientes'
+            message: ERROR_MESSAGE_TEXT.report.pendingLoadError
         });
     }
 };
@@ -21,7 +22,7 @@ const reportsByUser = async (req, res) => {
 
         if (!Number.isInteger(userId)) {
             return res.status(400).json({
-                message: 'El identificador del usuario debe ser un número válido'
+                message: ERROR_MESSAGE_TEXT.common.invalidUserId
             });
         }
 
@@ -30,7 +31,7 @@ const reportsByUser = async (req, res) => {
     } catch (error) {
         console.log("ERROR REAL:", error);
         res.status(500).json({
-            message: 'Error al cargar los reportes del usuario'
+            message: ERROR_MESSAGE_TEXT.report.userReportsLoadError
         });
     }
 };
@@ -42,14 +43,14 @@ const reportsById = async (req, res) => {
         const report = await Report.getReportsById(id);
         if(!report){
             return res.status(404).json({
-                message: 'Reporte no encontrado'
+                message: ERROR_MESSAGE_TEXT.report.notFound
             })
         }
         res.json(report);
     }catch (error){
         console.log("ERROR REAL:", error);
         res.status(500).json({
-            message: 'Error al cargar el reporte'
+            message: ERROR_MESSAGE_TEXT.report.loadError
         });
     }
 };
@@ -62,7 +63,7 @@ const stateStadistics = async (req, res) => {
     }catch (error){
         console.log("ERROR REAL:", error);
         res.status(500).json({
-            message: 'Error al cargar las estadísticas de estado'
+            message: ERROR_MESSAGE_TEXT.report.statsLoadError
         });   
     }
 }
@@ -79,7 +80,7 @@ const updateReportStatus = async (req, res) => {
     }catch (error){
         console.log("ERROR REAL:", error);
         res.status(500).json({
-            message: 'Error al actualizar el estado del reporte'
+            message: ERROR_MESSAGE_TEXT.report.updateError
         });  
     }
 };
@@ -99,7 +100,7 @@ const createReport = async (req, res) => {
         // VALIDACIÓN BÁSICA
         if (!motivo || !denunciante_id || !denunciado_id || !articulo_id) {
             return res.status(400).json({
-                message: 'Todos los campos obligatorios son necesarios para procesar la denuncia'
+                message: ERROR_MESSAGE_TEXT.report.requiredFields
             });
         }
 
@@ -119,7 +120,7 @@ const createReport = async (req, res) => {
     } catch (error) {
         console.error('Error al crear el reporte:', error.message);
         res.status(500).json({
-            message: 'Server error while creating report'
+            message: ERROR_MESSAGE_TEXT.report.createError
         });
     }
 };

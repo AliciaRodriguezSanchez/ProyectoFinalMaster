@@ -1,4 +1,5 @@
 const Review = require('../models/review.model');
+const { ERROR_MESSAGE_TEXT } = require('../constants/error-message.text');
 
 //POST /api/reviews
 const createReview = async(req, res) => {
@@ -16,7 +17,7 @@ const createReview = async(req, res) => {
         // VALIDACIÓN DE PARÁMETROS
         if (!puntuacion || !comentario || !emisor_id || !articulo_id) {
             return res.status(400).json({
-                message: 'Todos los campos son obligatorios'
+                message: ERROR_MESSAGE_TEXT.common.requiredFields
             });
         }
 
@@ -37,7 +38,7 @@ const createReview = async(req, res) => {
     } catch (error) {
         console.error('Error al crear la valoración:', error.message);
         res.status(500).json({
-            message: 'Server error al crear la valoración'
+            message: ERROR_MESSAGE_TEXT.review.createError
         });
     }
 };
