@@ -3,12 +3,18 @@
 ########################################
 
 @baseUrl = http://localhost:3000/api
-@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIxLCJyb2xlIjoyLCJuYW1lIjoiQWRtaW4iLCJzdXJuYW1lIjoiQWRtaW4gQWRtaW4iLCJ1c2VybmFtZSI6ImRhbmlyb290IiwiaWF0IjoxNzgyNzI3NDE3fQ.dKmrAAdXWRhhMxeBcfhpidStlKiK4zb46mIxZKX6etg
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIxLCJyb2xlIjozLCJuYW1lIjoiQWRtaW4iLCJzdXJuYW1lIjoiQWRtaW4gQWRtaW4iLCJ1c2VybmFtZSI6ImRhbmlyb290IiwiaWF0IjoxNzgyODEzNDU4fQ.fY5HXFjWkIAk6mHvZKFn0Vea0ke7jcwxPVUV8Z5hZh8
 
 ########################################
 # TEST SERVER
 ########################################
 GET {{baseUrl}}/test
+
+########################################
+# Users
+########################################
+GET {{baseUrl}}/users
+Authorization: {{TOKEN}}
 
 
 ########################################

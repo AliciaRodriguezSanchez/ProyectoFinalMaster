@@ -61,6 +61,15 @@ const numberUsers = async () => {
     return result;
 }
 
+const getAllUsers = async () => {
+    const [result] = await db.query(`
+        SELECT p.nombre, p.apellidos, p.email, r.nombre_rol, p.estado_cuenta
+        FROM perfiles AS p 
+        JOIN roles AS r ON p.rol_id==r.id
+        `);
+    return result;
+}
+
 module.exports = {
     insert,
     selectByEmail,
@@ -68,5 +77,6 @@ module.exports = {
     selectByUsername,
     updatePasswordByEmail,
     updatePasswordByEmailAndUsername,
-    numberUsers
+    numberUsers,
+    getAllUsers
 }
