@@ -6,4 +6,5 @@ export interface IPendingTable {
     time: string;
     status: string;
     resolution?: string;
+    article_id?: number;
 }

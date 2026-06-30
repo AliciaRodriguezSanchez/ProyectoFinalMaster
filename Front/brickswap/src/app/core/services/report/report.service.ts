@@ -87,5 +87,15 @@ export class ReportService {
 
   }
 
+  getReportsP(): Promise<any>{
+    const token = localStorage.getItem('token')
+    const headers = new HttpHeaders({
+      'Authorization': `${token}`
+    });
+    return firstValueFrom(
+      this.http.get<any>(`${API_URL}/reports/count`, {headers})
+    );
+  }
+
 
 }

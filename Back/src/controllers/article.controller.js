@@ -183,6 +183,52 @@ const getArticlesInPromotion = async (req, res) => {
     }
 }
 
+//Update state
+
+const updateState = async (req, res) => {
+    try{
+        const id = req.params.id;
+        const {estado_revision} = req.body;
+        const result = await Article.reportStateRefresh(id, estado_revision);
+        res.json(result)
+    }catch (error){
+        console.error('Error al obtener los artículos: ', error.message);
+        res.status(500).json({ message: 'Error al actualizar los artículos' });
+    }
+}
+
+// Get number of articles per state
+
+const getNumberArticles = async (req, res) => {
+    try{
+        const result = await Article.getArticlesNumber();
+        res.json(result);
+    }catch (error){
+        console.error('Error al obtener los artículos: ', error.message);
+        res.status(500).json({ message: 'Error al obtener el número de artículos' });
+    }
+}
+
+const getNumberArticlesSold = async (req, res) => {
+    try{
+        const result = await Article.getArticlesSoldNumber();
+        res.json(result);
+    }catch (error){
+        console.error('Error al obtener los artículos: ', error.message);
+        res.status(500).json({ message: 'Error al obtener el número de artículos' });
+    }
+}
+
+const getNumberArticlesReview = async (req, res) => {
+    try{
+        const result = await Article.getArticlesReviewNumber();
+        res.json(result);
+    }catch (error){
+        console.error('Error al obtener los artículos: ', error.message);
+        res.status(500).json({ message: 'Error al obtener el número de artículos' });
+    }
+}
+
 // GET /api/articles/profile/:profileId
 const getArticlesByProfileId = async (req, res) => {
   try {
@@ -216,6 +262,11 @@ module.exports = {
     getArticlesInPromotion,
     createArticle,
     buyArticle,
+    reserveArticle,
+    updateState,
+    getNumberArticles,
+    getNumberArticlesSold,
+    getNumberArticlesReview,
     reserveArticle,
     getArticlesByProfileId
 };

@@ -5,6 +5,7 @@ import { Article } from "../../models/article/article.model";
 import { ICategory } from "../../../interfaces/icategory.interface";
 import { IArticle } from "../../../interfaces/iarticles.interface";
 import { API_URL , ARTICLES, LAST_PUBLICATIONS, IN_PROMOTIONS} from "../api";
+import { App } from "../../../app";
 
 @Injectable({
   providedIn: 'root'
@@ -74,6 +75,34 @@ export class ArticleService {
   getArticlesInPromotions(): Promise<IArticle[]> {
     return firstValueFrom(
       this.http.get<IArticle[]>(`${API_URL}/${ARTICLES}/${IN_PROMOTIONS}`)
+    );
+  }
+
+  //PUT /articles/id cambio de estado revisión G2
+  updateState(id: number, estado_revision:string): Promise<any>{
+    const body = {
+      estado_revision
+    }
+    return firstValueFrom(
+      this.http.put<any>(`${API_URL}/articles/${id}`, body)
+    );
+  }
+
+  getNumberArticles(): Promise<any>{
+    return firstValueFrom(
+      this.http.get<any>(`${API_URL}/articles/stadistic`)
+    );
+  }
+
+  getNumberArticlesSold(): Promise<any>{
+    return firstValueFrom(
+      this.http.get<any>(`${API_URL}/articles/sold`)
+    );
+  }
+
+  getNumberArticlesReview(): Promise<any>{
+    return firstValueFrom(
+      this.http.get<any>(`${API_URL}/articles/review`)
     );
   }
 

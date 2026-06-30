@@ -3,4 +3,6 @@ export interface IStat {
     color?: string;
     stadistics: number ;
     label: string;
+    bgClass?: string;
+    nombreMostrar?: string;
 }

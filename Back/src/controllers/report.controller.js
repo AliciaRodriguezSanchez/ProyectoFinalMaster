@@ -125,11 +125,24 @@ const createReport = async (req, res) => {
     }
 };
 
+const getNumberReports = async (req, res) => {
+    try{
+        const reports = await Report.getReportsNumber();
+        res.json(reports);
+    }catch (error){
+        console.log("ERROR REAL:", error);
+        res.status(500).json({
+            message: 'Error al cargar el número de los Reportes pendientes'
+        });
+    }
+};
+
 module.exports = {
     createReport,
     stateReports,
     reportsByUser,
     reportsById,
     updateReportStatus,
-    stateStadistics
+    stateStadistics,
+    getNumberReports
 };

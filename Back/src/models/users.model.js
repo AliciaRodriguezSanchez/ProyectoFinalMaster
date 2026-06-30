@@ -54,11 +54,19 @@ const updatePasswordByEmailAndUsername = async (email, username, password) => {
     return result;
 }
 
+const numberUsers = async () => {
+    const [result] = await db.query(`
+        SELECT COUNT(*) FROM perfiles;
+        `);
+    return result;
+}
+
 module.exports = {
     insert,
     selectByEmail,
     selectByEmailAndUsername,
     selectByUsername,
     updatePasswordByEmail,
-    updatePasswordByEmailAndUsername
+    updatePasswordByEmailAndUsername,
+    numberUsers
 }

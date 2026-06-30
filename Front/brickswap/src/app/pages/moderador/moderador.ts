@@ -4,28 +4,35 @@ import { DescriptionsComponent } from '../../shared/ui/descriptions/descriptions
 import { IStat } from '../../interfaces/istat.interface';
 import { ReportService } from '../../core/services/report/report.service';
 import { CardPanelComponent } from '../../shared/card-panel/card-panel.component';
-
 import { ActivatedRoute, Router } from '@angular/router';
 import { IPendingTable } from '../../interfaces/ipending-table.interface';
 import { TableComponent } from '../../shared/table/table.component';
+import { ArticleService } from '../../core/services/article/article.service';
 
-// Define los estados exactos que te devuelve la base de datos
-const CONFIGURACION_ESTADOS: Record<string, { icon: string, color: string }> = {
-  'Pendiente': { 
-    icon: 'bi bi-exclamation-triangle small', 
-    color: 'text-warning' 
+const CONFIGURACION_ESTADOS: Record<string, { icon: string, color: string, bgClass: string, nombreMostrar: string }> = {
+  'Pendiente': {
+    icon: 'bi bi-exclamation-triangle small',
+    color: 'text-warning',
+    bgClass: 'bg-warning-subtle',
+    nombreMostrar: 'Pendientes'
   },
-  'Revisado_Mantenido': { 
-    icon: 'bi-check-circle-fill', 
-    color: 'text-success' 
+  'Revisado_Mantenido': {
+    icon: 'bi-check-circle-fill',
+    color: 'text-success',
+    bgClass: 'bg-success-subtle',
+    nombreMostrar: 'Aceptados'
   },
-  'Revisado_Retirado': { 
-    icon: 'bi-x-circle-fill', 
-    color: 'text-danger' 
+  'Revisado_Retirado': {
+    icon: 'bi-x-circle-fill',
+    color: 'text-danger',
+    bgClass: 'bg-danger-subtle',
+    nombreMostrar: 'Rechazados'
   },
-  'default': { 
-    icon: 'bi-info-circle', 
-    color: 'text-primary' 
+  'default': {
+    icon: 'bi-info-circle',
+    color: 'text-primary',
+    bgClass: 'bg-primary-subtle',
+    nombreMostrar: 'Otros'
   }
 };
 
@@ -43,6 +50,7 @@ export class ModeradorPage {
 
   constructor(
     private reportServices: ReportService,
+    private articleService: ArticleService,
     private router: Router,
     private route: ActivatedRoute
   ){}
@@ -56,12 +64,11 @@ export class ModeradorPage {
       })
   };
 
-  ordenarAscendente: boolean = false; // Falso = más reciente primero
+  ordenarAscendente: boolean = false; 
 
   cambiarOrden() {
     this.ordenarAscendente = !this.ordenarAscendente;
     
-    // Ordenamos el array actual que tienes en la señal
     const listaActual = [...this.reportsTables()];
     
     listaActual.sort((a, b) => {
@@ -92,7 +99,8 @@ export class ModeradorPage {
         reason: item.motivo,
         time: item.fecha_reporte,
         status: item.estado_reporte,
-        resolution: item.resolucion_comentario
+        resolution: item.resolucion_comentario,
+        article_id: item.articulo_id
       }));
       this.reportsTables.set(datosMapeados);
       console.log('Datos de la tabla', datosMapeados);
@@ -109,10 +117,27 @@ export class ModeradorPage {
 
         return {
           label: dato.Estado,
+          nombreMostrar: configVisual.nombreMostrar,
           stadistics: dato.total_reportes,
           icon: configVisual.icon,
-          color: configVisual.color
+          color: configVisual.color,
+          bgClass: configVisual.bgClass
         };
+      });
+
+      const estadosBase = ['Pendiente', 'Revisado_Retirado', 'Revisado_Mantenido'];
+      estadosBase.forEach(estado => {
+        if (!datosMapeados.some((d: any) => d.label === estado)) {
+          const configVisual = CONFIGURACION_ESTADOS[estado] || CONFIGURACION_ESTADOS['default'];
+          datosMapeados.push({
+            label: estado,
+            nombreMostrar: configVisual.nombreMostrar,
+            stadistics: 0,
+            icon: configVisual.icon,
+            color: configVisual.color,
+            bgClass: configVisual.bgClass
+          });
+        }
       });
       const ordenDeseado: Record<string, number> = {
         'Pendiente': 1,
@@ -133,13 +158,25 @@ export class ModeradorPage {
     }
   }
 
-  async guardarResolucion(datosResolucion: {id: number, estado: string, resolucion: string}){
+  async guardarResolucion(datosResolucion: {id: number, estado: string, resolucion: string, estado_revision:string}){
 
     try{
       await this.reportServices.actualizarReporte(datosResolucion);
-  
+      console.log('Estos son los dtaos de Resolución',datosResolucion);
+
       const reportesActuales = this.reportsTables();
-  
+      
+      const reporteActual = reportesActuales.find((r:any) => r.id == datosResolucion.id);
+      console.log('Reporte Actula info', reporteActual);
+
+      const idArticulo = reporteActual?.article_id;
+
+      if(idArticulo){
+        await this.articleService.updateState(idArticulo, datosResolucion.estado_revision);
+        console.log('Estado del artículo actualizado', idArticulo, datosResolucion.estado_revision);
+      }else{
+        console.error('No se encontró el articulo_id en el reporte actual')
+      }
       const reportesActualizados = reportesActuales.filter((r:any) =>
         r.id !== datosResolucion.id);
   

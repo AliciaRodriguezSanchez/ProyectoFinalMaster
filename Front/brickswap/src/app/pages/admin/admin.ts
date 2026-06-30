@@ -1,198 +1,100 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, signal } from '@angular/core';
+import { TitleComponent } from '../../shared/ui/titles/title.component';
+import { DescriptionsComponent } from '../../shared/ui/descriptions/descriptions.component';
+import { CardPanelComponent } from '../../shared/card-panel/card-panel.component';
+import { IStat } from '../../interfaces/istat.interface';
+import { ArticleService } from '../../core/services/article/article.service';
+import { UserService } from '../../core/services/user/user.service';
+import { ReportService } from '../../core/services/report/report.service';
 
-import { CategoryService } from '../../core/services/category/category.service';
-import type { ICategory } from '../../interfaces/icategory.interface';
+const CONFIGURACION_GLOBAL: Record<string, any> = {
+  'Usuarios totales': { icon: 'bi-people-fill', color: 'text-primary', bgClass: 'bg-primary-subtle' },
+  'Artículos publicados': { icon: 'bi-box-seam', color: 'text-success', bgClass: 'bg-success-subtle' },
+  'Artículos vendidos': { icon: 'bi-graph-up-arrow', color: 'text-info', bgClass: 'bg-info-subtle' },
+  'En revisión': { icon: 'bi-exclamation-triangle-fill', color: 'text-warning', bgClass: 'bg-warning-subtle' },
+  'Reportes pendientes': { icon: 'bi-exclamation-circle-fill', color: 'text-danger', bgClass: 'bg-danger-subtle' }
+};
+
+const ORDEN_TARJETAS = [
+  'Usuarios totales',
+  'Artículos publicados',
+  'Artículos vendidos',
+  'En revisión',
+  'Reportes pendientes'
+];
 
 @Component({
   selector: 'app-admin',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [TitleComponent, DescriptionsComponent, CardPanelComponent],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
-export class AdminPage implements OnInit {
-
-  categories: ICategory[] = [];
-
-  availableIcons: string[] = [
-  '🧱', '🏠', '🏛️', '🏙️', '🚗',
-  '🏎️', '🚀', '✈️', '🚂', '🚢',
-  '🦸', '🧙', '🥷', '🤖', '👮',
-  '🐉', '🦖', '🐾', '🏰', '⚙️',
-  '🎨', '💡', '⭐', '❤️', '🎮',
-  '⚽', '🏀', '🎵', '📦', '🔧'
-  ];
-
-  isLoading = false;
-  isSaving = false;
-
-  showCategoryModal = false;
-  isEditMode = false;
-
-  selectedCategoryId: number | null = null;
-
-  categoryForm: ICategory = {
-    nombre: '',
-    descripcion: '',
-    icono: '',
-  };
-
-  successMessage = '';
-  errorMessage = '';
+export class AdminPage {
+  totalStadistics=signal<IStat[]>([]);
 
   constructor(
-  private categoryService: CategoryService,
-  private changeDetectorRef: ChangeDetectorRef
-) {}
+    private articleService: ArticleService,
+    private userService: UserService,
+    private reportService: ReportService
+  ){}
 
-  ngOnInit(): void {
-    this.loadCategories();
-  }
 
-  async loadCategories(): Promise<void> {
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.changeDetectorRef.detectChanges();
-
+ngOnInit(){
+  this.obtenerEstadisticasGlobales();
+}
+async obtenerEstadisticasGlobales() {
+  
     try {
-      this.categories = await this.categoryService.getCategories();
 
-      console.log('Categorías recibidas:', this.categories);
-    } catch (error) {
-      console.error('Error al cargar categorías:', error);
-      this.errorMessage = 'No se pudieron cargar las categorías';
-    } finally {
-      this.isLoading = false;
-      this.changeDetectorRef.detectChanges();
-    }
-  }
+      const fallback = [{ 'COUNT(*)': 0 }];
 
-  openCreateModal(): void {
-    this.isEditMode = false;
-    this.selectedCategoryId = null;
+      const [
+        totalUsuarios,
+        totalPublicados,
+        totalVendidos,
+        totalRevision,
+        totalReportes
+      ] = await Promise.all([
+        this.userService.getNumberUsers().catch(() => fallback),
+        this.articleService.getNumberArticles().catch(() => fallback),
+        this.articleService.getNumberArticlesSold().catch(() => fallback),
+        this.articleService.getNumberArticlesReview().catch(() => fallback),
+        this.reportService.getReportsP().catch(() => fallback) 
+      ]);
 
-    this.categoryForm = {
-      nombre: '',
-      descripcion: '',
-      icono: '',
-    };
+      console.log('Respuesta del backend', totalUsuarios, totalPublicados, totalVendidos, totalRevision, totalReportes);
 
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.showCategoryModal = true;
-  }
 
-  openEditModal(category: ICategory): void {
-    this.isEditMode = true;
-    this.selectedCategoryId = category.id ?? null;
+      const estadisticasMapeadas = ORDEN_TARJETAS.map(label => {
+        
+        let total = 0;
+        
+        if (label === 'Usuarios totales') total = totalUsuarios[0]['COUNT(*)'];
+        if (label === 'Artículos publicados') total = totalPublicados[0]['COUNT(*)'];
+        if (label === 'Artículos vendidos') total = totalVendidos[0]['COUNT(*)'];
+        if (label === 'En revisión') total = totalRevision[0]['COUNT(*)'];
+        if (label === 'Reportes pendientes') total = totalReportes[0]['COUNT(*)'];
 
-    this.categoryForm = {
-      nombre: category.nombre,
-      descripcion: category.descripcion ?? '',
-      icono: category.icono ?? '',
-    };
+        const configVisual = CONFIGURACION_GLOBAL[label] || {
+          icon: 'bi-question-circle', 
+          color: 'text-secondary', 
+          bgClass: 'bg-secondary-subtle'
+        };
 
-    this.successMessage = '';
-    this.errorMessage = '';
-    this.showCategoryModal = true;
-  }
-
-  closeModal(): void {
-    if (this.isSaving) {
-      return;
-    }
-
-    this.showCategoryModal = false;
-  }
-
-  async saveCategory(): Promise<void> {
-  const nombre = this.categoryForm.nombre.trim();
-  const descripcion = this.categoryForm.descripcion?.trim() ?? '';
-  const icono = this.categoryForm.icono?.trim() ?? '';
-
-  if (!nombre) {
-    this.errorMessage = 'El nombre de la categoría es obligatorio';
-    this.changeDetectorRef.detectChanges();
-    return;
-  }
-
-  this.isSaving = true;
-  this.successMessage = '';
-  this.errorMessage = '';
-  this.changeDetectorRef.detectChanges();
-
-  try {
-    if (this.selectedCategoryId !== null) {
-      await this.categoryService.updateCategory(
-        this.selectedCategoryId,
-        { nombre, descripcion, icono }
-      );
-
-      this.successMessage = 'Categoría actualizada correctamente';
-    } else {
-      await this.categoryService.createCategory({
-        nombre,
-        descripcion,
-        icono,
+        return {
+          label: label,
+          stadistics: total,
+          icon: configVisual.icon,
+          color: configVisual.color,
+          bgClass: configVisual.bgClass
+        };
       });
 
-      this.successMessage = 'Categoría creada correctamente';
-    }
+      this.totalStadistics.set(estadisticasMapeadas);
+      console.log('Estadísticas Globales generadas:', estadisticasMapeadas);
 
-    await this.loadCategories();
-
-    this.isSaving = false;
-    this.changeDetectorRef.detectChanges();
-
-    setTimeout(() => {
-      this.showCategoryModal = false;
-      this.successMessage = '';
-      this.errorMessage = '';
-      this.changeDetectorRef.detectChanges();
-    }, 700);
-
-  } catch (error: any) {
-    console.error('Error al guardar categoría:', error);
-
-    this.errorMessage =
-      error?.error?.message ??
-      'No se pudo guardar la categoría';
-
-    this.isSaving = false;
-    this.changeDetectorRef.detectChanges();
-  }
-}
-
-  async deleteCategory(category: ICategory): Promise<void> {
-    if (!category.id) {
-      return;
-    }
-
-    const confirmed = window.confirm(
-      `¿Seguro que quieres eliminar la categoría "${category.nombre}"?`
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    this.successMessage = '';
-    this.errorMessage = '';
-
-    try {
-      await this.categoryService.deleteCategory(category.id);
-
-      this.successMessage = 'Categoría eliminada correctamente';
-      await this.loadCategories();
-
-    } catch (error: any) {
-      console.error('Error al eliminar categoría:', error);
-
-      this.errorMessage =
-        error?.error?.message ??
-        'No se pudo eliminar la categoría';
+    } catch (error) {
+      console.log('Error general al cargar las estadísticas:', error);
     }
   }
 }

@@ -95,6 +95,17 @@ const resetPassword = async (req, res) => {
     }
 }
 
+const getNumberUsers = async (req, res) =>{
+    try{
+        const users = await userModel.numberUsers();
+        res.json(users)
+    }catch (error){
+        res.status(500).json({
+            message: 'Error al obtener el número de usuarios totales'
+        });
+    }
+}
+
 
 ////////////////funciones auxiliares
 
@@ -108,5 +119,6 @@ const capitalizar = (texto) => {
 
 module.exports = {
     register,
-    resetPassword
+    resetPassword,
+    getNumberUsers
 }
