@@ -4,7 +4,7 @@ import { ArticleDetail } from './pages/article-detail/article-detail';
 import { ArticleForm } from './pages/article-form/article-form';
 import { AuthPage } from './pages/auth/pages/auth/auth';
 import { Register } from './pages/register/register';
-import { Home } from './pages/home/home';
+import { Home } from './interfaces/home';
 import { ModeradorPage } from './pages/moderador/moderador';
 import { AdminPage } from './pages/admin/admin';
 import { UserPanelPage } from './pages/user-panel/user-panel';
@@ -37,12 +37,16 @@ export const routes: Routes = [
 
     // 8. MI PANEL
     {
-        path: 'my-panel',
-        canActivate: [roleGuard],
-        data: {
-            roles: [UserRole.USER]
-        },
-        component: UserPanelPage
+      path: 'my-panel',
+      canActivate: [roleGuard],
+      data: {
+        roles: [
+          UserRole.USER,
+          UserRole.MODERATOR,
+          UserRole.ADMIN
+        ]
+      },
+      component: UserPanelPage
     },
 
     // 9. MENSAJES
@@ -71,16 +75,16 @@ export const routes: Routes = [
         data: {
             roles: [UserRole.MODERATOR]
         },
-        component: ModeradorPage,  
+        component: ModeradorPage,
     },
 
     // 12. ADMINISTRACION
-    { path: 'administration',  
+    { path: 'administration',
         canActivate: [roleGuard],
         data: {
             roles: [UserRole.ADMIN]
         },
-        component: AdminPage 
+        component: AdminPage
     },
 
     // 13. RUTA COMÚN PARA REDIRIGIR

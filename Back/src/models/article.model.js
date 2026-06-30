@@ -161,6 +161,33 @@ const getArticlesInPromotion = async () => {
 
 }
 
+// OBTENER TODOS LOS ARTÍCULOS DE UN USUARIO
+const getArticlesByProfileId = async (profileId) => {
+    const [rows] = await db.query(
+        `SELECT
+            a.id,
+            a.titulo,
+            a.descripcion,
+            a.foto,
+            a.precio,
+            a.estado_revision,
+            a.estado_articulo,
+            a.estado_venta,
+            a.fecha_publicacion,
+            a.perfil_id,
+            a.categoria_id,
+            c.nombre AS categoria_nombre
+         FROM articulos a
+         LEFT JOIN categorias c
+            ON a.categoria_id = c.id
+         WHERE a.perfil_id = ?
+         ORDER BY a.fecha_publicacion DESC`,
+        [profileId]
+    );
+
+    return rows;
+};
+
 //PUT /aritcles/:id
 
 const reportStateRefresh = async (id, nuevo_estado) =>{
@@ -205,6 +232,8 @@ module.exports = {
     getArticlesInPromotion,
     createArticle,
     buyArticle,
+    reserveArticle,
+    getArticlesByProfileId,
     reserveArticle,
     reportStateRefresh,
     getArticlesNumber,

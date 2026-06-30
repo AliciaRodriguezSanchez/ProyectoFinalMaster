@@ -1,4 +1,5 @@
 const Message = require('../models/message.model');
+const { ERROR_MESSAGE_TEXT } = require('../constants/error-message.text');
 
 //POST /api/messages ENVIAR MENSAJES ENTRE USUARIOS
 const sendMessage = async (req, res) => {
@@ -16,7 +17,7 @@ const sendMessage = async (req, res) => {
         // VALIDACIÓN BÁSICA
         if (!texto_mensaje?.trim() || !emisor_id || !receptor_id || !articulo_id) {
             return res.status(400).json({
-                message: 'Todos los campos son obligatorios'
+                message: ERROR_MESSAGE_TEXT.common.requiredFields
             });
         }
 
@@ -26,7 +27,7 @@ const sendMessage = async (req, res) => {
 
         if (!Number.isInteger(senderId) || !Number.isInteger(receiverId) || !Number.isInteger(articleId)) {
             return res.status(400).json({
-                message: 'Los identificadores deben ser números válidos'
+                message: ERROR_MESSAGE_TEXT.common.invalidIdentifiers
             });
         }
 
@@ -40,19 +41,19 @@ const sendMessage = async (req, res) => {
 
         if (!result) {
             return res.status(404).json({
-                message: 'Artículo no encontrado'
+                message: ERROR_MESSAGE_TEXT.message.articleNotFound
             });
         }
 
         if (result.errorCode === 'SAME_USER') {
             return res.status(400).json({
-                message: 'El emisor y receptor no pueden ser el mismo usuario'
+                message: ERROR_MESSAGE_TEXT.message.sameSenderReceiver
             });
         }
 
         if (result.errorCode === 'SELLER_REQUIRED') {
             return res.status(400).json({
-                message: 'La conversación debe incluir al vendedor del artículo'
+                message: ERROR_MESSAGE_TEXT.message.sellerRequired
             });
         }
 
@@ -65,7 +66,7 @@ const sendMessage = async (req, res) => {
     } catch (error) {
         console.error('Error al enviar el mensaje:', error.message);
         res.status(500).json({
-            message: 'Error al enviar el mensaje'
+            message: ERROR_MESSAGE_TEXT.message.sendError
         });
     }
 };
@@ -76,7 +77,7 @@ const getConversation = async (req, res) => {
         const conversation = await Message.getConversation(req.params);
 
         if (!conversation) {
-            return res.status(404).json({ message: 'Conversación no encontrada' });
+            return res.status(404).json({ message: ERROR_MESSAGE_TEXT.message.conversationNotFound });
         }
 
         res.status(200).json(conversation);
@@ -93,14 +94,14 @@ const getConversationById = async (req, res) => {
 
         if (!Number.isInteger(conversationId) || !Number.isInteger(userId)) {
             return res.status(400).json({
-                message: 'Los identificadores deben ser números válidos'
+                message: ERROR_MESSAGE_TEXT.common.invalidIdentifiers
             });
         }
 
         const conversation = await Message.getConversationById({ conversationId, userId });
 
         if (!conversation) {
-            return res.status(404).json({ message: 'Conversación no encontrada' });
+            return res.status(404).json({ message: ERROR_MESSAGE_TEXT.message.conversationNotFound });
         }
 
         res.status(200).json(conversation);
@@ -115,7 +116,7 @@ const getConversations = async (req, res) => {
 
         if (!Number.isInteger(userId)) {
             return res.status(400).json({
-                message: 'El identificador del usuario debe ser un número válido'
+                message: ERROR_MESSAGE_TEXT.common.invalidUserId
             });
         }
 
@@ -124,7 +125,7 @@ const getConversations = async (req, res) => {
     } catch (error) {
         console.error('Error al cargar conversaciones:', error.message);
         res.status(500).json({
-            message: 'Error al cargar conversaciones'
+            message: ERROR_MESSAGE_TEXT.message.conversationsLoadError
         });
     }
 };
@@ -135,7 +136,7 @@ const getConversationByReport = async (req, res) => {
 
         if (!Number.isInteger(reportId)) {
             return res.status(400).json({
-                message: 'El identificador del reporte debe ser un número válido'
+                message: ERROR_MESSAGE_TEXT.message.invalidReportId
             });
         }
 
@@ -145,12 +146,12 @@ const getConversationByReport = async (req, res) => {
         });
 
         if (!conversation) {
-            return res.status(404).json({ message: 'Conversación no encontrada para este reporte' });
+            return res.status(404).json({ message: ERROR_MESSAGE_TEXT.message.reportConversationNotFound });
         }
 
         if (conversation.errorCode === 'REPORT_ACCESS_DENIED') {
             return res.status(403).json({
-                message: 'No tienes permiso para ver esta conversación de reporte'
+                message: ERROR_MESSAGE_TEXT.message.reportConversationForbidden
             });
         }
 
@@ -158,7 +159,7 @@ const getConversationByReport = async (req, res) => {
     } catch (error) {
         console.error('Error al cargar conversación del reporte:', error.message);
         res.status(500).json({
-            message: 'Error al cargar la conversación del reporte'
+            message: ERROR_MESSAGE_TEXT.message.reportConversationLoadError
         });
     }
 };
@@ -169,7 +170,7 @@ const sendReportMessage = async (req, res) => {
 
         if (!texto_mensaje?.trim() || !emisor_id || !report_id) {
             return res.status(400).json({
-                message: 'Texto, emisor y reporte son obligatorios'
+                message: ERROR_MESSAGE_TEXT.message.reportMessageRequiredFields
             });
         }
 
@@ -178,7 +179,7 @@ const sendReportMessage = async (req, res) => {
 
         if (!Number.isInteger(senderId) || !Number.isInteger(reportId)) {
             return res.status(400).json({
-                message: 'Los identificadores deben ser números válidos'
+                message: ERROR_MESSAGE_TEXT.common.invalidIdentifiers
             });
         }
 
@@ -191,25 +192,25 @@ const sendReportMessage = async (req, res) => {
 
         if (!result) {
             return res.status(404).json({
-                message: 'Reporte no encontrado'
+                message: ERROR_MESSAGE_TEXT.report.notFound
             });
         }
 
         if (result.errorCode === 'REPORT_REPLY_NOT_ALLOWED') {
             return res.status(403).json({
-                message: 'Solo el moderador puede responder a este reporte'
+                message: ERROR_MESSAGE_TEXT.message.moderatorOnly
             });
         }
 
         if (result.errorCode === 'ADMIN_NOT_FOUND') {
             return res.status(404).json({
-                message: 'Administrador no encontrado'
+                message: ERROR_MESSAGE_TEXT.message.adminNotFound
             });
         }
 
         if (result.errorCode === 'ADMIN_READ_ONLY') {
             return res.status(403).json({
-                message: 'El administrador solo puede visualizar la conversación'
+                message: ERROR_MESSAGE_TEXT.message.adminReadOnly
             });
         }
 
@@ -222,7 +223,7 @@ const sendReportMessage = async (req, res) => {
     } catch (error) {
         console.error('Error al enviar mensaje al denunciante:', error.message);
         res.status(500).json({
-            message: 'Error al enviar mensaje al denunciante'
+            message: ERROR_MESSAGE_TEXT.message.sendReportMessageError
         });
     }
 };
@@ -237,24 +238,24 @@ const changeStatus = async (req, res) => {
   const validStatuses = ['unreaded', 'readed', 'pending', 'resolved'];
 
   if (!status || !validStatuses.includes(status)) {
-        return res.status(400).json({ message: 'Status inválido' });
+        return res.status(400).json({ message: ERROR_MESSAGE_TEXT.message.invalidStatus });
     }
 
   if (!conversationId || isNaN(Number(conversationId))) {
-        return res.status(400).json({ message: 'ID de conversación inválido' });
+        return res.status(400).json({ message: ERROR_MESSAGE_TEXT.message.invalidConversationId });
     }
 
   const exists = await Message.existsConversationById(conversationId);
   
   if (!exists) {
-        return res.status(404).json({ message: 'Conversación no encontrada' });
+        return res.status(404).json({ message: ERROR_MESSAGE_TEXT.message.conversationNotFound });
     }
 
   try {
     const result = await Message.editStatus(status, conversationId);
     res.status(200).json({ message: 'Status actualizado'});
   } catch (error) {
-    res.status(500).json({ message: 'Error al cambiar el status' });
+    res.status(500).json({ message: ERROR_MESSAGE_TEXT.message.statusUpdateError });
   }
 };
 

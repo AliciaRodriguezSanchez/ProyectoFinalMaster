@@ -214,3 +214,8 @@ DEFAULT 'unreaded' NOT NULL;
 los mensajes de denuncia/admin los separamos del hilo comercial, se guardan así a propósito:
 conversation_id = NULL
 tipo_mensaje = 'SYSTEM'
+
+
+## añadir columna de icono en categorias ALTER TABLE categorias
+ALTER TABLE categorias
+ADD COLUMN icono VARCHAR(20) NULL AFTER descripcion

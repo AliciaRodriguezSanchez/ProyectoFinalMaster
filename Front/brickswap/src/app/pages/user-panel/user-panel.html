@@ -1,4 +1,196 @@
 <main class="user-panel-page">
-  <h1>Mi panel</h1>
-  
+
+  <section class="panel-header">
+    <div>
+      <p class="panel-kicker">Mi espacio</p>
+      <h1>Mis gestiones</h1>
+      <p class="panel-description">
+        Controla tus artículos publicados, vendidos, favoritos y borradores.
+      </p>
+    </div>
+
+    <a
+      routerLink="/sell-article"
+      class="publish-button"
+    >
+      Publicar
+    </a>
+  </section>
+
+  @if (errorMessage) {
+    <p class="panel-message error-message">
+      {{ errorMessage }}
+    </p>
+  }
+
+  <section class="summary-grid">
+
+    <button
+      type="button"
+      class="summary-card summary-card-selling"
+      [class.active]="activeTab === 'selling'"
+      (click)="selectTab('selling')"
+    >
+      <span class="summary-icon">📦</span>
+
+      <span class="summary-content">
+        <strong>{{ sellingArticles.length }}</strong>
+        <span>En venta</span>
+      </span>
+    </button>
+
+    <button
+      type="button"
+      class="summary-card summary-card-sold"
+      [class.active]="activeTab === 'sold'"
+      (click)="selectTab('sold')"
+    >
+      <span class="summary-icon">✅</span>
+
+      <span class="summary-content">
+        <strong>{{ soldArticles.length }}</strong>
+        <span>Vendidos</span>
+      </span>
+    </button>
+
+    <button
+      type="button"
+      class="summary-card summary-card-favorites"
+      [class.active]="activeTab === 'favorites'"
+      (click)="selectTab('favorites')"
+    >
+      <span class="summary-icon">❤️</span>
+
+      <span class="summary-content">
+        <strong>{{ favoriteArticles.length }}</strong>
+        <span>Favoritos</span>
+      </span>
+    </button>
+
+    <button
+      type="button"
+      class="summary-card summary-card-drafts"
+      [class.active]="activeTab === 'drafts'"
+      (click)="selectTab('drafts')"
+    >
+      <span class="summary-icon">📝</span>
+
+      <span class="summary-content">
+        <strong>{{ draftArticles.length }}</strong>
+        <span>Borradores</span>
+      </span>
+    </button>
+
+  </section>
+
+  <section class="management-section">
+
+    <header class="management-header">
+
+      <div class="management-title-group">
+        <span class="management-icon" aria-hidden="true">
+          @switch (activeTab) {
+            @case ('selling') { 📦 }
+            @case ('sold') { ✅ }
+            @case ('favorites') { ❤️ }
+            @case ('drafts') { 📝 }
+          }
+        </span>
+
+        <div>
+          <p class="management-kicker">Resumen</p>
+          <h2>{{ activeTabTitle }}</h2>
+        </div>
+      </div>
+
+      <span class="management-count">
+        {{ visibleArticles.length }}
+        {{ visibleArticles.length === 1 ? 'artículo' : 'artículos' }}
+      </span>
+
+    </header>
+
+    @if (isLoading) {
+      <div class="empty-state">
+        <p>Cargando tus artículos...</p>
+      </div>
+    } @else {
+
+      @if (visibleArticles.length === 0) {
+        <div class="empty-state">
+          <span class="empty-icon">🧱</span>
+
+          <h3>No hay artículos en esta sección</h3>
+
+          <p>
+            @switch (activeTab) {
+              @case ('selling') {
+                Publica tu primer artículo para verlo aquí.
+              }
+
+              @case ('sold') {
+                Todavía no has vendido ningún artículo.
+              }
+
+              @case ('favorites') {
+                Aún no has añadido artículos a favoritos.
+              }
+
+              @case ('drafts') {
+                No tienes borradores pendientes.
+              }
+            }
+          </p>
+        </div>
+      } @else {
+
+        <div class="article-list">
+
+          @for (article of visibleArticles; track article.id) {
+            <a
+              class="management-card"
+              [routerLink]="['/article', article.id]"
+            >
+              <img
+                class="article-image"
+                [src]="article.foto"
+                [alt]="article.titulo"
+              >
+
+              <div class="article-info">
+
+                <div class="article-heading">
+                  <div>
+                    <p class="article-category">
+                      {{ article.categoria_nombre || 'Sin categoría' }}
+                    </p>
+
+                    <h3>{{ article.titulo }}</h3>
+                  </div>
+
+                  <strong class="article-price">
+                    {{ article.precio | currency:'EUR':'symbol':'1.2-2' }}
+                  </strong>
+                </div>
+
+                <p class="article-description">
+                  {{ article.descripcion }}
+                </p>
+
+                <div class="article-meta">
+                  <span>{{ article.estado_articulo }}</span>
+                  <span>{{ article.estado_revision }}</span>
+                  <span>{{ article.estado_venta }}</span>
+                </div>
+
+              </div>
+            </a>
+          }
+
+        </div>
+      }
+    }
+
+  </section>
+
 </main>

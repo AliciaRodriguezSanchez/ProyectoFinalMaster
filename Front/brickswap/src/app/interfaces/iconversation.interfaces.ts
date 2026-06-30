@@ -1,9 +1,9 @@
-import { MessageType } from '../constants/message';
+import { MessageType } from '../core/constants/message';
 import {
   ArticleSaleStatus,
   ConversationStatus,
   ReportStatus,
-} from '../constants/status';
+} from '../core/constants/status';
 
 export interface IAConversationMessage {
   id: number;

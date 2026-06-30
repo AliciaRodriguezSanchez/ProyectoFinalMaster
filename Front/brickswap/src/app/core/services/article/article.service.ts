@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable, firstValueFrom } from "rxjs";
 import { Article } from "../../models/article/article.model";
-import { ICategory } from "../../interfaces/icategory.interface";
-import { IArticle } from "../../interfaces/iarticles.interface";
+import { ICategory } from "../../../interfaces/icategory.interface";
+import { IArticle } from "../../../interfaces/iarticles.interface";
 import { API_URL , ARTICLES, LAST_PUBLICATIONS, IN_PROMOTIONS} from "../api";
 import { App } from "../../../app";
 
@@ -105,4 +105,23 @@ export class ArticleService {
       this.http.get<any>(`${API_URL}/articles/review`)
     );
   }
+
+  // 10. GET artículos de un usuario
+  getArticlesByProfileId(profileId: number): Promise<IArticle[]> {
+    return firstValueFrom(
+      this.http.get<IArticle[]>(
+        `${API_URL}/articles/profile/${profileId}`
+      )
+    );
+  }
+
+    // 11. GET favoritos de un usuario
+  getFavoritesByProfileId(profileId: number): Promise<IArticle[]> {
+    return firstValueFrom(
+      this.http.get<IArticle[]>(
+        `${API_URL}/favorites/profile/${profileId}`
+      )
+    );
+  }
+
 }

@@ -3,14 +3,17 @@
   align-items: center;
   justify-content: center;
 
-/*   min-height: 38px;
- */  padding: .005rem 1rem;
+  min-height: 30px;
+  padding: 0 16px;
 
-  border: 1px solid #6c757d;
-  border-radius: 999px;
+  border: 1px solid var(--brick-color-border-muted);
+  border-radius: var(--brick-radius-pill);
 
-  color: #6c757d;
-  background: white;
+  color: var(--brick-color-muted);
+  background: var(--brick-color-white);
+  font-size: var(--brick-font-size-md);
+  font-weight: var(--brick-font-weight-l);
+  line-height: 1;
 
   cursor: pointer;
   user-select: none;
@@ -20,7 +23,7 @@
 }
 
 .active-pill {
-  background-color: #212529;
-  border-color: #212529;
-  color: white;
+  background-color: var(--brick-color-text);
+  border-color: var(--brick-color-text);
+  color: var(--brick-color-white);
 }

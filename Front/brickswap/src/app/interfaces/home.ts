@@ -1,19 +1,19 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { UiCarrouselComponent } from '../../shared/components/carrousel/carrousel.component';
-import { UiCarrouselItem } from '../../shared/components/carrousel/carrousel.interface';
-import { UiProductCardComponent } from '../../shared/components/product-card/product-card.component';
-import { UiCategoryCardComponent } from '../../shared/components/category-card/category-card.component';
-import { PromotionBannerComponent } from '../../shared/components/promotion-banner/promotion-banner.component';
-import { UiInfoCardComponent } from '../../shared/components/info-card/info-card.component';
-import { CATEGORY_STYLES, HOME_FEATURES } from './home-features';
-import { APP_ASSETS } from '../../core/constants/app-assets';
-import { MESSAGE_TEXT } from '../../core/constants/message-text';
-import { CategoryService } from '../../core/services/category/category.service';
-import { ICategory } from '../../core/interfaces/icategory.interface';
-import { UiToastService } from '../../core/services/toast/ui-toast.service';
-import { ArticleService } from '../../core/services/article/article.service';
-import { IArticle } from '../../core/interfaces/iarticles.interface';
+import { UiCarrouselComponent } from '../shared/components/carrousel/carrousel.component';
+import { UiCarrouselItem } from '../shared/components/carrousel/carrousel.interface';
+import { UiProductCardComponent } from '../shared/components/product-card/product-card.component';
+import { UiCategoryCardComponent } from '../shared/components/category-card/category-card.component';
+import { PromotionBannerComponent } from '../shared/components/promotion-banner/promotion-banner.component';
+import { UiInfoCardComponent } from '../shared/components/info-card/info-card.component';
+import { CATEGORY_STYLES, HOME_FEATURES } from '../pages/home/home-features';
+import { APP_ASSETS } from '../core/constants/app-assets';
+import { MESSAGE_TEXT } from '../core/constants/message-text';
+import { CategoryService } from '../core/services/category/category.service';
+import { ICategory } from './icategory.interface';
+import { UiToastService } from '../core/services/toast/ui-toast.service';
+import { ArticleService } from '../core/services/article/article.service';
+import { IArticle } from './iarticles.interface';
 
 
 @Component({
@@ -26,8 +26,8 @@ import { IArticle } from '../../core/interfaces/iarticles.interface';
     UiProductCardComponent,
     UiInfoCardComponent,
   ],
-  templateUrl: './home.html',
-  styleUrl: './home.css',
+  templateUrl: '../pages/home/home.html',
+  styleUrl: '../pages/home/home.css',
 })
 export class Home implements OnInit {
   heroImageUrl = APP_ASSETS.homeBackground;
@@ -42,11 +42,12 @@ export class Home implements OnInit {
   isLoadingProductsInPromotion = signal(true);
   categoryItems = computed<UiCarrouselItem[]>(() =>
     this.categories().map((category, index) => {
+      // Sirve para repetir estilos en bucle sin salirse del array.
       const style = CATEGORY_STYLES[index % CATEGORY_STYLES.length];
-
+      // si en la bbdd tenemos el icono se mapea el de bbdd si no usa
       return {
         id: category.id,
-        icon: style.icon,
+        icon: category.icono?.trim() || style.icon,
         color: style.color,
         text: category.nombre,
       };
@@ -134,5 +135,5 @@ export class Home implements OnInit {
     ...this.latestProducts,
   ];*/
 
- 
+
 }

@@ -4,15 +4,19 @@
   background: var(--brick-color-surface-alt);
   color: var(--brick-color-text);
   font-family: var(--brick-font-family-base);
+  overflow-x: hidden;
 }
 
 .home-page {
+  box-sizing: border-box;
+  width: 100%;
   max-width: 1240px;
   margin: 0 auto;
-  padding: 10px 0 48px;
+  padding: 10px 18px 48px;
 }
 
 .home-section {
+  min-width: 0;
   padding: 42px 0 10px;
 }
 
@@ -59,6 +63,7 @@
 }
 
 .home-carrousel-frame {
+  min-width: 0;
   padding: 0;
   border: 0;
   border-radius: 0;
@@ -157,6 +162,10 @@
 }
 
 @media (max-width: 560px) {
+  .home-page {
+    padding-inline: 12px;
+  }
+
   .home-section__header {
     align-items: flex-start;
     flex-direction: column;

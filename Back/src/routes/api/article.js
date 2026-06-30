@@ -29,6 +29,11 @@ router.put('/:id/buy', articleController.buyArticle);
 // RUTA BASE PARA RESERVAR ARTÍCULO PUT /api/articles/:id/reserve
 router.put('/:id/reserve', articleController.reserveArticle);
 
+router.get(
+  '/profile/:profileId',
+  articleController.getArticlesByProfileId
+);
+
 // RUTA PARA DETALLE ARTÍCULO POR ID GET /api/articles/:id
 router.get('/:id', articleController.getArticleById);
 

@@ -1,4 +1,6 @@
 const Article = require('../models/article.model');
+const { ERROR_CODES } = require('../constants/error-codes');
+const { ERROR_MESSAGE_TEXT } = require('../constants/error-message.text');
 
 // GET /api/articles
 const getAllArticles = async (req, res) => {
@@ -22,7 +24,7 @@ const getAllArticles = async (req, res) => {
 
     } catch (error) {
         console.error('Error al recuperar artículos:', error.message);
-        res.status(500).json({ message: 'Server error al recuperar artículos' });
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.article.loadError });
     }
 };
 
@@ -34,12 +36,12 @@ const getArticleById = async (req, res) => {
         const rows = await Article.getArticleById(id);
 
         if (rows.length === 0) {
-            return res.status(404).json({ message: 'Artículo no encontrado' });
+            return res.status(404).json({ message: ERROR_MESSAGE_TEXT.article.notFound });
         }
 
         res.status(200).json(rows[0]);
     } catch (error) {
-        res.status(500).json({ message: 'Error al encontrar artículo' });
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.article.detailError });
     }
 };
 
@@ -61,7 +63,13 @@ const createArticle = async (req, res) => {
 
         // VALIDACIÓN BÁSICA
         if (!titulo || !descripcion || !foto || !precio || !estado_articulo || !estado_revision || !perfil_id || !categoria_id) {
-            return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.common.requiredFields });
+        }
+
+        if (typeof foto !== 'string' || foto.length > 200 || !/^https?:\/\/\S+$/.test(foto)) {
+            return res.status(400).json({
+                message: ERROR_MESSAGE_TEXT.article.imageUrlInvalid
+            });
         }
 
         // EJECUTAR INSERCIÓN CON LOS VALORES DE ANGULAR
@@ -83,7 +91,20 @@ const createArticle = async (req, res) => {
 
     } catch (error) {
         console.error('Error al subir el artículo:', error.message);
-        res.status(500).json({ message: 'Server error al subir el artículo' });
+
+        if (error.code === ERROR_CODES.foreignKeyMissing) {
+            return res.status(400).json({
+                message: ERROR_MESSAGE_TEXT.article.relatedEntityNotFound
+            });
+        }
+
+        if (error.code === ERROR_CODES.dataTooLong) {
+            return res.status(400).json({
+                message: ERROR_MESSAGE_TEXT.article.fieldTooLong
+            });
+        }
+
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.article.createError });
     }
 };
 
@@ -99,7 +120,7 @@ const buyArticle = async (req, res) => {
         // SI EL VALOR ES 0, SIGNIFICA QUE EL ARTÍCULO YA FUE VENDIDO O NO EXISTE
         if (result.affectedRows === 0) {
             return res.status(400).json({
-                message: 'Artículo no disponible para la compra'
+                message: ERROR_MESSAGE_TEXT.article.buyUnavailable
             });
         }
 
@@ -110,7 +131,7 @@ const buyArticle = async (req, res) => {
 
     } catch (error) {
         console.error('Error al comprar el artículo:', error.message);
-        res.status(500).json({ message: 'Server error al comprar el artículo' });
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.article.buyError });
     }
 };
 
@@ -126,7 +147,7 @@ const reserveArticle = async (req, res) => {
         // SI EL VALOR ES 0, SIGNIFICA QUE EL ARTÍCULO YA FUE VENDIDO O NO EXISTE
         if (result.affectedRows === 0) {
             return res.status(400).json({
-                message: 'Artículo no disponible para la reserva'
+                message: ERROR_MESSAGE_TEXT.article.reserveUnavailable
             });
         }
 
@@ -137,7 +158,7 @@ const reserveArticle = async (req, res) => {
 
     } catch (error) {
         console.error('Error al reservar el artículo:', error.message);
-        res.status(500).json({ message: 'Server error al reservar el artículo' });
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.article.reserveError });
     }
 };
 
@@ -148,7 +169,7 @@ const getLastArticles = async (req, res) => {
         res.status(200).json(result);
     }catch (error) {
         console.error('Error al obtener los artículos: ', error.message);
-        res.status(500).json({ message: 'Error al obtener los artículos' });
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.article.loadError });
     }
 }
 const getArticlesInPromotion = async (req, res) => {
@@ -158,7 +179,7 @@ const getArticlesInPromotion = async (req, res) => {
         res.status(200).json(result);
     }catch (error) {
         console.error('Error al obtener los artículos: ', error.message);
-        res.status(500).json({ message: 'Error al obtener los artículos' });
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.article.loadError });
     }
 }
 
@@ -208,6 +229,32 @@ const getNumberArticlesReview = async (req, res) => {
     }
 }
 
+// GET /api/articles/profile/:profileId
+const getArticlesByProfileId = async (req, res) => {
+  try {
+    const { profileId } = req.params;
+
+    if (!profileId || Number.isNaN(Number(profileId))) {
+      return res.status(400).json({
+        message: ERROR_MESSAGE_TEXT.common.invalidProfileId
+      });
+    }
+
+    const articles = await Article.getArticlesByProfileId(profileId);
+
+    res.status(200).json(articles);
+  } catch (error) {
+    console.error(
+      'Error al obtener los artículos del usuario:',
+      error.message
+    );
+
+    res.status(500).json({
+      message: ERROR_MESSAGE_TEXT.article.userArticlesError
+    });
+  }
+};
+
 module.exports = {
     getAllArticles,
     getArticleById,
@@ -219,5 +266,7 @@ module.exports = {
     updateState,
     getNumberArticles,
     getNumberArticlesSold,
-    getNumberArticlesReview
+    getNumberArticlesReview,
+    reserveArticle,
+    getArticlesByProfileId
 };

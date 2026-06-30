@@ -15,8 +15,8 @@
   background: var(--brick-color-brand);
   color: var(--brick-color-black);
 
-  font-size: var(--brick-font-size-xl);
-  font-weight: 700;
+  font-size: var(--brick-font-size-base);
+  font-weight: var(--brick-font-weight-l);
   line-height: 1;
 
   cursor: pointer;
@@ -55,13 +55,13 @@
   &--md {
     min-height: var(--brick-control-height-md);
     padding: 0 24px;
-    font-size: var(--brick-font-size-xl);
+    font-size: var(--brick-font-size-base);
   }
 
   &--lg {
     min-height: var(--brick-control-height-lg);
     padding: 0 28px;
-    font-size: var(--brick-font-size-2xl);
+    font-size: var(--brick-font-size-lg);
   }
 
   &:hover:not(:disabled) {

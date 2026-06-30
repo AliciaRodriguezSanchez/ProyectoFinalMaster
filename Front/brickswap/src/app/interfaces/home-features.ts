@@ -1,4 +1,4 @@
-import type { HomeCategoryStyle, HomeFeature } from "../../interfaces/ihome.interface";
+import type { HomeCategoryStyle, HomeFeature } from "./ihome.interface";
 
 export const CATEGORY_STYLES: HomeCategoryStyle[] = [
   { icon: '🎨', color: 'linear-gradient(135deg, #ff9f1c, #ff6b00)' },

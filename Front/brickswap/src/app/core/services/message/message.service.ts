@@ -4,7 +4,7 @@ import { Observable, firstValueFrom, lastValueFrom } from 'rxjs';
 import { API_URL, CONVERSATION } from '../api';
 import { MESSAGE_TYPE, MessageType } from '../../constants/message';
 import { TOKEN_KEY } from '../../constants/auth';
-import { IAConversation, IAConversationListItem } from '../../interfaces/iconversation.interfaces';
+import { IAConversation, IAConversationListItem } from '../../../interfaces/iconversation.interfaces';
 import { MessageStatus } from '../../../shared/components/caja-mensaje/caja-mensaje.component';
 
 export interface SendMessageResponse {

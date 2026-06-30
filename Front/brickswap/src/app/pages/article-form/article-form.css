@@ -1,34 +1,153 @@
-.form-control:focus, .form-select:focus {
-  border-color: var(--brick-color-brand-soft);
-  box-shadow: var(--brick-shadow-focus-brand);
+.article-form-shell {
+  box-sizing: border-box;
+  min-height: calc(100vh - 64px);
+  background: var(--brick-color-white);
+  color: var(--brick-color-text);
+  padding: 34px 20px 56px;
 }
 
-.form-control.is-invalid:focus, .form-select.is-invalid:focus {
-  border-color: var(--brick-color-danger);
-  box-shadow: var(--brick-shadow-focus-danger);
+.article-form-shell ::ng-deep app-form-template > .row {
+  width: min(100%, 672px);
+  display: block;
+  margin: 0 auto;
 }
 
-.invalid-feedback {
-  font-size: var(--brick-font-size-bootstrap-sm);
-  font-weight: 500;
-  animation: fadeInError 0.2s ease-in-out;
+.article-form-shell ::ng-deep app-form-template .col-12 {
+  width: 100%;
+  max-width: none;
+  padding: 0;
 }
 
-@keyframes fadeInError {
-  from {
-    opacity: 0;
-    transform: translateY(-3px);
+.article-form-shell ::ng-deep app-form-template .card {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent;
+  box-shadow: none !important;
+}
+
+.article-form-shell ::ng-deep app-form-template .card-header {
+  display: none;
+}
+
+.article-form-shell ::ng-deep app-form-template .card-body {
+  padding: 0 !important;
+}
+
+.article-form__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--brick-color-text);
+  font-size: var(--brick-font-size-base);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.article-form__back:hover {
+  color: var(--brick-color-brand-dark);
+}
+
+.article-form__title {
+  margin: 24px 0 30px;
+  color: var(--brick-color-title);
+  font-size: var(--brick-font-size-4xl);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.article-form__field {
+  display: block;
+  margin-bottom: 24px;
+}
+
+.article-form__field--photo {
+  max-width: 320px;
+}
+
+.article-form__field--photo ::ng-deep .ui-input svg {
+  display: none;
+}
+
+.article-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 16px;
+  row-gap: 0;
+}
+
+.article-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.article-form__actions ui-button {
+  display: inline-block;
+  min-width: 0;
+}
+
+.article-form__action {
+  width: auto;
+}
+
+.article-form__action ::ng-deep .ui-button {
+  width: auto;
+  min-height: 36px;
+  gap: 8px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-size: var(--brick-font-size-base);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.article-form__action ::ng-deep .ui-button::before {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  background: currentColor;
+  content: "";
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+
+.article-form__action--draft ::ng-deep .ui-button::before {
+  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M17 21v-8H7v8M7 3v5h8' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.article-form__action--publish ::ng-deep .ui-button::before {
+  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m22 2-7 20-4-9-9-4 20-7Z' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M22 2 11 13' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.article-form__action--publish ::ng-deep .ui-button {
+  background: var(--brick-color-brand);
+  color: var(--brick-color-black);
+  opacity: 1;
+}
+
+@media (max-width: 560px) {
+  .article-form-shell {
+    padding: 24px 16px 40px;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+
+  .article-form__title {
+    margin-bottom: 24px;
+    font-size: var(--brick-font-size-3xl);
   }
-}
 
-.bg-light.border.rounded img {
-  transition: transform 0.2s ease;
-}
+  .article-form__grid {
+    grid-template-columns: 1fr;
+  }
 
-.bg-light.border.rounded img:hover {
-  transform: scale(1.02);
+  .article-form__actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .article-form__action,
+  .article-form__action ::ng-deep .ui-button {
+    width: 100%;
+  }
 }

@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const userModel = require('../models/users.model')
 const { createAuthToken } = require('../utils/auth-token');
+const { ERROR_MESSAGE_TEXT } = require('../constants/error-message.text');
 
 
 const register = async (req, res) => {
@@ -9,18 +10,18 @@ const register = async (req, res) => {
         const { name, lastname, username, email, password, repetPassword } = req.body;
 
         if(!name || !lastname || !username || !email || !password || !repetPassword){
-            return res.status(400).json({ message: 'Todos los campos son obligatorios' })
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.common.requiredFields })
         }
 
         if(password !== repetPassword){
-            return res.status(400).json({ message: 'Las contraseñas no coinciden' });
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.user.passwordMismatch });
         }
 
         const user = await userModel.selectByEmail(email)
 
         if(user){
             return res.status(409).json({
-                message: 'Ese email ya está registrado'
+                message: ERROR_MESSAGE_TEXT.user.duplicatedEmail
             })
         }
 
@@ -28,7 +29,7 @@ const register = async (req, res) => {
 
         if(usernameExist){
             return res.status(409).json({
-                message: 'Ese nombre de usuario ya está registrado'
+                message: ERROR_MESSAGE_TEXT.user.duplicatedUsername
             })
         }
 
@@ -70,17 +71,17 @@ const resetPassword = async (req, res) => {
         const { email, username, newPassword, repeatPassword } = req.body;
 
         if (!email || !username || !newPassword || !repeatPassword) {
-            return res.status(400).json({ message: 'Todos los campos son obligatorios' });
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.common.requiredFields });
         }
 
         if (newPassword !== repeatPassword) {
-            return res.status(400).json({ message: 'Las contraseñas no coinciden' });
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.user.passwordMismatch });
         }
 
         const user = await userModel.selectByEmailAndUsername(email, username);
 
         if (!user) {
-            return res.status(404).json({ message: 'No existe ningún usuario con ese email y nombre de usuario' });
+            return res.status(404).json({ message: ERROR_MESSAGE_TEXT.user.resetUserNotFound });
         }
 
         const hashedPassword = bcrypt.hashSync(newPassword, 8);

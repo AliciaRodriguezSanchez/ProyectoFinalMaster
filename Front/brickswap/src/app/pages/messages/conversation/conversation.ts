@@ -18,7 +18,7 @@ import {
   ReportStatus,
 } from '../../../core/constants/status';
 import { UserRole } from '../../../core/constants/user-role';
-import { IAConversation } from '../../../core/interfaces/iconversation.interfaces';
+import { IAConversation } from '../../../interfaces/iconversation.interfaces';
 import { ArticleService } from '../../../core/services/article/article.service';
 import { AuthService } from '../../../core/services/auth/auth.service';
 import { MessageService } from '../../../core/services/message/message.service';

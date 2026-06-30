@@ -119,6 +119,10 @@ export class ArticleDetail implements OnInit {
       return;
     }
 
+    if (this.isOwnArticleActionBlocked(userId)) {
+      return;
+    }
+
     void buyArticleWithToast({
       articleService: this.articleService,
       toastService: this.toastService,
@@ -139,8 +143,7 @@ export class ArticleDetail implements OnInit {
       return;
     }
 
-    if (emisor_id === this.article.perfil_id) {
-      this.toastService.warning(MESSAGE_TEXT.articleDetail.ownConversationError);
+    if (this.isOwnArticleActionBlocked(emisor_id)) {
       return;
     }
 
@@ -155,6 +158,10 @@ export class ArticleDetail implements OnInit {
 
     if (!denunciante_id) {
       this.toastService.warning(MESSAGE_TEXT.articleDetail.actionLoginRequired);
+      return;
+    }
+
+    if (this.isOwnArticleActionBlocked(denunciante_id)) {
       return;
     }
 
@@ -253,6 +260,10 @@ export class ArticleDetail implements OnInit {
       this.toastService.warning(MESSAGE_TEXT.articleDetail.actionLoginRequired);
       return;
     }
+
+    if (this.isOwnArticleActionBlocked(mi_perfil_id)) {
+      return;
+    }
     
     this.favoriteService.addFavorite(mi_perfil_id, this.article.id).subscribe({
       next: (res) => {
@@ -270,6 +281,10 @@ export class ArticleDetail implements OnInit {
     const userId = this.requireLoggedUser();
 
     if (!userId) {
+      return;
+    }
+
+    if (this.isOwnArticleActionBlocked(userId)) {
       return;
     }
 
@@ -303,6 +318,15 @@ export class ArticleDetail implements OnInit {
     }
 
     return userId;
+  }
+
+  private isOwnArticleActionBlocked(userId: number): boolean {
+    if (!this.article || userId !== this.article.perfil_id) {
+      return false;
+    }
+
+    this.toastService.warning(MESSAGE_TEXT.articleDetail.ownArticleActionError);
+    return true;
   }
 
   private setArticleSaleStatus(status: Article['estado_venta']): void {
