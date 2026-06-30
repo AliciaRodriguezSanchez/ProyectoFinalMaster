@@ -14,7 +14,7 @@ import { ARTICLE_SALE_STATUS, TAG_STATUS_VARIANT } from '../../core/constants/st
 import { buyArticleWithToast } from '../../core/utils/article-actions';
 import { ActionModalComponent } from '../../shared/components/action-modal/action-modal.component';
 import { ValoracionModalComponent } from '../../shared/components/valoracion-modal/valoracion-modal';
-import { TagComponent, TagVariant } from '../../shared/tag/tag.component';
+import { TagComponent, TagVariant } from '../../shared/ui/tag/tag.component';
 import { UiButtonComponent } from '../../shared/ui/button/ui-button.component';
 import { UiFavoriteButtonComponent } from '../../shared/ui/favorite-button/ui-favorite-button.component';
 import { UiIconButtonComponent } from '../../shared/ui/icon-button/ui-icon-button.component';
