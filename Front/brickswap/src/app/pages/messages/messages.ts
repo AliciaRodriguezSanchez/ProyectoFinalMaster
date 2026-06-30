@@ -146,14 +146,7 @@ export class MessagesPage implements OnInit {
   }
 
   onConversationClick(conversation: IAConversationListItem): void {
-    const currentUserId = this.authService.getCurrentUserId();
-    const lastMessageIsFromMe = conversation.last_message_sender_id === currentUserId;
-
-    if (lastMessageIsFromMe) {
-      return;
-    }
-
-    if (conversation.status === 'unreaded') {
+    if (this.statusValue(conversation) === 'unreaded') {
       this.onStatusChanged(conversation.conversation_id, 'readed');
     }
   }
@@ -179,6 +172,15 @@ export class MessagesPage implements OnInit {
   }
 
   statusValue(conversation: IAConversationListItem): MessageStatus {
+    const currentUserId = this.authService.getCurrentUserId();
+
+    if (
+      conversation.status === 'unreaded' &&
+      conversation.last_message_sender_id === currentUserId
+    ) {
+      return 'readed';
+    }
+
     return conversation.status || 'unreaded';
   }
 

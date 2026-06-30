@@ -99,7 +99,7 @@ const sendMessage = async (messageData) => {
 
         await connection.query(
             'UPDATE conversations SET last_message_at = NOW(), status = ? WHERE id = ?',
-            ['pending', conversationId]
+            ['unreaded', conversationId]
         );
 
         await connection.commit();

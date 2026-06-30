@@ -163,6 +163,7 @@ export class ConversationPage implements OnInit {
       }
 
       this.setConversation(conversation);
+      await this.markConversationAsReadIfNeeded(conversation);
     } catch (error) {
       console.error(error);
       this.messages.set([]);
@@ -467,6 +468,32 @@ export class ConversationPage implements OnInit {
     this.messages.set(
       visibleMessages.map((message) => this.mapConversationMessage(message))
     );
+  }
+
+  private async markConversationAsReadIfNeeded(conversation: IAConversation): Promise<void> {
+    const conversationId = Number(conversation.conversation_id);
+    const currentUserId = this.currentUserId();
+    const lastMessage = conversation.messages.at(-1);
+
+    if (
+      !conversationId ||
+      !currentUserId ||
+      conversation.status !== CONVERSATION_STATUS.unreaded ||
+      !lastMessage ||
+      Number(lastMessage.emisor_id) === currentUserId
+    ) {
+      return;
+    }
+
+    try {
+      await this.messageService.changeConversationStatus(
+        conversationId,
+        CONVERSATION_STATUS.readed
+      );
+      this.conversationStatus.set(CONVERSATION_STATUS.readed);
+    } catch (error) {
+      console.error('Error al marcar la conversación como leída:', error);
+    }
   }
 
   private mapConversationMessage(
