@@ -1,6 +1,9 @@
 import { MessageType } from '../constants/message';
-
-export type ConversationStatus = 'readed' | 'unreaded' | 'pending' | 'resolved';
+import {
+  ArticleSaleStatus,
+  ConversationStatus,
+  ReportStatus,
+} from '../constants/status';
 
 export interface IAConversationMessage {
   id: number;
@@ -21,6 +24,7 @@ export interface IAConversation {
   titulo: string;
   foto: string;
   precio: string | number;
+  estado_venta?: ArticleSaleStatus;
   buyer_id: number;
   buyer_nombre?: string;
   buyer_apellidos?: string;
@@ -32,7 +36,7 @@ export interface IAConversation {
   report_id?: number;
   report_denunciante_id?: number;
   report_denunciado_id?: number;
-  report_status?: string;
+  report_status?: ReportStatus;
   last_message_at: string;
   messages: IAConversationMessage[];
 }
@@ -43,6 +47,7 @@ export interface IAConversationListItem {
   titulo: string;
   foto: string;
   precio: string | number;
+  estado_venta?: ArticleSaleStatus;
   buyer_id: number;
   buyer_nombre?: string;
   buyer_apellidos?: string;

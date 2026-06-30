@@ -41,15 +41,28 @@
       </svg>
     }
 
+    @if (icon() === 'currency') {
+      <svg aria-hidden="true" viewBox="0 0 24 24">
+        <path d="M16.5 6.5A6 6 0 1 0 18 17" />
+        <path d="M5 10h9" />
+        <path d="M5 14h8" />
+      </svg>
+    }
+
     <input
       [id]="inputId()"
-      [type]="type()"
+      [type]="type() === 'number' ? 'text' : type()"
+      [attr.inputmode]="type() === 'number' ? 'decimal' : null"
       [value]="value()"
       [placeholder]="placeholder()"
       [autocomplete]="autocomplete()"
+      [attr.min]="min()"
+      [attr.step]="step()"
       [disabled]="disabled()"
       [required]="required()"
       [attr.aria-required]="required()"
+      (keydown)="onKeyDown($event)"
+      (paste)="onPaste($event)"
       (input)="onInput($event)"
       (blur)="onBlur()"
     />

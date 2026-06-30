@@ -59,8 +59,8 @@
               variant="primary"
               size="md"
               [label]="text.keepReportedArticle"
-              [disabled]="!reportResolution().trim() || isUpdatingReport()"
-              (clicked)="updateReportStatus('Revisado_Mantenido')"
+              [disabled]="!reportResolution().trim() || isUpdatingReport() || isSendingReportMessage()"
+              (clicked)="updateReportStatus(reportStatusValue.kept)"
             ></ui-button>
             <ui-button
               class="conversation-page__report-action-button conversation-page__report-action-button--secondary"
@@ -68,9 +68,18 @@
               variant="secondary"
               size="md"
               [label]="text.removeReportedArticle"
-              [disabled]="!reportResolution().trim() || isUpdatingReport()"
-              (clicked)="updateReportStatus('Revisado_Retirado')"
+              [disabled]="!reportResolution().trim() || isUpdatingReport() || isSendingReportMessage()"
+              (clicked)="updateReportStatus(reportStatusValue.removed)"
             ></ui-button>
+            <button
+              class="conversation-page__report-send-button"
+              type="button"
+              [attr.aria-label]="text.sendToComplainant"
+              [disabled]="!reportResolution().trim() || isUpdatingReport() || isSendingReportMessage()"
+              (click)="sendReportReply()"
+            >
+              <span aria-hidden="true">{{ sendIcon }}</span>
+            </button>
           </div>
         </section>
       </footer>
@@ -79,9 +88,9 @@
     @if (!isModeratorView() && !isConversationResolved()) {
       <footer class="conversation-page__footer conversation-page__footer--chat">
         <app-message-actions
-          [showPrice]="isReceiver()"
+          [showPrice]="isReceiver() && !isArticleSold()"
           [showDelivery]="isSender()"
-          [showBuy]="isReceiver() && isLoggedIn()"
+          [showBuy]="isReceiver() && isLoggedIn() && !isArticleSold()"
           (actionSelected)="onActionSelected($event)"
         ></app-message-actions>
         <app-message-composer
@@ -90,4 +99,22 @@
       </footer>
     }
   </section>
+
+  @if (actionModalType()) {
+    <app-action-modal
+      [title]="getActionModalTitle()"
+      [textareaLabel]="getActionModalTextareaLabel()"
+      [textareaPlaceholder]="getActionModalPlaceholder()"
+      [fieldType]="actionModalType() === 'price' ? 'input' : 'textarea'"
+      [inputType]="actionModalType() === 'price' ? 'number' : 'text'"
+      [inputIcon]="actionModalType() === 'price' ? 'currency' : 'email'"
+      [inputMin]="actionModalType() === 'price' ? 0 : null"
+      [inputStep]="actionModalType() === 'price' ? '0.01' : null"
+      [submitLabel]="getActionModalSubmitLabel()"
+      [cancelLabel]="text.modalCancelLabel"
+      [requiredError]="actionModalType() === 'price' ? text.priceOfferNumericError : text.modalRequiredError"
+      (canceled)="closeActionModal()"
+      (submitted)="submitActionModal($event)"
+    />
+  }
 </main>

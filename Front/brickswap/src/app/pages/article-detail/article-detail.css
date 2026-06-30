@@ -1,0 +1,199 @@
+.article-detail {
+  width: min(100% - 104px, 1540px);
+  margin: 40px auto 72px;
+  color: var(--brick-color-text);
+}
+
+.article-detail__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 24px 18px;
+  color: var(--brick-color-label);
+  font-size: var(--brick-font-size-md);
+  font-weight: var(--brick-font-weight-l);
+  text-decoration: none;
+}
+
+.article-detail__back:hover {
+  color: var(--brick-color-black);
+}
+
+.article-detail__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  justify-content: center;
+  gap: clamp(28px, 4vw, 48px);
+}
+
+.article-detail__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid var(--brick-color-border);
+  border-radius: var(--brick-radius-2xl);
+  background: var(--brick-color-surface-muted);
+}
+
+.article-detail__image {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.article-detail__status {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 1;
+  box-shadow: var(--brick-shadow-sm);
+}
+
+:host ::ng-deep .article-detail__status .tag {
+  min-height: 24px;
+  padding: 0 12px;
+  font-size: var(--brick-font-size-sm);
+}
+
+.article-detail__content {
+  padding-top: 2px;
+  min-width: 0;
+}
+
+.article-detail__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.article-detail__title {
+  margin: 0 0 18px;
+  color: var(--brick-color-title);
+  font-size: var(--brick-font-size-5xl);
+  font-weight: var(--brick-font-weight-xl);
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.article-detail__price {
+  margin: 0 0 16px;
+  color: var(--brick-color-title);
+  font-size: var(--brick-font-size-8xl);
+  font-weight: var(--brick-font-weight-xl);
+  line-height: 1.1;
+}
+
+.article-detail__description {
+  margin: 0 0 18px;
+  color: var(--brick-color-muted);
+  font-size: var(--brick-font-size-lg);
+  font-weight: var(--brick-font-weight-m);
+  line-height: 1.6;
+}
+
+.article-detail__meta {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 28px;
+  color: var(--brick-color-muted);
+  font-size: var(--brick-font-size-md);
+  font-weight: var(--brick-font-weight-m);
+}
+
+.article-detail__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.article-detail__meta-icon {
+  width: 18px;
+  text-align: center;
+}
+
+.article-detail__meta small {
+  display: block;
+  margin-top: 2px;
+  color: var(--brick-color-muted-alt);
+}
+
+.article-detail__actions {
+  display: grid;
+  gap: 12px;
+}
+
+.article-detail__buy-action,
+.article-detail__secondary-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.article-detail__secondary-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+:host ::ng-deep .article-detail__actions .ui-button {
+  min-height: 36px;
+  border-radius: var(--brick-radius-sm);
+  font-size: var(--brick-font-size-md);
+  font-weight: var(--brick-font-weight-l);
+}
+
+@media (max-width: 1120px) and (min-width: 861px) {
+  .article-detail {
+    width: min(100% - 48px, 1120px);
+  }
+}
+
+.article-detail__review {
+  margin-top: 12px;
+}
+
+.article-detail__review-button {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--brick-color-border-muted);
+  border-radius: var(--brick-radius-sm);
+  background: var(--brick-color-white);
+  color: var(--brick-color-text);
+  font-size: var(--brick-font-size-md);
+  font-weight: var(--brick-font-weight-l);
+}
+
+.article-detail__secure {
+  margin: 16px 0 0;
+  color: var(--brick-color-muted-alt);
+  font-size: var(--brick-font-size-sm);
+  text-align: center;
+}
+
+@media (max-width: 860px) {
+  .article-detail {
+    width: min(100% - 24px, 560px);
+    margin-top: 20px;
+  }
+
+  .article-detail__back {
+    margin-left: 0;
+  }
+
+  .article-detail__layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .article-detail__title {
+    font-size: var(--brick-font-size-4xl);
+  }
+
+  .article-detail__price {
+    font-size: var(--brick-font-size-7xl);
+  }
+
+  .article-detail__secondary-actions {
+    grid-template-columns: 1fr;
+  }
+}

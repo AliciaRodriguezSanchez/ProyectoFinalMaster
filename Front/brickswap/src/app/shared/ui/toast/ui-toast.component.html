@@ -4,6 +4,7 @@
       class="toast-message"
       [class.toast-message--error]="toast.type === 'error'"
       [class.toast-message--success]="toast.type === 'success'"
+      [class.toast-message--warning]="toast.type === 'warning'"
     >
       <span class="toast-message__icon" aria-hidden="true">
         {{ toast.type === 'success' ? '✓' : '!' }}

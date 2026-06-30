@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { MessageStatus } from '../../shared/caja-mensaje/caja-mensaje.component';
+import { MessageStatus } from '../components/caja-mensaje/caja-mensaje.component';
 
 const STATUS_LABEL: Record<MessageStatus, string> = {
   unreaded: 'Sin leer',

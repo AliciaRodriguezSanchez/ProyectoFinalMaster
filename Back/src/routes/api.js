@@ -11,6 +11,7 @@ const messageRoutes = require('./api/message');
 const reportRoutes = require('./api/report');
 const usersRoutes = require('./api/users')
 const loginRoutes = require('./api/login');
+const profileRoutes = require('./api/profile');
 
 
 router.get('/test', (req, res) => {
@@ -25,5 +26,6 @@ router.use('/messages',   messageRoutes);
 router.use('/reports', checkToken, reportRoutes); 
 router.use('/login', loginRoutes);
 router.use('/users', usersRoutes);
+router.use('/profile', checkToken, profileRoutes);
 
 module.exports = router;

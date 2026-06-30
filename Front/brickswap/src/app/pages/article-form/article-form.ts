@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormTemplate } from '../../shared/components/form-template/form-template';
 import { ArticleService } from '../../core/services/article/article.service';
+import { MESSAGE_TEXT } from '../../core/constants/message-text';
+import { UiToastService } from '../../core/services/toast/ui-toast.service';
 
 @Component({
   selector: 'app-article-form',
@@ -21,7 +23,8 @@ export class ArticleForm {
   constructor (
     private fb: FormBuilder,
     private articleService: ArticleService,
-    private router: Router
+    private router: Router,
+    private toastService: UiToastService
   ) {
     this.initForm();
   }
@@ -61,12 +64,12 @@ export class ArticleForm {
       this.articleService.createArticle(this.articleForm.value).subscribe({
         next: (response) => {
           console.log(' Artículo subido a Brickswap:', response);
-          alert('¡Éxito! Gracias por utilizar Brickswap! El artículo se ha subido correctamente.');
+          this.toastService.success(MESSAGE_TEXT.articleForm.createSuccess);
           this.router.navigate(['/catalog']);
         },
         error: (err) => {
           console.error('Error al subir el artículo:', err);
-          alert('¡Error! El artículo no se ha podido subir a Brickswap.');
+          this.toastService.error(MESSAGE_TEXT.articleForm.createError);
         }
       });
     } else {

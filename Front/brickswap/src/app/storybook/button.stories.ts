@@ -8,7 +8,7 @@ const meta: Meta<UiButtonComponent> = {
   argTypes: {
     variant: {
       control: 'select',
-      options: ['primary', 'secondary']
+      options: ['primary', 'secondary', 'outline', 'danger']
     },
     size: {
       control: 'select',
@@ -40,6 +40,20 @@ export const Secondary: Story = {
   args: {
     label: 'Ver novedades',
     variant: 'secondary'
+  }
+};
+
+export const Outline: Story = {
+  args: {
+    label: 'Reservar',
+    variant: 'outline'
+  }
+};
+
+export const Danger: Story = {
+  args: {
+    label: 'Reportar articulo',
+    variant: 'danger'
   }
 };
 

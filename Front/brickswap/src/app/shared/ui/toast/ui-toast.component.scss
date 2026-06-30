@@ -32,6 +32,10 @@
   border-color: var(--brick-color-success, #16a34a);
 }
 
+.toast-message--warning {
+  border-color: var(--brick-color-brand);
+}
+
 .toast-message__icon {
   width: 28px;
   height: 28px;
@@ -46,6 +50,11 @@
 
 .toast-message--success .toast-message__icon {
   background: var(--brick-color-success, #16a34a);
+}
+
+.toast-message--warning .toast-message__icon {
+  background: var(--brick-color-brand);
+  color: var(--brick-color-black);
 }
 
 .toast-message p {

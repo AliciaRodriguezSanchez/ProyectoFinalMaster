@@ -1,0 +1,25 @@
+<span
+  class="rating-stars"
+  [class.rating-stars--sm]="size() === 'sm'"
+  [class.rating-stars--md]="size() === 'md'"
+  [class.rating-stars--lg]="size() === 'lg'"
+>
+  <span class="rating-stars__icons">
+    @for (star of stars; track star) {
+      <span
+        class="rating-stars__star"
+        [class.rating-stars__star--filled]="isStarFilled(star)"
+      >
+        ★
+      </span>
+    }
+  </span>
+
+  @if (showValue()) {
+    <span class="rating-stars__value">{{ ratingText }}</span>
+  }
+
+  @if (showReviewCount() && reviewCount() !== null) {
+    <span class="rating-stars__count">({{ reviewText }})</span>
+  }
+</span>
