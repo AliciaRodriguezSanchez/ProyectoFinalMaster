@@ -47,19 +47,25 @@
       }
     } @else {
       @for (conversation of filteredConversations(); track conversation.conversation_id) {
-        <a
-          class="messages-page__conversation-link"
-          [routerLink]="['/messages/conversation-thread', conversation.conversation_id]" (click)="onConversationClick(conversation)"
-        >
+        <div class="position-relative w-100">
           <app-caja-mensaje
             [name]="otherUserName(conversation)"
             [product]="conversation.titulo"
             [timeAgo]="timeAgo(conversation)"
             [status]="statusValue(conversation)"
             [lastMsg]="lastMessagePreview(conversation)"
+            [showStatusSelect]="true"
             (statusChanged)="onStatusChanged(conversation.conversation_id, $event)"
           ></app-caja-mensaje>
-        </a>
+
+          <a
+            [routerLink]="['/messages/conversation-thread', conversation.conversation_id]"
+            (click)="onConversationClick(conversation)"
+            class="position-absolute top-0 start-0 h-100"
+            style="width: calc(100% - 120px); z-index: 1;"
+            [attr.aria-label]="'Abrir conversación de ' + conversation.titulo"
+          ></a>
+        </div>
       }
       @for (report of filteredReports(); track report.id) {
         <a

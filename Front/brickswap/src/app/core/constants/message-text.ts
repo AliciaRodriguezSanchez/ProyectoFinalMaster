@@ -105,6 +105,7 @@ export const MESSAGE_TEXT = {
     reserveUnavailable: 'Artículo no disponible para la reserva',
     operationError: 'Error al procesar la operación, inténtelo más tarde',
     ownConversationError: 'No puedes iniciar una conversación contigo mismo',
+    ownArticleActionError: 'No puedes realizar esta acción sobre tu propio artículo',
     modalCancelLabel: 'Cancelar',
     modalRequiredError: 'Este campo es obligatorio',
     chatModalTitle: 'Chatear con el vendedor',
@@ -117,9 +118,9 @@ export const MESSAGE_TEXT = {
     reportSubmitLabel: 'Enviar denuncia',
     reportReasonRequired: 'Debes indicar el motivo del reporte',
     reportSuccess: 'Se reportó el producto correctamente',
+    sendMessageSuccess: 'El mensaje se ha enviado correctamente',
     sendMessageError: 'Error al enviar el mensaje',
     sendReportError: 'No se pudo enviar el reporte correctamente',
     favoriteError: 'Error al añadir a favoritos',
-    ownArticleActionError: 'No puedes realizar esta acción sobre tu propio artículo.'
   },
 } as const;

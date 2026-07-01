@@ -146,14 +146,7 @@ export class MessagesPage implements OnInit {
   }
 
   onConversationClick(conversation: IAConversationListItem): void {
-    const currentUserId = this.authService.getCurrentUserId();
-    const lastMessageIsFromMe = conversation.last_message_sender_id === currentUserId;
-
-    if (lastMessageIsFromMe) {
-      return;
-    }
-
-    if (conversation.status === 'unreaded') {
+    if (this.statusValue(conversation) === 'unreaded') {
       this.onStatusChanged(conversation.conversation_id, 'readed');
     }
   }
@@ -178,20 +171,47 @@ export class MessagesPage implements OnInit {
     return this.timeAgoFromDate(date);
   }
 
-  statusValue(conversation: IAConversationListItem): MessageStatus {
-    return conversation.status || 'unreaded';
-  }
+  //////////////
 
   lastMessagePreview(conversation: IAConversationListItem): string {
-    if (conversation.last_message_type === MESSAGE_TYPE.PRICE_OFFER) {
-      return `${this.text.priceOfferLabel}: ${Number(conversation.last_message_text || 0).toFixed(2)} €`;
+  // 1. Si no hay tipo de mensaje o texto, devolvemos un string vacío de forma segura
+      if (!conversation.last_message_type) {
+        return conversation.last_message_text || '';
+      }
+    
+      // 2. Evaluamos según el tipo de mensaje recibido
+      switch (conversation.last_message_type) {
+        case MESSAGE_TYPE.PRICE_OFFER: {
+          const precio = Number(conversation.last_message_text || 0);
+          return `${this.text.priceOfferLabel}: ${precio.toFixed(2)} €`;
+        }
+      
+        case MESSAGE_TYPE.DELIVERY_METHOD: {
+          return `${this.text.deliveryMethodLabel}: ${conversation.last_message_text || ''}`;
+        }
+      
+        default:
+          // 3. Si es un mensaje de texto normal (TEXT) o cualquier otro, devolvemos el texto plano
+          return conversation.last_message_text || '';
+      }
+  }
+
+  statusValue(conversation: IAConversationListItem): MessageStatus {
+    if (conversation.status === 'resolved') {
+      return 'resolved';
     }
 
-    if (conversation.last_message_type === MESSAGE_TYPE.DELIVERY_METHOD) {
-      return `${this.text.deliveryMethodLabel}: ${conversation.last_message_text || ''}`;
+    const currentUserId = this.authService.getCurrentUserId();
+    
+    if (conversation.status === 'readed') {
+          return 'readed';
+        }
+
+    if (conversation.last_message_sender_id === currentUserId) {
+      return 'pending';
     }
 
-    return conversation.last_message_text || '';
+    return 'unreaded';
   }
 
   reportTitle(report: IReportsTable): string {
