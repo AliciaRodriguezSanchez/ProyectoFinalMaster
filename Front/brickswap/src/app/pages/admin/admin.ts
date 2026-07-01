@@ -1,8 +1,7 @@
-import { Component, ElementRef, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, signal, ViewChild, ChangeDetectorRef} from '@angular/core';
 import { TitleComponent } from '../../shared/ui/titles/title.component';
 import { DescriptionsComponent } from '../../shared/ui/descriptions/descriptions.component';
 import { CardPanelComponent } from '../../shared/card-panel/card-panel.component';
-import { ChangeDetectorRef, Component, signal } from '@angular/core';
 
 import { IStat } from '../../interfaces/istat.interface';
 import { ArticleService } from '../../core/services/article/article.service';
@@ -14,9 +13,6 @@ import { IUsersTable } from '../../interfaces/iusers-table.interface';
 import { isActive, Router } from '@angular/router';
 import { TableComponent } from '../../shared/table/table.component';
 
-import { TitleComponent } from '../../shared/ui/titles/title.component';
-import { DescriptionsComponent } from '../../shared/ui/descriptions/descriptions.component';
-import { CardPanelComponent } from '../../shared/card-panel/card-panel.component';
 
 const CONFIGURACION_GLOBAL: Record<string, any> = {
   'Usuarios totales': {
