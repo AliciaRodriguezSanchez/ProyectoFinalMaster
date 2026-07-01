@@ -1,0 +1,15 @@
+<button
+  type="button"
+  class="card d-flex flex-row justify-content-start align-items-center py-4 px-4 rounded-4 shadow-sm gap-4 w-100 admin-card"
+  [class.admin-card--active]="isActive()"
+  (click)="cardSelected.emit(card())"
+>
+  <div class="rounded-4 text-center p-2 px-3" [ngClass]="card().colorClass">
+    <i class="fs-3" [ngClass]="card().icon"></i>
+  </div>
+
+  <div class="col d-flex flex-column text-start">
+    <span class="fs-5 fw-semibold">{{ card().title }}</span>
+    <span class="opacity-75">{{ card().description }}</span>
+  </div>
+</button>

@@ -100,12 +100,64 @@ const getNumberUsers = async (req, res) =>{
         const users = await userModel.numberUsers();
         res.json(users)
     }catch (error){
+        console.error(error);
         res.status(500).json({
             message: 'Error al obtener el número de usuarios totales'
         });
     }
 }
 
+const getUsers = async (req, res) => {
+    try{
+        const users = await userModel.getAllUsers();
+        res.json(users)
+    }catch (error){
+        console.error("Error en el endpoint getUsers:", error);
+        res.status(500).json({
+            message: 'Error al obtener los usuarios'
+        });
+    }
+}
+
+const stateChange = async (req, res) => {
+    try{
+        const {id} = req.params;
+        const result = await userModel.changeState(id);
+        res.json(result)
+    }catch (error){
+        console.error("Error en el endpoint getUsers:", error);
+        res.status(500).json({
+            message: 'Error al cambiar el estado del usuarios'
+        });
+    }
+}
+
+const roleChange = async (req, res) => {
+    try{
+        const {id} = req.params;
+        const {newRole} = req.body;
+        const result = await userModel.changeRole(id, newRole);
+        res.json(result)
+    }catch (error){
+        console.error("Error en el endpoint getUsers:", error);
+        res.status(500).json({
+            message: 'Error al cambiar el estado del usuarios'
+        });
+    }
+}
+
+const userDelete = async (req, res) => {
+    try{
+        const {id} = req.params;
+        const result = await userModel.deleteUser(id);
+        res.json(result)
+    }catch (error){
+        console.error("Error en el endpoint getUsers:", error);
+        res.status(500).json({
+            message: 'Error al eliminar usuarios'
+        });
+    }
+}
 
 ////////////////funciones auxiliares
 
@@ -120,5 +172,9 @@ const capitalizar = (texto) => {
 module.exports = {
     register,
     resetPassword,
-    getNumberUsers
+    getNumberUsers,
+    getUsers,
+    stateChange,
+    roleChange,
+    userDelete
 }

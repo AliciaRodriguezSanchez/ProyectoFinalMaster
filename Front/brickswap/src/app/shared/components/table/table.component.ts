@@ -1,8 +1,9 @@
-import { Component, EventEmitter, input, Output } from '@angular/core';
-import { IPendingTable } from '../../interfaces/ipending-table.interface';
 import { CommonModule } from '@angular/common';
-import { IUsersTable } from '../../interfaces/iusers-table.interface';
-import { ReportViewComponent } from '../components/report-view/report-view.component';
+import { Component, EventEmitter, input, Output } from '@angular/core';
+import { ReportViewComponent } from '../report-view/report-view.component';
+import { IUsersTable } from '../../../interfaces/iusers-table.interface';
+import { IPendingTable } from '../../../interfaces/ipending-table.interface';
+
 
 export type TableItem = IUsersTable | IPendingTable;
 
@@ -18,8 +19,6 @@ export class TableComponent {
 
   @Output() onGuardarResolucion = new EventEmitter<{id: number, estado: string, resolucion: string, estado_revision:string}>();
   @Output() ordenarEvent = new EventEmitter<void>();
-  @Output() actionClick = new EventEmitter<any>();
-  @Output() roleChange = new EventEmitter<{ id: number, newRole: string }>();
   @Output() deleteClick = new EventEmitter<any>();
 
   emitirOrden() {

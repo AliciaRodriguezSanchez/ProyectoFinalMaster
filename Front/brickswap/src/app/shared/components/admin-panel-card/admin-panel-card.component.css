@@ -1,0 +1,10 @@
+.admin-card {
+  border: 1px solid #e9ecef;
+  background: #fff;
+  cursor: pointer;
+}
+
+.admin-card:hover,
+.admin-card--active {
+  border-color: #ffc107;
+}
