@@ -11,6 +11,7 @@ import { UserPanelPage } from './pages/user-panel/user-panel';
 import { ProfilePage } from './pages/profile/profile';
 import { roleGuard } from './core/guards/role.guard';
 import { UserRole } from './core/constants/user-role';
+import { Error404 } from './pages/error404/error404';
 
 export const routes: Routes = [
     //1. RUTA POR DEFECTO
@@ -88,5 +89,6 @@ export const routes: Routes = [
     },
 
     // 13. RUTA COMÚN PARA REDIRIGIR
-    { path: '**', redirectTo: 'home' }
+    /* { path: '**', redirectTo: 'home' } */
+    { path: '**', component: Error404}
 ];
