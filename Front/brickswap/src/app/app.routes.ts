@@ -89,6 +89,5 @@ export const routes: Routes = [
     },
 
     // 13. RUTA COMÚN PARA REDIRIGIR
-    /* { path: '**', redirectTo: 'home' } */
-    { path: '**', component: Error404}
+    { path: '**', redirectTo: 'home' }
 ];
