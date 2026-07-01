@@ -97,9 +97,15 @@ const sendMessage = async (messageData) => {
             ]
         );
 
+
+        ///////////////////cambio aqui
+
         await connection.query(
-            'UPDATE conversations SET last_message_at = NOW(), status = ? WHERE id = ?',
-            ['unreaded', conversationId]
+            `UPDATE conversations 
+             SET last_message_at = NOW(), 
+                 status = IF(status = 'resolved', 'resolved', 'unreaded') 
+             WHERE id = ?`,
+            [conversationId]
         );
 
         await connection.commit();
