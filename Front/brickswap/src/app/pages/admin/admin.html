@@ -10,5 +10,30 @@
         </div>
       }
     </div>
-</section>
+    
 
+  <section class="row py-4">
+    <app-title class="py-4" size="small" text="Gestión"></app-title>
+    @for (card of adminCards; track card.id) {
+      <article class="col-12 col-md-6 col-lg-4 mb-4">
+        <app-admin-panel-card
+          [card]="card"
+          [isActive]="activeSection() === card.id"
+          (cardSelected)="seleccionarCard($event)"
+        ></app-admin-panel-card>
+      </article>
+    }
+  </section>
+
+  @if (activeSection() === 'users') {
+    <section class="mt-4" #userListSection>
+      <app-table 
+        [typeTable]="'usuarios'" 
+        [data]="users()" 
+        (actionClick)="toogleState($event)" 
+        (roleChange)="cambiarRolUsuario($event)"
+        (deleteClick)="eliminarUsuario($event)">
+      </app-table>
+    </section>
+  }
+</section>

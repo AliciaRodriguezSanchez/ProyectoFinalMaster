@@ -61,6 +61,39 @@ const numberUsers = async () => {
     return result;
 }
 
+const getAllUsers = async () => {
+    const [result] = await db.query(`
+        SELECT p.id, p.nombre, p.apellidos, p.email, r.nombre_rol, p.estado_cuenta
+        FROM perfiles AS p 
+        JOIN roles AS r ON p.rol_id=r.id
+        `);
+    return result;
+}
+
+const changeState = async (id) => {
+    const [result] = await db.query(`
+    UPDATE perfiles 
+    SET estado_cuenta = IF(estado_cuenta = 'Activo', 'Suspendido', 'Activo') 
+    WHERE id = ?
+  `, [id]);
+    return result;
+}
+
+const changeRole = async (userId, newRole) => {
+  const [result] = await db.query(`
+    UPDATE perfiles 
+    SET rol_id = (SELECT id FROM roles WHERE nombre_rol = ?)
+    WHERE id = ?
+  `, [newRole, parseInt(userId)]);
+  
+  return result;
+}
+
+const deleteUser = async (id) => {
+  const [result] = await db.query(`DELETE FROM perfiles WHERE id = ?`, [id]);
+  return result;
+}
+
 module.exports = {
     insert,
     selectByEmail,
@@ -68,5 +101,9 @@ module.exports = {
     selectByUsername,
     updatePasswordByEmail,
     updatePasswordByEmailAndUsername,
-    numberUsers
+    numberUsers,
+    getAllUsers,
+    changeState,
+    changeRole,
+    deleteUser
 }

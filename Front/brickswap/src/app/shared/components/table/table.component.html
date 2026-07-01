@@ -130,23 +130,11 @@
           </span>
         </div>
         <div class="col-md-3 col-12 text-end ms-auto my-1">
-          <select 
-            class="form-select form-select-sm border mx-1 bg-light text-secondary" 
-            style="width: 120px; height: 35px; display: inline-block; padding: 0.25rem 0.5rem;"
-            [value]="$any(item).role"
-            (change)="roleChange.emit({ id: $any(item).id, newRole: $any($event.target).value })">
-            <option value="admin">Admin</option>
-            <option value="moderador">Moderador</option>
-            <option value="usuario">Usuario</option>
-          </select>
-          <button class="btn btn-sm mx-1" [ngClass]="$any(item).isActive ? 'btn-danger' : 'btn-outline-secondary'" (click)="actionClick.emit(item.id)" style="width: 120px; height: 35px;">
-            {{ $any(item).isActive ? 'Bloquear' : 'Activar' }}
+          <button class="btn btn-white border btn-sm mx-1">
+            <i class="bi bi-shield"></i>Rol
           </button>
-          <button 
-            class="btn btn-sm btn-outline-danger" 
-            style="width: 40px; height: 35px;"
-            (click)="deleteClick.emit(item.id)">
-            <i class="bi bi-trash"></i>
+          <button class="btn btn-sm mx-1" [ngClass]="$any(item).isActive ? 'btn-danger' : 'btn-outline-secondary'">
+            {{ $any(item).isActive ? 'Bloquear' : 'Activar' }}
           </button>
         </div>
         }
