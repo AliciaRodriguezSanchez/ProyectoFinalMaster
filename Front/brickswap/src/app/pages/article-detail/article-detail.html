@@ -8,7 +8,7 @@
     <div class="article-detail__media">
       <app-tag
         class="article-detail__status"
-        [label]="article.estado_venta"
+        [label]="isOwnDraft() ? 'Borrador' : article.estado_venta"
         [variant]="getSaleStatusVariant()"
       />
 
@@ -57,13 +57,22 @@
 
       <div class="article-detail__actions" [attr.aria-label]="text.actionsAria">
         <div class="article-detail__buy-action">
-          <ui-button
-            [label]="text.buyNowLabel"
-            variant="primary"
-            size="md"
-            [disabled]="article.estado_venta !== saleStatus.available"
-            (clicked)="buyArticle()"
-          />
+          @if (isOwnDraft()) {
+            <ui-button
+              label="Publicar"
+              variant="primary"
+              size="md"
+              (clicked)="publishDraft()"
+            />
+          } @else {
+            <ui-button
+              [label]="text.buyNowLabel"
+              variant="primary"
+              size="md"
+              [disabled]="article.estado_venta !== saleStatus.available"
+              (clicked)="buyArticle()"
+            />
+          }
         </div>
 
         <div class="article-detail__secondary-actions">
