@@ -133,6 +133,40 @@ export class ArticleDetail implements OnInit {
     });
   }
 
+  isOwnDraft(): boolean {
+    if (!this.article) return false;
+
+    return (
+      this.article.estado_revision === 'Borrador' &&
+      this.authService.getCurrentUserId() === this.article.perfil_id
+    );
+  }
+
+  async publishDraft(): Promise<void> {
+    if (!this.article || !this.article.id) return;
+
+    const userId = this.requireLoggedUser();
+
+    if (!userId || !this.isOwnDraft()) {
+      return;
+    }
+
+    try {
+      await this.articleService.updateState(this.article.id, 'Publicado');
+
+      this.article = {
+        ...this.article,
+        estado_revision: 'Publicado',
+      };
+
+      this.toastService.success('Artículo publicado correctamente');
+      this.cdr.detectChanges();
+    } catch (error) {
+      console.error('Error al publicar el borrador:', error);
+      this.toastService.error('No se pudo publicar el artículo');
+    }
+  }
+
   // 2. ACCIÓN: ABRIR CHAT / MENSAJERÍA
   sendMessage() {
     if (!this.article) return;
