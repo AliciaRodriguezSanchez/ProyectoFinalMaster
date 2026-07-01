@@ -111,14 +111,39 @@ const getUsers = async (req, res) => {
         const users = await userModel.getAllUsers();
         res.json(users)
     }catch (error){
+        console.error("Error en el endpoint getUsers:", error);
         res.status(500).json({
             message: 'Error al obtener los usuarios'
         });
     }
 }
 
+const stateChange = async (req, res) => {
+    try{
+        const {id} = req.params;
+        const result = await userModel.changeState(id);
+        res.json(result)
+    }catch (error){
+        console.error("Error en el endpoint getUsers:", error);
+        res.status(500).json({
+            message: 'Error al cambiar el estado del usuarios'
+        });
+    }
+}
 
-
+const roleChange = async (req, res) => {
+    try{
+        const {id} = req.params;
+        const {newRole} = req.body;
+        const result = await userModel.changeRole(id, newRole);
+        res.json(result)
+    }catch (error){
+        console.error("Error en el endpoint getUsers:", error);
+        res.status(500).json({
+            message: 'Error al cambiar el estado del usuarios'
+        });
+    }
+}
 
 ////////////////funciones auxiliares
 
@@ -134,5 +159,7 @@ module.exports = {
     register,
     resetPassword,
     getNumberUsers,
-    getUsers
+    getUsers,
+    stateChange,
+    roleChange
 }

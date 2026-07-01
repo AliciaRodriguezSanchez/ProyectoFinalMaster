@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, ElementRef, signal, ViewChild } from '@angular/core';
 import { TitleComponent } from '../../shared/ui/titles/title.component';
 import { DescriptionsComponent } from '../../shared/ui/descriptions/descriptions.component';
 import { CardPanelComponent } from '../../shared/card-panel/card-panel.component';
@@ -9,10 +9,7 @@ import { ReportService } from '../../core/services/report/report.service';
 import { AdminPanelCardComponent } from '../../shared/components/admin-panel-card/admin-panel-card.component';
 import { IAdminPanelCard } from '../../interfaces/iadmin-panel-card.interface';
 import { IUsersTable } from '../../interfaces/iusers-table.interface';
-import { IAdminCategoryRow } from '../../interfaces/iadmin-category-row.interface';
-import { CategoryService } from '../../core/services/category/category.service';
-import { ICategory } from '../../core/interfaces/icategory.interface';
-import { Router } from '@angular/router';
+import { isActive, Router } from '@angular/router';
 import { TableComponent } from '../../shared/table/table.component';
 
 const CONFIGURACION_GLOBAL: Record<string, any> = {
@@ -40,11 +37,10 @@ type AdminSection = 'users' | 'categories' | 'moderation';
   styleUrl: './admin.css',
 })
 export class AdminPage {
-  totalStadistics=signal<IStat[]>([]);
+  totalStadistics = signal<IStat[]>([]);
   activeSection = signal<AdminSection | null>(null);
   users = signal<IUsersTable[]>([]);
-  categories = signal<IAdminCategoryRow[]>([]);
-  isLoading = signal(false);
+  @ViewChild('userListSection') userListSection!: ElementRef;
 
   adminCards: IAdminPanelCard[] = [
     {
@@ -70,23 +66,25 @@ export class AdminPage {
     },
   ];
 
-
   constructor(
     private router: Router,
     private articleService: ArticleService,
     private userService: UserService,
-    private reportService: ReportService,
-    private categoryService: CategoryService
+    private reportService: ReportService
   ){}
 
+  ngOnInit(){
+    this.obtenerEstadisticasGlobales();
+  }
 
-ngOnInit(){
-  this.obtenerEstadisticasGlobales();
-}
-
-async seleccionarCard(card: IAdminPanelCard) {
+  async seleccionarCard(card: IAdminPanelCard) {
     if (card.id === 'moderation') {
       this.router.navigate(['/moderador']);
+      return;
+    }
+
+    if (card.id === 'categories') {
+      this.router.navigate(['/categorias']);
       return;
     }
 
@@ -99,17 +97,17 @@ async seleccionarCard(card: IAdminPanelCard) {
 
     if (card.id === 'users') {
       this.cargarUsuarios();
-    }
-
-    if (card.id === 'categories') {
-      await this.cargarCategorias();
+      setTimeout(() => {
+        this.userListSection?.nativeElement.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }, 100);
     }
   }
 
-async obtenerEstadisticasGlobales() {
-  
+  async obtenerEstadisticasGlobales() {
     try {
-
       const fallback = [{ 'COUNT(*)': 0 }];
 
       const [
@@ -126,11 +124,7 @@ async obtenerEstadisticasGlobales() {
         this.reportService.getReportsP().catch(() => fallback) 
       ]);
 
-      console.log('Respuesta del backend', totalUsuarios, totalPublicados, totalVendidos, totalRevision, totalReportes);
-
-
       const estadisticasMapeadas = ORDEN_TARJETAS.map(label => {
-        
         let total = 0;
         
         if (label === 'Usuarios totales') total = totalUsuarios[0]['COUNT(*)'];
@@ -155,57 +149,62 @@ async obtenerEstadisticasGlobales() {
       });
 
       this.totalStadistics.set(estadisticasMapeadas);
-      console.log('Estadísticas Globales generadas:', estadisticasMapeadas);
 
     } catch (error) {
       console.log('Error general al cargar las estadísticas:', error);
     }
   }
 
-  async cargarUsuarios(){
-    this.users.set([
-      {
-        id: 1,
-        name: 'Carlos Martínez',
-        email: 'carlos.admin@legohub.com',
-        role: 'Admin',
-        isActive: true,
-      },
-      {
-        id: 3,
-        name: 'Miguel Fernández',
-        email: 'miguel.mod@legohub.com',
-        role: 'Moderador',
-        isActive: true,
-      },
-      {
-        id: 19,
-        name: 'Sergio Morales',
-        email: 'sergio@correo.com',
-        role: 'Usuario',
-        isActive: false,
-      },
-    ]);
-  }
-
-  async cargarCategorias() {
-    this.isLoading.set(true);
-
+  async cargarUsuarios() {
     try {
-      const data = await this.categoryService.getCategories();
+      const data: any = await this.userService.getUsuarios();
 
-      const categoriasMapeadas = data.map((category: ICategory, index: number) => ({
-        id: category.id || index + 1,
-        name: category.nombre,
-        description: category.descripcion || 'Sin descripción',
+      const usuariosMapeados: IUsersTable[] = data.map((user: any) => ({
+        id: user.id,
+        name: `${user.nombre} ${user.apellidos}`.trim(),
+        email: user.email,
+        role: user.nombre_rol,
+        isActive: user.estado_cuenta === 'Activo' 
       }));
 
-      this.categories.set(categoriasMapeadas);
+      this.users.set(usuariosMapeados);
+
     } catch (error) {
-      console.error('Error al cargar categorías:', error);
-      this.categories.set([]);
-    } finally {
-      this.isLoading.set(false);
+      console.error('Error al cargar usuarios:', error);
+      this.users.set([]);
+    }
+  }
+
+  async toogleState(id:string){
+    try{
+      await this.userService.getStateChange(id);
+
+      this.users.update(usuario => usuario.map(user =>{
+        if(user.id === id){
+          return {...user, isActive:!user.isActive};
+        }
+        return user;
+      }))
+    }catch (error){
+      console.error('Error al cambiar el estado del perfil', error)
+    }
+  }
+
+  async cambiarRolUsuario(evento: { id: number, newRole: string }) {
+    try {
+      await this.userService.getRolChange(evento.id, evento.newRole);
+
+      this.users.update(usuariosActuales => 
+        usuariosActuales.map(user => {
+          if (user.id === evento.id) {
+            return { ...user, role: evento.newRole };
+          }
+          return user;
+        })
+      );
+      
+    } catch (error) {
+      console.error('Error al cambiar el rol del usuario:', error);
     }
   }
 }

@@ -16,6 +16,18 @@ GET {{baseUrl}}/test
 GET {{baseUrl}}/users
 Authorization: {{TOKEN}}
 
+###
+PUT {{baseUrl}}/users/11/status
+Authorization: {{TOKEN}}
+
+###
+PUT {{baseUrl}}/users/11/role
+Authorization: {{TOKEN}}
+Content-Type: application/json
+
+{
+  "newRole":"moderador"
+}
 
 ########################################
 # CATEGORIES

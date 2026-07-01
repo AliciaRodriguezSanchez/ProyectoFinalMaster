@@ -63,11 +63,30 @@ const numberUsers = async () => {
 
 const getAllUsers = async () => {
     const [result] = await db.query(`
-        SELECT p.nombre, p.apellidos, p.email, r.nombre_rol, p.estado_cuenta
+        SELECT p.id, p.nombre, p.apellidos, p.email, r.nombre_rol, p.estado_cuenta
         FROM perfiles AS p 
-        JOIN roles AS r ON p.rol_id==r.id
+        JOIN roles AS r ON p.rol_id=r.id
         `);
     return result;
+}
+
+const changeState = async (id) => {
+    const [result] = await db.query(`
+    UPDATE perfiles 
+    SET estado_cuenta = IF(estado_cuenta = 'Activo', 'Suspendido', 'Activo') 
+    WHERE id = ?
+  `, [id]);
+    return result;
+}
+
+const changeRole = async (userId, newRole) => {
+  const [result] = await db.query(`
+    UPDATE perfiles 
+    SET rol_id = (SELECT id FROM roles WHERE nombre_rol = ?)
+    WHERE id = ?
+  `, [newRole, parseInt(userId)]);
+  
+  return result;
 }
 
 module.exports = {
@@ -78,5 +97,7 @@ module.exports = {
     updatePasswordByEmail,
     updatePasswordByEmailAndUsername,
     numberUsers,
-    getAllUsers
+    getAllUsers,
+    changeState,
+    changeRole
 }
