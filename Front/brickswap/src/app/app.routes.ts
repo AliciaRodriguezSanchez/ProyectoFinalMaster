@@ -11,6 +11,7 @@ import { UserPanelPage } from './pages/user-panel/user-panel';
 import { ProfilePage } from './pages/profile/profile';
 import { roleGuard } from './core/guards/role.guard';
 import { UserRole } from './core/constants/user-role';
+import { CategoryManagement } from './pages/category-management/category-management';
 
 export const routes: Routes = [
     //1. RUTA POR DEFECTO
@@ -87,6 +88,15 @@ export const routes: Routes = [
         component: AdminPage
     },
 
-    // 13. RUTA COMÚN PARA REDIRIGIR
+    // 13. GESTION DE CATEGORIAS
+    { path: 'administration/categories',
+        canActivate: [roleGuard],
+        data: {
+        roles: [UserRole.ADMIN]
+        },
+        component: CategoryManagement
+    },
+
+    // 14. RUTA COMÚN PARA REDIRIGIR
     { path: '**', redirectTo: 'home' }
 ];
