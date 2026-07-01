@@ -122,5 +122,6 @@ export const MESSAGE_TEXT = {
     sendMessageError: 'Error al enviar el mensaje',
     sendReportError: 'No se pudo enviar el reporte correctamente',
     favoriteError: 'Error al añadir a favoritos',
+    ownArticleActionError: 'No puedes realizar esta acción sobre tu propio artículo.'
   },
 } as const;
