@@ -12,7 +12,7 @@ export class ReportService {
   constructor(private http: HttpClient) { }
 
   // POST /api/reports
-  createReport(motivo: string, denunciante_id: number, denunciado_id: number, articulo_id: number): Observable<any> {
+  createReport(motivo: string, denunciado_id: number, articulo_id: number): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `${token}`
@@ -20,7 +20,6 @@ export class ReportService {
 
     return this.http.post<any>(`${API_URL}/reports`, { 
       motivo, 
-      denunciante_id, 
       denunciado_id, 
       articulo_id 
     }, {headers});

@@ -3,7 +3,10 @@ const ERROR_MESSAGE_TEXT = {
         requiredFields: 'Todos los campos son obligatorios',
         invalidIdentifiers: 'Los identificadores deben ser números válidos',
         invalidProfileId: 'El identificador del perfil no es válido',
-        invalidUserId: 'El identificador del usuario debe ser un número válido'
+        invalidUserId: 'El identificador del usuario debe ser un número válido',
+        routeNotFound: 'Ruta no encontrada',
+        invalidJson: 'El cuerpo de la petición no tiene un formato JSON válido',
+        unexpectedError: 'Error interno del servidor'
     },
     article: {
         loadError: 'Server error al recuperar artículos',
@@ -31,7 +34,8 @@ const ERROR_MESSAGE_TEXT = {
     },
     auth: {
         credentialsRequired: 'Email y contraseña son obligatorios',
-        invalidCredentials: 'Error email y/o contraseña'
+        invalidCredentials: 'Error email y/o contraseña',
+        loginError: 'Error del servidor al iniciar sesión'
     },
     user: {
         passwordMismatch: 'Las contraseñas no coinciden',
@@ -42,7 +46,11 @@ const ERROR_MESSAGE_TEXT = {
     profile: {
         notFound: 'Perfil no encontrado',
         currentPasswordRequired: 'Introduce la contraseña actual',
-        invalidCurrentPassword: 'La contraseña actual no es correcta'
+        invalidCurrentPassword: 'La contraseña actual no es correcta',
+        loadError: 'Error del servidor al obtener el perfil',
+        updateError: 'Error del servidor al actualizar el perfil',
+        checkPasswordError: 'Error del servidor al comprobar la contraseña',
+        changePasswordError: 'Error del servidor al cambiar la contraseña'
     },
     favorite: {
         duplicated: 'Este artículo ya se encuentra en tu lista de favoritos',

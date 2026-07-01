@@ -319,7 +319,6 @@ export class ConversationPage implements OnInit {
       await firstValueFrom(
         this.messageService.sendReportMessage(
           message,
-          senderId,
           this.reportId()
         )
       );
@@ -368,7 +367,6 @@ export class ConversationPage implements OnInit {
         await firstValueFrom(
           this.messageService.sendReportMessage(
             cleanMessage,
-            senderId,
             this.reportId()
           )
         );
@@ -392,7 +390,6 @@ export class ConversationPage implements OnInit {
       await firstValueFrom(
         this.messageService.sendMessage(
           cleanMessage,
-          senderId,
           receiverId,
           articleId,
           tipoMensaje

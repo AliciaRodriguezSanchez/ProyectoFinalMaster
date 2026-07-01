@@ -251,7 +251,7 @@ export class ArticleDetail implements OnInit {
       return;
     }
 
-    this.messageService.sendMessage(texto, emisor_id, this.article.perfil_id, this.article.id!).subscribe({
+    this.messageService.sendMessage(texto, this.article.perfil_id, this.article.id!).subscribe({
       next: (res) => {
         this.closeActionModal();
         this.router.navigate(['/messages/conversation-thread', res.conversationId]);
@@ -275,7 +275,7 @@ export class ArticleDetail implements OnInit {
       return;
     }
 
-    this.reportService.createReport(motivo.trim(), denunciante_id, this.article.perfil_id, this.article.id!).subscribe({
+    this.reportService.createReport(motivo.trim(), this.article.perfil_id, this.article.id!).subscribe({
       next: (res) => {
         this.closeActionModal();
         this.toastService.success(MESSAGE_TEXT.articleDetail.reportSuccess);
@@ -299,7 +299,7 @@ export class ArticleDetail implements OnInit {
       return;
     }
     
-    this.favoriteService.addFavorite(mi_perfil_id, this.article.id).subscribe({
+    this.favoriteService.addFavorite(this.article.id).subscribe({
       next: (res) => {
         this.isFavorite.set(true);
         this.toastService.success(res.message);

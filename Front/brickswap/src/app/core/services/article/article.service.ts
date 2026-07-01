@@ -1,17 +1,26 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, firstValueFrom } from "rxjs";
 import { Article } from "../../models/article/article.model";
 import { ICategory } from "../../../interfaces/icategory.interface";
 import { IArticle } from "../../../interfaces/iarticles.interface";
 import { API_URL , ARTICLES, LAST_PUBLICATIONS, IN_PROMOTIONS} from "../api";
 import { App } from "../../../app";
+import { TOKEN_KEY } from "../../constants/auth";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArticleService {
   constructor(private http: HttpClient) { }
+
+  private authHeaders(): HttpHeaders {
+    const token = localStorage.getItem(TOKEN_KEY);
+
+    return new HttpHeaders({
+      Authorization: token || ''
+    });
+  }
 
   // 1. GET /api/categories
   getCategories(): Observable<ICategory[]> {
@@ -42,24 +51,31 @@ export class ArticleService {
 
   // 4. POST /api/articles
   createArticle(article: Article): Observable<any> {
-    return this.http.post<any>(`${API_URL}/articles`, article);
+    return this.http.post<any>(`${API_URL}/articles`, article, {
+      headers: this.authHeaders()
+    });
   }
 
   // 5. PUT /api/articles/:id/reserve
   reserveArticle(id: number): Observable<any> {
-    return this.http.put<any>(`${API_URL}/articles/${id}/reserve`, {});
+    return this.http.put<any>(`${API_URL}/articles/${id}/reserve`, {}, {
+      headers: this.authHeaders()
+    });
   }
 
   // 6. PUT /api/articles/:id/buy
   buyArticle(id: number): Observable<any> {
-    return this.http.put<any>(`${API_URL}/articles/${id}/buy`, {});
+    return this.http.put<any>(`${API_URL}/articles/${id}/buy`, {}, {
+      headers: this.authHeaders()
+    });
   }
 
   // 7. POST /api/articles/:id/favorites
-  addToFavorites(articuloId: number, perfilId: number): Observable<any> {
+  addToFavorites(articuloId: number): Observable<any> {
     return this.http.post<any>(`${API_URL}/favorites`, {
-      articulo_id: articuloId,
-      perfil_id: perfilId
+      articulo_id: articuloId
+    }, {
+      headers: this.authHeaders()
     });
   }
 
@@ -84,7 +100,9 @@ export class ArticleService {
       estado_revision
     }
     return firstValueFrom(
-      this.http.put<any>(`${API_URL}/articles/${id}`, body)
+      this.http.put<any>(`${API_URL}/articles/${id}`, body, {
+        headers: this.authHeaders()
+      })
     );
   }
 

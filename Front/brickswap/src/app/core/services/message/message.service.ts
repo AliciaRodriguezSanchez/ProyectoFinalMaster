@@ -42,17 +42,17 @@ export class MessageService {
   // POST /api/messages
   sendMessage(
     texto_mensaje: string,
-    emisor_id: number,
     receptor_id: number,
     articulo_id: number,
     tipo_mensaje: MessageType = MESSAGE_TYPE.TEXT
   ): Observable<SendMessageResponse> {
     return this.http.post<SendMessageResponse>(`${API_URL}/messages`, {
       texto_mensaje,
-      emisor_id,
       receptor_id,
       articulo_id,
       tipo_mensaje
+    }, {
+      headers: this.authHeaders()
     });
   }
 
@@ -60,13 +60,19 @@ export class MessageService {
   // gobtener hilo mensaje
   getConversation(articleId: number, userId: number): Promise<IAConversation> {
     return firstValueFrom(
-      this.http.get<IAConversation>(`${API_URL}/messages/${CONVERSATION}/${articleId}/${userId}`)
+      this.http.get<IAConversation>(
+        `${API_URL}/messages/${CONVERSATION}/${articleId}/${userId}`,
+        { headers: this.authHeaders() }
+      )
     );
   }
 
   getConversationById(conversationId: number, userId: number): Promise<IAConversation> {
     return firstValueFrom(
-      this.http.get<IAConversation>(`${API_URL}/messages/conversation-by-id/${conversationId}/${userId}`)
+      this.http.get<IAConversation>(
+        `${API_URL}/messages/conversation-by-id/${conversationId}/${userId}`,
+        { headers: this.authHeaders() }
+      )
     );
   }
 
@@ -81,14 +87,12 @@ export class MessageService {
 
   sendReportMessage(
     texto_mensaje: string,
-    emisor_id: number,
     report_id: number
   ): Observable<SendReportMessageResponse> {
     return this.http.post<SendReportMessageResponse>(
       `${API_URL}/messages/report-message`,
       {
         texto_mensaje,
-        emisor_id,
         report_id
       },
       { headers: this.authHeaders() }
@@ -98,7 +102,9 @@ export class MessageService {
   getConversations(userId: number): Promise<IAConversationListItem[]> {
   return lastValueFrom(
     this.http.get<IAConversationListItem[]>(`${API_URL}/messages/conversations/${userId}`, {
-      headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' }
+      headers: this.authHeaders()
+        .set('Cache-Control', 'no-cache')
+        .set('Pragma', 'no-cache')
     })
   );
 }
@@ -107,6 +113,8 @@ export class MessageService {
   changeConversationStatus(conversationID: number, status: MessageStatus): Promise<UpdateStatusResponse> {
     return lastValueFrom(this.http.put<UpdateStatusResponse>(`${API_URL}/messages/conversations/${conversationID}`, {
       status
+    }, {
+      headers: this.authHeaders()
     }))
   }
 }

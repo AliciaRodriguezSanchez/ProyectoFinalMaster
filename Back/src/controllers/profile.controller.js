@@ -13,7 +13,8 @@ const getMe = async (req, res) => {
 
         res.json(profile);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error al obtener perfil:', error.message);
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.profile.loadError });
     }
 };
 
@@ -68,7 +69,8 @@ const updateMe = async (req, res) => {
             token
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error al actualizar perfil:', error.message);
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.profile.updateError });
     }
 };
 
@@ -88,7 +90,8 @@ const checkPassword = async (req, res) => {
 
         res.json({ message: 'Contraseña actual correcta' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error al comprobar contraseña:', error.message);
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.profile.checkPasswordError });
     }
 };
 
@@ -115,7 +118,8 @@ const changePassword = async (req, res) => {
 
         res.json({ message: 'Contraseña actualizada correctamente' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error al cambiar contraseña:', error.message);
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.profile.changePasswordError });
     }
 };
 

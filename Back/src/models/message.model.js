@@ -715,10 +715,15 @@ const editStatus = async (status, conversationId) => {
     return result;
 };
 
-const existsConversationById = async (conversationId) => {
+const existsConversationById = async (conversationId, userId) => {
   const [rows] = await db.query(
-    `SELECT id FROM conversations WHERE id = ?`,
-    [conversationId]
+    `
+    SELECT id
+    FROM conversations
+    WHERE id = ?
+      AND (buyer_id = ? OR seller_id = ?)
+    `,
+    [conversationId, userId, userId]
   );
   return rows[0];
 };
