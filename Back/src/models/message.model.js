@@ -72,10 +72,10 @@ const sendMessage = async (messageData) => {
         if (!conversationId) {
             const [conversationResult] = await connection.query(
                 `
-                INSERT INTO conversations (item_id, buyer_id, seller_id, created_at, last_message_at)
-                VALUES (?, ?, ?, NOW(), NOW())
+                INSERT INTO conversations (item_id, buyer_id, seller_id, created_at, last_message_at, status)
+                VALUES (?, ?, ?, NOW(), NOW(), ?)
                 `,
-                [articleId, buyerId, sellerId]
+                [articleId, buyerId, sellerId, 'unreaded']
             );
 
             conversationId = conversationResult.insertId;
@@ -97,9 +97,15 @@ const sendMessage = async (messageData) => {
             ]
         );
 
+
+        ///////////////////cambio aqui
+
         await connection.query(
-            'UPDATE conversations SET last_message_at = NOW(), status = ? WHERE id = ?',
-            ['pending', conversationId]
+            `UPDATE conversations 
+             SET last_message_at = NOW(), 
+                 status = IF(status = 'resolved', 'resolved', 'unreaded') 
+             WHERE id = ?`,
+            [conversationId]
         );
 
         await connection.commit();
@@ -335,10 +341,10 @@ const createConversationFromLegacyMessages = async ({ articleId, userId }) => {
         if (!conversationId) {
             const [conversationResult] = await connection.query(
                 `
-                INSERT INTO conversations (item_id, buyer_id, seller_id, created_at, last_message_at)
-                VALUES (?, ?, ?, NOW(), NOW())
+                INSERT INTO conversations (item_id, buyer_id, seller_id, created_at, last_message_at, status)
+                VALUES (?, ?, ?, NOW(), NOW(), ?)
                 `,
-                [articleId, buyerId, sellerId]
+                [articleId, buyerId, sellerId, 'unreaded']
             );
 
             conversationId = conversationResult.insertId;

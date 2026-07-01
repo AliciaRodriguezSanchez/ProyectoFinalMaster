@@ -23,6 +23,11 @@
   width: auto;
 }
 
+.message-card__select {
+  position: relative;
+  z-index: 2; 
+}
+
 @media (max-width: 480px) {
   .message-card {
     flex-direction: column;
