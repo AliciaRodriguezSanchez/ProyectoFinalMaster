@@ -145,6 +145,19 @@ const roleChange = async (req, res) => {
     }
 }
 
+const userDelete = async (req, res) => {
+    try{
+        const {id} = req.params;
+        const result = await userModel.deleteUser(id);
+        res.json(result)
+    }catch (error){
+        console.error("Error en el endpoint getUsers:", error);
+        res.status(500).json({
+            message: 'Error al eliminar usuarios'
+        });
+    }
+}
+
 ////////////////funciones auxiliares
 
 const capitalizar = (texto) => {
@@ -161,5 +174,6 @@ module.exports = {
     getNumberUsers,
     getUsers,
     stateChange,
-    roleChange
+    roleChange,
+    userDelete
 }

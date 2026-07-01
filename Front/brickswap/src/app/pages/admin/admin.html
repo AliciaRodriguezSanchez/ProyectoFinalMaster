@@ -25,7 +25,13 @@
 
   @if (activeSection() === 'users') {
     <section class="mt-4" #userListSection>
-      <app-table [typeTable]="'usuarios'" [data]="users()" (actionClick)="toogleState($event)" (roleChange)="cambiarRolUsuario($event)"></app-table>
+      <app-table 
+        [typeTable]="'usuarios'" 
+        [data]="users()" 
+        (actionClick)="toogleState($event)" 
+        (roleChange)="cambiarRolUsuario($event)"
+        (deleteClick)="eliminarUsuario($event)">
+      </app-table>
     </section>
   }
 </section>

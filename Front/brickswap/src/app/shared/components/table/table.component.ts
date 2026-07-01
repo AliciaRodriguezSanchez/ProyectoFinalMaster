@@ -19,6 +19,7 @@ export class TableComponent {
 
   @Output() onGuardarResolucion = new EventEmitter<{id: number, estado: string, resolucion: string, estado_revision:string}>();
   @Output() ordenarEvent = new EventEmitter<void>();
+  @Output() deleteClick = new EventEmitter<any>();
 
   emitirOrden() {
     console.log("Clic detectado en botón ordenar"); 

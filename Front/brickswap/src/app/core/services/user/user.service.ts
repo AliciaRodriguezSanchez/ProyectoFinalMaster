@@ -34,5 +34,9 @@ export class UserService {
       this.http.put(`${API_URL}/users/${id}/role`, {newRole})
     );
   }
+
+  deleteUser(userId: number): Promise<any> {
+    return firstValueFrom(this.http.delete(`${API_URL}/users/${userId}`));
+  }
   
 }

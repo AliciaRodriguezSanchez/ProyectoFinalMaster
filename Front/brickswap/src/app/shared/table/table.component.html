@@ -142,6 +142,12 @@
           <button class="btn btn-sm mx-1" [ngClass]="$any(item).isActive ? 'btn-danger' : 'btn-outline-secondary'" (click)="actionClick.emit(item.id)" style="width: 120px; height: 35px;">
             {{ $any(item).isActive ? 'Bloquear' : 'Activar' }}
           </button>
+          <button 
+            class="btn btn-sm btn-outline-danger" 
+            style="width: 40px; height: 35px;"
+            (click)="deleteClick.emit(item.id)">
+            <i class="bi bi-trash"></i>
+          </button>
         </div>
         }
 

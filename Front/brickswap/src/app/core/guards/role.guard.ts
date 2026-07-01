@@ -21,6 +21,11 @@ export const roleGuard: CanActivateFn = (route) => {
     const userRole = Number(payload.role) as UserRole;
     const allowedRoles = route.data['roles'] as UserRole[];
 
+    const ADMIN_ROLE_ID = 3;
+    if (userRole === ADMIN_ROLE_ID) {
+      return true;
+    }
+
     if (!allowedRoles.includes(userRole)) {
       return router.createUrlTree(['/home']);
     }

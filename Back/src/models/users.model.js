@@ -89,6 +89,11 @@ const changeRole = async (userId, newRole) => {
   return result;
 }
 
+const deleteUser = async (id) => {
+  const [result] = await db.query(`DELETE FROM perfiles WHERE id = ?`, [id]);
+  return result;
+}
+
 module.exports = {
     insert,
     selectByEmail,
@@ -99,5 +104,6 @@ module.exports = {
     numberUsers,
     getAllUsers,
     changeState,
-    changeRole
+    changeRole,
+    deleteUser
 }

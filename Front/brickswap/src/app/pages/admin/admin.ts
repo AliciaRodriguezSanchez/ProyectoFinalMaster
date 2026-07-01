@@ -175,6 +175,17 @@ export class AdminPage {
     }
   }
 
+  async eliminarUsuario(userId: number) {
+    if (confirm('¿Estás seguro de que quieres eliminar a este usuario?')) {
+      try {
+        await this.userService.deleteUser(userId);
+        this.users.update(users => users.filter(u => u.id !== userId));
+      } catch (error) {
+        console.error('Error al eliminar:', error);
+      }
+    }
+  }
+
   async toogleState(id:string){
     try{
       await this.userService.getStateChange(id);

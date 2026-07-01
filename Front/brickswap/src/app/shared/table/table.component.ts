@@ -20,6 +20,7 @@ export class TableComponent {
   @Output() ordenarEvent = new EventEmitter<void>();
   @Output() actionClick = new EventEmitter<any>();
   @Output() roleChange = new EventEmitter<{ id: number, newRole: string }>();
+  @Output() deleteClick = new EventEmitter<any>();
 
   emitirOrden() {
     console.log("Clic detectado en botón ordenar"); 
