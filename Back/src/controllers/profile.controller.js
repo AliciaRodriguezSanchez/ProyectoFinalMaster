@@ -5,7 +5,27 @@ const { ERROR_MESSAGE_TEXT } = require('../constants/error-message.text');
 
 const getMe = async (req, res) => {
     try {
+        console.log("DEBUG: Buscando perfil para el usuario ID:", req.user.id);
+        
         const profile = await getProfileResponse(req.user.id);
+
+        if (!profile) {
+            console.log("DEBUG: Perfil no encontrado en BD para ID:", req.user.id);
+            return res.status(404).json({ message: 'Perfil no encontrado' });
+        }
+
+        res.json(profile);
+    } catch (error) {
+        console.error('Error al obtener perfil:', error.message);
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
+};
+
+// FUNCIÓN PARA PERFIL PÚBLICO (No depende de req.user)
+const getProfileById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const profile = await getProfileResponse(id);
 
         if (!profile) {
             return res.status(404).json({ message: ERROR_MESSAGE_TEXT.profile.notFound });
@@ -13,7 +33,7 @@ const getMe = async (req, res) => {
 
         res.json(profile);
     } catch (error) {
-        console.error('Error al obtener perfil:', error.message);
+        console.error('Error al obtener perfil público:', error.message);
         res.status(500).json({ message: ERROR_MESSAGE_TEXT.profile.loadError });
     }
 };
@@ -166,7 +186,6 @@ const getProfileResponse = async (id) => {
 const getRatingLines = (ratingLines) => {
     return [5, 4, 3, 2, 1].map((stars) => {
         const line = ratingLines.find((ratingLine) => Number(ratingLine.stars) === stars);
-
         return {
             stars,
             count: Number(line?.count || 0)
@@ -176,11 +195,7 @@ const getRatingLines = (ratingLines) => {
 
 const isCurrentPasswordOk = async (id, currentPassword) => {
     const userPassword = await Profile.selectPasswordById(id);
-
-    if (!userPassword?.password) {
-        return false;
-    }
-
+    if (!userPassword?.password) return false;
     try {
         return bcrypt.compareSync(currentPassword, userPassword.password);
     } catch {
@@ -198,6 +213,7 @@ const capitalizar = (texto) => {
 
 module.exports = {
     getMe,
+    getProfileById,
     updateMe,
     checkPassword,
     changePassword

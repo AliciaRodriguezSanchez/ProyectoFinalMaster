@@ -74,11 +74,19 @@ export interface ProfileUpdateResponse {
 export class ProfileService {
   constructor(private http: HttpClient) {}
 
+  // Obtener perfil propio (requiere auth)
   getProfile(): Promise<ProfileData> {
     return firstValueFrom(
       this.http.get<ProfileData>(`${API_URL}/profile/me`, {
         headers: this.getHeaders(),
       })
+    );
+  }
+
+  // NUEVO: Obtener perfil público por ID (no requiere auth)
+  getProfileById(id: string): Promise<ProfileData> {
+    return firstValueFrom(
+      this.http.get<ProfileData>(`${API_URL}/profile/${id}`)
     );
   }
 

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { TOKEN_KEY } from '../../core/constants/auth';
 import {
   PasswordChangeData,
@@ -46,37 +46,57 @@ export class ProfilePage implements OnInit {
   constructor(
     private profileService: ProfileService,
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.loadProfile();
+    // Usamos paramMap para reaccionar a cambios en el ID de la ruta
+    this.route.paramMap.subscribe(() => {
+      this.loadProfile();
+    });
   }
 
   async loadProfile(): Promise<void> {
     this.loading = true;
     this.errorMessage = '';
+    
+    // Obtenemos el ID de la ruta actual
+    const userId = this.route.snapshot.paramMap.get('id');
 
     try {
-      this.profile = await this.profileService.getProfile();
+      // Si tenemos ID, es perfil público; si no, es perfil propio
+      this.profile = userId 
+        ? await this.profileService.getProfileById(userId) 
+        : await this.profileService.getProfile();
+      
       this.visibleReviewsCount = 5;
-    } catch (error) {
-      if (this.isAuthError(error)) {
+    } catch (error: any) {
+      console.error("DEBUG: Error al cargar perfil:", error);
+
+      // Si es el perfil propio y tenemos un error 401/403, redirigimos
+      if (!userId && this.isAuthError(error)) {
         this.redirectToLogin();
         return;
       }
 
-      this.errorMessage = this.getErrorMessage(error, 'No se pudo cargar el perfil');
+      // Si es 404, damos un mensaje claro
+      this.errorMessage = error.status === 404 
+        ? 'No se ha encontrado el perfil solicitado.' 
+        : this.getErrorMessage(error, 'No se pudo cargar el perfil');
     } finally {
       this.loading = false;
       this.cdr.detectChanges();
     }
   }
 
+  get isMyProfile(): boolean {
+    // Si no hay ID en la ruta, estamos en nuestro perfil
+    return !this.route.snapshot.paramMap.get('id');
+  }
+
   openEditModal(): void {
-    if (!this.profile) {
-      return;
-    }
+    if (!this.profile) return;
 
     this.editForm = {
       name: this.profile.name,
@@ -99,9 +119,7 @@ export class ProfilePage implements OnInit {
   }
 
   async saveProfile(): Promise<void> {
-    if (this.formIsInvalid) {
-      return;
-    }
+    if (this.formIsInvalid) return;
 
     this.savingProfile = true;
     this.errorMessage = '';
@@ -130,7 +148,6 @@ export class ProfilePage implements OnInit {
         this.redirectToLogin();
         return;
       }
-
       this.modalMessage = this.getErrorMessage(error, 'No se pudieron guardar los cambios');
     } finally {
       this.savingProfile = false;
@@ -150,9 +167,7 @@ export class ProfilePage implements OnInit {
     this.passwordForm.newPassword = '';
     this.passwordForm.repeatPassword = '';
 
-    if (this.passwordCheckTimer) {
-      clearTimeout(this.passwordCheckTimer);
-    }
+    if (this.passwordCheckTimer) clearTimeout(this.passwordCheckTimer);
 
     if (!this.passwordForm.currentPassword.trim()) {
       this.checkingPassword = false;
@@ -160,34 +175,23 @@ export class ProfilePage implements OnInit {
     }
 
     const currentPassword = this.passwordForm.currentPassword;
-
-    this.passwordCheckTimer = setTimeout(() => {
-      this.checkCurrentPassword(currentPassword);
-    }, 600);
+    this.passwordCheckTimer = setTimeout(() => this.checkCurrentPassword(currentPassword), 600);
   }
 
   async checkCurrentPassword(currentPassword = this.passwordForm.currentPassword): Promise<void> {
-    if (!currentPassword.trim()) {
-      return;
-    }
-
+    if (!currentPassword.trim()) return;
     this.checkingPassword = true;
     this.passwordMessage = '';
 
     try {
       await this.profileService.checkPassword({ currentPassword });
-
-      if (currentPassword !== this.passwordForm.currentPassword) {
-        return;
-      }
-
+      if (currentPassword !== this.passwordForm.currentPassword) return;
       this.currentPasswordOk = true;
     } catch (error) {
       if (this.isAuthError(error)) {
         this.redirectToLogin();
         return;
       }
-
       if (currentPassword === this.passwordForm.currentPassword) {
         this.currentPasswordOk = false;
         this.passwordMessage = '';
@@ -212,7 +216,6 @@ export class ProfilePage implements OnInit {
     }
 
     this.savingPassword = true;
-
     try {
       const response = await this.profileService.changePassword(this.passwordForm);
       this.passwordMessage = response.message;
@@ -222,7 +225,6 @@ export class ProfilePage implements OnInit {
         this.redirectToLogin();
         return;
       }
-
       this.passwordMessage = this.getErrorMessage(error, 'No se pudo cambiar la contraseña');
     } finally {
       this.savingPassword = false;
@@ -230,179 +232,60 @@ export class ProfilePage implements OnInit {
     }
   }
 
-  getFullName(profile: ProfileData): string {
-    return `${profile.name} ${profile.lastname}`;
-  }
-
+  getFullName(profile: ProfileData): string { return `${profile.name} ${profile.lastname}`; }
   getInitials(profile: ProfileData): string {
     const firstInitial = profile.name.trim().charAt(0);
     const secondInitial = profile.lastname.trim().charAt(0) || profile.username.trim().charAt(0);
-
     return `${firstInitial || 'U'}${secondInitial || ''}`.toUpperCase();
   }
-
   getRoleName(profile: ProfileData): string {
-    const roles: Record<number, string> = {
-      1: 'usuario',
-      2: 'moderador',
-      3: 'administrador',
-    };
-
+    const roles: Record<number, string> = { 1: 'usuario', 2: 'moderador', 3: 'administrador' };
     return roles[profile.roleId] || 'usuario';
   }
-
   getFormattedDate(date: string): string {
     const profileDate = new Date(date);
-
-    if (Number.isNaN(profileDate.getTime())) {
-      return date;
-    }
-
-    return profileDate.toLocaleDateString('es-ES');
+    return Number.isNaN(profileDate.getTime()) ? date : profileDate.toLocaleDateString('es-ES');
   }
-
   getReviewDate(date: string): string {
     const reviewDate = new Date(date);
-
-    if (Number.isNaN(reviewDate.getTime())) {
-      return date;
-    }
-
-    return new Intl.DateTimeFormat('es-ES', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric',
-    }).format(reviewDate);
+    return Number.isNaN(reviewDate.getTime()) ? date : new Intl.DateTimeFormat('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }).format(reviewDate);
   }
-
-  getRatingPercent(count: number): number {
-    if (!this.profile?.reviewCount) {
-      return 0;
-    }
-
-    return (count / this.profile.reviewCount) * 100;
-  }
-
-  showReviews(profile: ProfileData): boolean {
-    return profile.roleId === 1;
-  }
-
-  showMoreReviews(): void {
-    this.visibleReviewsCount = this.profile?.reviews.length || 5;
-  }
-
-  get visibleReviews(): ProfileReview[] {
-    return this.profile?.reviews.slice(0, this.visibleReviewsCount) || [];
-  }
-
-  get hasMoreReviews(): boolean {
-    return Boolean(this.profile && this.visibleReviewsCount < this.profile.reviews.length);
-  }
-
-  get passwordsDontMatch(): boolean {
-    return Boolean(
-      this.passwordForm.newPassword &&
-        this.passwordForm.repeatPassword &&
-        this.passwordForm.newPassword !== this.passwordForm.repeatPassword
-    );
-  }
-
+  getRatingPercent(count: number): number { return !this.profile?.reviewCount ? 0 : (count / this.profile.reviewCount) * 100; }
+  showReviews(profile: ProfileData): boolean { return profile.roleId === 1; }
+  showMoreReviews(): void { this.visibleReviewsCount = this.profile?.reviews.length || 5; }
+  get visibleReviews(): ProfileReview[] { return this.profile?.reviews.slice(0, this.visibleReviewsCount) || []; }
+  get hasMoreReviews(): boolean { return Boolean(this.profile && this.visibleReviewsCount < this.profile.reviews.length); }
+  get passwordsDontMatch(): boolean { return Boolean(this.passwordForm.newPassword && this.passwordForm.repeatPassword && this.passwordForm.newPassword !== this.passwordForm.repeatPassword); }
   get passwordChangeIsIncomplete(): boolean {
     const hasStarted = Boolean(this.passwordForm.newPassword || this.passwordForm.repeatPassword);
-
-    return Boolean(
-      this.currentPasswordOk &&
-        hasStarted &&
-        (!this.passwordForm.newPassword || !this.passwordForm.repeatPassword)
-    );
+    return Boolean(this.currentPasswordOk && hasStarted && (!this.passwordForm.newPassword || !this.passwordForm.repeatPassword));
   }
-
-  get formIsInvalid(): boolean {
-    return Boolean(
-      !this.editForm.name.trim() ||
-        !this.editForm.lastname.trim() ||
-        !this.editForm.email.trim() ||
-        this.passwordsDontMatch ||
-        this.passwordChangeIsIncomplete
-    );
-  }
-
-  onProfileImageError(): void {
-    if (this.profile) {
-      this.profile.photoUrl = null;
-    }
-  }
+  get formIsInvalid(): boolean { return Boolean(!this.editForm.name.trim() || !this.editForm.lastname.trim() || !this.editForm.email.trim() || this.passwordsDontMatch || this.passwordChangeIsIncomplete); }
+  onProfileImageError(): void { if (this.profile) this.profile.photoUrl = null; }
 
   private resetPasswordForm(): void {
-    if (this.passwordCheckTimer) {
-      clearTimeout(this.passwordCheckTimer);
-    }
-
+    if (this.passwordCheckTimer) clearTimeout(this.passwordCheckTimer);
     this.passwordFormOpen = false;
     this.currentPasswordOk = false;
     this.checkingPassword = false;
-    this.passwordMessage = '';
-    this.passwordForm = {
-      currentPassword: '',
-      newPassword: '',
-      repeatPassword: '',
-    };
+    this.passwordForm = { currentPassword: '', newPassword: '', repeatPassword: '' };
   }
-
   private showSuccessMessage(message: string): void {
     this.successMessage = message;
-
-    if (this.successMessageTimer) {
-      clearTimeout(this.successMessageTimer);
-    }
-
-    this.successMessageTimer = setTimeout(() => {
-      this.successMessage = '';
-      this.successMessageTimer = null;
-      this.cdr.detectChanges();
-    }, 2000);
+    if (this.successMessageTimer) clearTimeout(this.successMessageTimer);
+    this.successMessageTimer = setTimeout(() => { this.successMessage = ''; this.successMessageTimer = null; this.cdr.detectChanges(); }, 2000);
   }
-
-  private getEmptyEditForm(): ProfileUpdateData {
-    return {
-      name: '',
-      lastname: '',
-      username: '',
-      email: '',
-      photoUrl: '',
-    };
-  }
-
-  private getErrorMessage(error: unknown, fallback: string): string {
-    if (this.hasErrorMessage(error)) {
-      return error.error.message;
-    }
-
-    return fallback;
-  }
-
+  private getEmptyEditForm(): ProfileUpdateData { return { name: '', lastname: '', username: '', email: '', photoUrl: '' }; }
+  private getErrorMessage(error: unknown, fallback: string): string { return this.hasErrorMessage(error) ? error.error.message : fallback; }
   private isAuthError(error: unknown): boolean {
-    if (typeof error !== 'object' || error === null || !('status' in error)) {
-      return false;
-    }
-
+    if (typeof error !== 'object' || error === null || !('status' in error)) return false;
     const httpError = error as { status?: unknown };
-
     return httpError.status === 401 || httpError.status === 403;
   }
-
-  private redirectToLogin(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    this.router.navigate(['/login']);
-  }
-
+  private redirectToLogin(): void { localStorage.removeItem(TOKEN_KEY); this.router.navigate(['/login']); }
   private hasErrorMessage(error: unknown): error is { error: { message: string } } {
-    if (typeof error !== 'object' || error === null || !('error' in error)) {
-      return false;
-    }
-
+    if (typeof error !== 'object' || error === null || !('error' in error)) return false;
     const httpError = error as { error?: { message?: unknown } };
-
     return typeof httpError.error?.message === 'string';
   }
 }

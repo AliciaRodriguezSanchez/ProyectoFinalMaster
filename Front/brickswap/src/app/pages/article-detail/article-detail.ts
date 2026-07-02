@@ -41,6 +41,7 @@ export class ArticleDetail implements OnInit {
   protected readonly text = MESSAGE_TEXT.articleDetail;
   protected readonly saleStatus = ARTICLE_SALE_STATUS;
   isFavorite = signal(false);
+  isActionLoading = signal(false);
   actionModalType = signal<'chat' | 'report' | null>(null);
 
   // OBJETO PRINCIPAL
@@ -68,7 +69,6 @@ export class ArticleDetail implements OnInit {
 
   // CARGA DINÁMICA DE CATÁLOGO
   loadBackendArticle() {
-
     const articleId = Number(this.route.snapshot.paramMap.get('id'));
 
     if (articleId) {
@@ -77,7 +77,9 @@ export class ArticleDetail implements OnInit {
           // FORZAMOS LA ASIGNACIÓN LIMPIA
           const resultado = Array.isArray(data) ? data[0] : data;
           this.article = { ...resultado };
-          this.isFavorite.set(false);
+
+          // Comprobamos estado inicial de favorito
+          this.checkFavoriteStatus();
 
           if (this.article && (!this.article.foto || this.article.foto.trim() === '')) {
             this.article.foto = this.defaultImage;
@@ -87,10 +89,22 @@ export class ArticleDetail implements OnInit {
         },
         error: (err) => console.error(err)
       });
-
     } else {
       console.warn({ articleId });
     }
+  }
+
+  private checkFavoriteStatus() {
+    const userId = this.authService.getCurrentUserId();
+    if (!userId || !this.article) return;
+
+    this.favoriteService.getMyFavorites().subscribe({
+      next: (favorites: any[]) => {
+        const isFav = favorites.some((f: any) => f.articulo_id === this.article?.id);
+        this.isFavorite.set(isFav);
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   getSaleStatusVariant(): TagVariant {
@@ -284,73 +298,74 @@ export class ArticleDetail implements OnInit {
     });
   }
 
-  // 4. ACCIÓN: AÑADIR A FAVORITOS
-  addToFavorites() {
+  // 4. ACCIÓN: TOGGLE FAVORITOS
+  toggleFavorite() {
+    console.log("ID del artículo actual:", this.article?.id);
     if (!this.article || !this.article.id) return;
 
-    const mi_perfil_id = this.authService.getCurrentUserId();
-
-    if (!mi_perfil_id) {
-      this.toastService.warning(MESSAGE_TEXT.articleDetail.actionLoginRequired);
-      return;
-    }
-
-    if (this.isOwnArticleActionBlocked(mi_perfil_id)) {
-      return;
-    }
-    
+  if (this.isFavorite()) {
+    this.favoriteService.removeFavorite(this.article.id).subscribe({
+      next: () => {
+        this.isFavorite.set(false);
+        this.toastService.success('Eliminado de favoritos');
+      },
+      error: () => this.toastService.error('Error al quitar de favoritos')
+    });
+  } else {
     this.favoriteService.addFavorite(this.article.id).subscribe({
       next: (res) => {
         this.isFavorite.set(true);
-        this.toastService.success(res.message);
+        this.toastService.success(res.message || 'Añadido a favoritos');
       },
-      error: (err) => this.toastService.error(err.error?.message || MESSAGE_TEXT.articleDetail.favoriteError)
+      error: (err) => {
+        if (err.status === 400 && err.error?.message?.includes('ya se encuentra')) {
+          this.isFavorite.set(true);
+          this.toastService.success('Ya estaba en favoritos');
+        } else {
+          this.toastService.error('Error al añadir a favoritos');
+        }
+      }
     });
   }
+}
 
   // 5. ACCIÓN: RESERVAR
   reserveArticle() {
-    if (!this.article || !this.article.id) return;
+    if (!this.article || !this.article.id || this.isActionLoading()) return;
 
     const userId = this.requireLoggedUser();
+    if (!userId || this.isOwnArticleActionBlocked(userId)) return;
 
-    if (!userId) {
-      return;
-    }
-
-    if (this.isOwnArticleActionBlocked(userId)) {
-      return;
-    }
+    this.isActionLoading.set(true);
 
     this.articleService.reserveArticle(this.article.id).subscribe({
       next: () => {
-        this.setArticleSaleStatus(ARTICLE_SALE_STATUS.reserved);
+        this.loadBackendArticle();
         this.toastService.success(MESSAGE_TEXT.articleDetail.reserveSuccess);
+        this.isActionLoading.set(false);
       },
       error: (err) => {
+        this.isActionLoading.set(false);
         const message = err.status === 400
           ? MESSAGE_TEXT.articleDetail.reserveUnavailable
           : MESSAGE_TEXT.articleDetail.operationError;
-
         this.toastService.error(message);
       }
     });
   }
 
-  // 6.LÓGICA AUXILIAR PARA VALORACIONES: ¿ES EL USUARIO ACTUAL EL COMPRADOR?
+  // 6.LÓGICA AUXILIAR PARA VALORACIONES
   isCurrentUserTheBuyer(): boolean {
     if (!this.article) return false;
-    return this.authService.getCurrentUserId() === this.article.perfil_id; 
+    return this.authService.getCurrentUserId() === this.article.perfil_id;
   }
 
   private requireLoggedUser(): number | null {
     const userId = this.authService.getCurrentUserId();
-
     if (!userId) {
       this.toastService.warning(MESSAGE_TEXT.articleDetail.actionLoginRequired);
       return null;
     }
-
     return userId;
   }
 
@@ -358,20 +373,13 @@ export class ArticleDetail implements OnInit {
     if (!this.article || userId !== this.article.perfil_id) {
       return false;
     }
-
     this.toastService.warning(MESSAGE_TEXT.articleDetail.ownArticleActionError);
     return true;
   }
 
   private setArticleSaleStatus(status: Article['estado_venta']): void {
-    if (!this.article) {
-      return;
-    }
-
-    this.article = {
-      ...this.article,
-      estado_venta: status,
-    };
+    if (!this.article) return;
+    this.article = { ...this.article, estado_venta: status };
     this.cdr.detectChanges();
   }
 }

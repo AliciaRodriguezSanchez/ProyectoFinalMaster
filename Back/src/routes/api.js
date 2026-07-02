@@ -13,7 +13,6 @@ const usersRoutes = require('./api/users')
 const loginRoutes = require('./api/login');
 const profileRoutes = require('./api/profile');
 
-
 router.get('/test', (req, res) => {
     res.json({ mensaje: '¡Servidor Express funcionando correctamente!' });
 });
@@ -26,6 +25,9 @@ router.use('/messages',   messageRoutes);
 router.use('/reports', checkToken, reportRoutes); 
 router.use('/login', loginRoutes);
 router.use('/users', usersRoutes);
-router.use('/profile', checkToken, profileRoutes);
+
+// MODIFICACIÓN AQUÍ: ELIMINAR CHECKTOKEN 
+// PROTECCIÓN AUTO GESTIONADA DESDE PERFIL
+router.use('/profile', profileRoutes);
 
 module.exports = router;
