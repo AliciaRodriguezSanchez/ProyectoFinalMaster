@@ -17,6 +17,17 @@
 
     <h2>{{ title() }}</h2>
 
+    @if (details().length) {
+      <dl class="action-modal__details">
+        @for (detail of details(); track detail.label) {
+          <div class="action-modal__detail">
+            <dt>{{ detail.label }}:</dt>
+            <dd>{{ detail.value ?? '-' }}</dd>
+          </div>
+        }
+      </dl>
+    }
+
     @if (fieldType() === 'input') {
       <ui-input
         [label]="textareaLabel()"
@@ -47,20 +58,34 @@
       }
     }
 
-    <div class="action-modal__actions">
-      <ui-button
-        [label]="cancelLabel()"
-        variant="outline"
-        size="sm"
-        (clicked)="onCancel()"
-      />
+    <div
+      class="action-modal__actions"
+      [class.action-modal__actions--single]="!showCancelButton() && !secondarySubmitLabel()"
+    >
+      @if (showCancelButton()) {
+        <ui-button
+          [label]="cancelLabel()"
+          variant="outline"
+          size="sm"
+          (clicked)="onCancel()"
+        />
+      }
 
       <ui-button
         [label]="submitLabel()"
-        variant="primary"
+        [variant]="submitVariant()"
         size="sm"
         (clicked)="onSubmit()"
       />
+
+      @if (secondarySubmitLabel()) {
+        <ui-button
+          [label]="secondarySubmitLabel()"
+          [variant]="secondarySubmitVariant()"
+          size="sm"
+          (clicked)="onSecondarySubmit()"
+        />
+      }
     </div>
   </section>
 </div>
