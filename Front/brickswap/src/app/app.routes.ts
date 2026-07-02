@@ -12,10 +12,9 @@ import { UserPanelPage } from './pages/user-panel/user-panel';
 import { ProfilePage } from './pages/profile/profile';
 import { roleGuard } from './core/guards/role.guard';
 import { APP_ROUTE_PATHS, AUTHENTICATED_USER_ROLES, UserRole } from './core/constants/user-role';
-import { Error404 } from './pages/error404/error404';
 
 export const routes: Routes = [
-    //1. RUTA POR DEFECTO
+    // 1. RUTA POR DEFECTO
     { path: '', redirectTo: APP_ROUTE_PATHS.home, pathMatch: 'full' },
 
     // 2. HOME
@@ -41,9 +40,7 @@ export const routes: Routes = [
     {
       path: APP_ROUTE_PATHS.myPanel,
       canActivate: [roleGuard],
-      data: {
-        roles: [UserRole.USER]
-      },
+      data: { roles: [UserRole.USER] },
       component: UserPanelPage
     },
 
@@ -51,61 +48,58 @@ export const routes: Routes = [
     {
         path: APP_ROUTE_PATHS.messages,
         canActivate: [roleGuard],
-        data: {
-            roles: AUTHENTICATED_USER_ROLES
-        },
+        data: { roles: AUTHENTICATED_USER_ROLES },
         loadChildren: () => import('./pages/messages/messages.routes').then((m) => m.MESSAGES_ROUTES)
     },
 
-    // 10. PERFIL
+    // 10. PERFIL (Estructura jerárquica corregida)
     {
         path: APP_ROUTE_PATHS.profile,
-        canActivate: [roleGuard],
-        data: {
-            roles: AUTHENTICATED_USER_ROLES
-        },
-        component: ProfilePage
+        children: [
+            {
+                path: '',
+                component: ProfilePage,
+                canActivate: [roleGuard],
+                data: { roles: AUTHENTICATED_USER_ROLES }
+            },
+            {
+                path: ':id',
+                component: ProfilePage
+            }
+        ]
     },
 
     // 11. MODERADOR
-    { path: APP_ROUTE_PATHS.moderator,
+    { 
+        path: APP_ROUTE_PATHS.moderator,
         canActivate: [roleGuard],
-        data: {
-            roles: [UserRole.ADMIN, UserRole.MODERATOR]
-        },
+        data: { roles: [UserRole.ADMIN, UserRole.MODERATOR] },
         component: ModeradorPage,
     },
 
     // 12. ADMINISTRACION
-    { path: APP_ROUTE_PATHS.administration,
+    { 
+        path: APP_ROUTE_PATHS.administration,
         canActivate: [roleGuard],
-        data: {
-            roles: [UserRole.ADMIN]
-        },
+        data: { roles: [UserRole.ADMIN] },
         component: AdminPage
     },
     {
         path: APP_ROUTE_PATHS.administrationUsers,
         canActivate: [roleGuard],
-        data: {
-            roles: [UserRole.ADMIN]
-        },
+        data: { roles: [UserRole.ADMIN] },
         component: AdminPage
     },
     {
         path: APP_ROUTE_PATHS.administrationCategories,
         canActivate: [roleGuard],
-        data: {
-            roles: [UserRole.ADMIN]
-        },
+        data: { roles: [UserRole.ADMIN] },
         component: CategoryManagement
     },
     {
         path: APP_ROUTE_PATHS.administrationModerator,
         canActivate: [roleGuard],
-        data: {
-            roles: [UserRole.ADMIN, UserRole.MODERATOR]
-        },
+        data: { roles: [UserRole.ADMIN, UserRole.MODERATOR] },
         component: ModeradorPage
     },
 
