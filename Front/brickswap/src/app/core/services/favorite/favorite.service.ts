@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { API_URL } from '../api';
+import { TOKEN_KEY } from '../../constants/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -9,11 +10,20 @@ import { API_URL } from '../api';
 export class FavoriteService {
   constructor(private http: HttpClient) { }
 
+  private authHeaders(): HttpHeaders {
+    const token = localStorage.getItem(TOKEN_KEY);
+
+    return new HttpHeaders({
+      Authorization: token || ''
+    });
+  }
+
   // POST /api/favorites
-  addFavorite(perfil_id: number, articulo_id: number): Observable<any> {
+  addFavorite(articulo_id: number): Observable<any> {
     return this.http.post<any>(`${API_URL}/favorites`, { 
-      perfil_id, 
       articulo_id 
+    }, {
+      headers: this.authHeaders()
     });
   }
 }

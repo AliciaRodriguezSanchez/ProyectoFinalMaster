@@ -5,7 +5,9 @@ const { ERROR_MESSAGE_TEXT } = require('../constants/error-message.text');
 const addFavorite = async (req, res) => {
     try {
 
-        const { perfil_id, articulo_id } = req.body;
+        const { articulo_id } = req.body;
+        // El perfil real viene del token, así no se pueden crear favoritos para otro usuario.
+        const perfil_id = req.user.id;
 
         // VALIDACIÓN BÁSICA
         if (!perfil_id || !articulo_id) {

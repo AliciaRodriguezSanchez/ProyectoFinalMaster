@@ -57,9 +57,10 @@ const createArticle = async (req, res) => {
             precio,
             estado_articulo,
             estado_revision,
-            perfil_id,
             categoria_id
         } = req.body;
+        // El propietario real viene del token, no del body enviado por el cliente.
+        const perfil_id = req.user.id;
 
         // VALIDACIÓN BÁSICA
         if (!titulo || !descripcion || !foto || !precio || !estado_articulo || !estado_revision || !perfil_id || !categoria_id) {

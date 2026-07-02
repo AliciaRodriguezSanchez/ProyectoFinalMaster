@@ -123,10 +123,10 @@ export class ArticleForm {
 
     if (this.articleForm.valid) {
       // 5. LLAMADA A LA API
+      const { perfil_id, ...articlePayload } = this.articleForm.value;
       const formValue = {
-        ...this.articleForm.value,
+        ...articlePayload,
         categoria_id: Number(this.articleForm.value.categoria_id),
-        perfil_id: profileId,
       }
       this.articleService.createArticle(formValue).subscribe({
         next: (response) => {

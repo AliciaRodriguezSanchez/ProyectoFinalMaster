@@ -92,10 +92,11 @@ const createReport = async (req, res) => {
         // CAMPOS OBLIGATORIOS
         const {
             motivo,
-            denunciante_id,
             denunciado_id,
             articulo_id
         } = req.body;
+        // El denunciante real viene del token, no del body enviado por el cliente.
+        const denunciante_id = req.user.id;
 
         // VALIDACIÓN BÁSICA
         if (!motivo || !denunciante_id || !denunciado_id || !articulo_id) {

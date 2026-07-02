@@ -8,20 +8,20 @@ const sendMessage = async (req, res) => {
         // VALIDACIÓN DE CAMPOS
         const {
             texto_mensaje,
-            emisor_id,
             receptor_id,
             articulo_id,
             tipo_mensaje
         } = req.body;
+        // El emisor real viene del token,
+        const senderId = Number(req.user.id);
 
         // VALIDACIÓN BÁSICA
-        if (!texto_mensaje?.trim() || !emisor_id || !receptor_id || !articulo_id) {
+        if (!texto_mensaje?.trim() || !senderId || !receptor_id || !articulo_id) {
             return res.status(400).json({
                 message: ERROR_MESSAGE_TEXT.common.requiredFields
             });
         }
 
-        const senderId = Number(emisor_id);
         const receiverId = Number(receptor_id);
         const articleId = Number(articulo_id);
 
@@ -74,7 +74,17 @@ const sendMessage = async (req, res) => {
 
 const getConversation = async (req, res) => {
     try {
-        const conversation = await Message.getConversation(req.params);
+        const articleId = Number(req.params.articleId);
+        // El usuario real viene del token
+        const userId = Number(req.user.id);
+
+        if (!Number.isInteger(articleId) || !Number.isInteger(userId)) {
+            return res.status(400).json({
+                message: ERROR_MESSAGE_TEXT.common.invalidIdentifiers
+            });
+        }
+
+        const conversation = await Message.getConversation({ articleId, userId });
 
         if (!conversation) {
             return res.status(404).json({ message: ERROR_MESSAGE_TEXT.message.conversationNotFound });
@@ -82,7 +92,8 @@ const getConversation = async (req, res) => {
 
         res.status(200).json(conversation);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error al cargar conversación:', error.message);
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.message.conversationsLoadError });
     }
 
 }
@@ -90,7 +101,8 @@ const getConversation = async (req, res) => {
 const getConversationById = async (req, res) => {
     try {
         const conversationId = Number(req.params.conversationId);
-        const userId = Number(req.params.userId || req.query.userId);
+        // El usuario real viene del token
+        const userId = Number(req.user.id);
 
         if (!Number.isInteger(conversationId) || !Number.isInteger(userId)) {
             return res.status(400).json({
@@ -106,13 +118,15 @@ const getConversationById = async (req, res) => {
 
         res.status(200).json(conversation);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error al cargar conversación por id:', error.message);
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.message.conversationsLoadError });
     }
 }
 
 const getConversations = async (req, res) => {
     try {
-        const userId = Number(req.params.userId || req.query.userId);
+        // Listamos siempre las conversaciones del usuario autenticado.
+        const userId = Number(req.user.id);
 
         if (!Number.isInteger(userId)) {
             return res.status(400).json({
@@ -166,15 +180,16 @@ const getConversationByReport = async (req, res) => {
 
 const sendReportMessage = async (req, res) => {
     try {
-        const { texto_mensaje, emisor_id, report_id } = req.body;
+        const { texto_mensaje, report_id } = req.body;
+        // El emisor real viene del token 
+        const senderId = Number(req.user.id);
 
-        if (!texto_mensaje?.trim() || !emisor_id || !report_id) {
+        if (!texto_mensaje?.trim() || !senderId || !report_id) {
             return res.status(400).json({
                 message: ERROR_MESSAGE_TEXT.message.reportMessageRequiredFields
             });
         }
 
-        const senderId = Number(emisor_id);
         const reportId = Number(report_id);
 
         if (!Number.isInteger(senderId) || !Number.isInteger(reportId)) {
@@ -245,7 +260,8 @@ const changeStatus = async (req, res) => {
         return res.status(400).json({ message: ERROR_MESSAGE_TEXT.message.invalidConversationId });
     }
 
-  const exists = await Message.existsConversationById(conversationId);
+  // Solo quien participa en la conversación puede cambiar su estado.
+  const exists = await Message.existsConversationById(conversationId, req.user.id);
   
   if (!exists) {
         return res.status(404).json({ message: ERROR_MESSAGE_TEXT.message.conversationNotFound });

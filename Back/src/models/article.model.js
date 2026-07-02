@@ -111,7 +111,9 @@ const buyArticle = async (id) => {
     const sql = `
     UPDATE articulos
     SET estado_venta = 'Vendido'
-    WHERE id = ? AND estado_venta = 'Disponible'
+    WHERE id = ?
+      AND estado_venta = 'Disponible'
+      AND estado_revision = 'Publicado'
     `;
 
     const [result] = await db.query(sql, [id]);
@@ -125,7 +127,9 @@ const reserveArticle = async (id) => {
     const sql = `
     UPDATE articulos
     SET estado_venta = 'Reservado'
-    WHERE id = ? AND estado_venta = 'Disponible'
+    WHERE id = ?
+      AND estado_venta = 'Disponible'
+      AND estado_revision = 'Publicado'
     `;
 
     const [result] = await db.query(sql, [id]);
@@ -141,6 +145,7 @@ const getLastArticles = async () => {
         LEFT JOIN categorias c ON a.categoria_id = c.id
         WHERE a.estado_revision = 'Publicado'
             AND a.estado_venta = 'Disponible'
+            AND a.fecha_publicacion >= DATE_SUB(NOW(), INTERVAL 7 DAY)
         ORDER BY a.fecha_publicacion DESC
         LIMIT 10`
     );
