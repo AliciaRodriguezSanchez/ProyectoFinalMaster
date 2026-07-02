@@ -4,7 +4,7 @@ import { UiButtonComponent } from '../../ui/button/ui-button.component';
 import { UiInputComponent, UiInputIcon, UiInputType } from '../../ui/input/ui-input.component';
 import { UiTextareaComponent } from '../../ui/textarea/ui-textarea.component';
 
-export type ActionModalField = 'textarea' | 'input';
+export type ActionModalField = 'textarea' | 'input' | 'none';
 
 @Component({
   selector: 'app-action-modal',
@@ -14,7 +14,7 @@ export type ActionModalField = 'textarea' | 'input';
 })
 export class ActionModalComponent {
   title = input.required<string>();
-  textareaLabel = input.required<string>();
+  textareaLabel = input('');
   textareaPlaceholder = input('');
   fieldType = input<ActionModalField>('textarea');
   inputType = input<UiInputType>('text');
@@ -32,6 +32,10 @@ export class ActionModalComponent {
   submittedOnce = signal(false);
 
   get isInvalid(): boolean {
+    if (this.fieldType() === 'none') {
+      return false;
+    }
+
     return this.submittedOnce() && !this.value().trim();
   }
 
@@ -47,6 +51,11 @@ export class ActionModalComponent {
     this.submittedOnce.set(true);
 
     const trimmedValue = this.value().trim();
+
+    if (this.fieldType() === 'none') {
+      this.submitted.emit('');
+      return;
+    }
 
     if (!trimmedValue) {
       return;

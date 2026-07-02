@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { API_URL } from '../api';
 import { TOKEN_KEY } from '../../constants/auth';
-import { UserRole } from '../../constants/user-role';
+import { APP_NAVIGATION_PATHS, UserRole } from '../../constants/user-role';
 import { decodeJwtPayload } from '../../utils/jwt';
 import type { AuthLoginForm } from '../../../interfaces/auth/auth-login-form.interface';
 import type { AuthLoginResponse, AuthTokenPayload } from '../../../interfaces/auth/auth-login.interface';
@@ -78,11 +78,11 @@ export class AuthService {
 
   private navigateByRole(role: UserRole): Promise<boolean> {
     const routesByRole: Record<UserRole, string> = {
-      [UserRole.USER]: '/catalog',
-      [UserRole.MODERATOR]: '/moderador',
-      [UserRole.ADMIN]: '/administration',
+      [UserRole.USER]: APP_NAVIGATION_PATHS.catalog,
+      [UserRole.MODERATOR]: APP_NAVIGATION_PATHS.moderator,
+      [UserRole.ADMIN]: APP_NAVIGATION_PATHS.administration,
     };
 
-    return this.router.navigate([routesByRole[role] || '/home']);
+    return this.router.navigate([routesByRole[role] || APP_NAVIGATION_PATHS.home]);
   }
 }

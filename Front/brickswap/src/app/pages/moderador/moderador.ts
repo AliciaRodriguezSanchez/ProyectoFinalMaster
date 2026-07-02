@@ -8,6 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IPendingTable } from '../../interfaces/ipending-table.interface';
 import { TableComponent } from '../../shared/table/table.component';
 import { ArticleService } from '../../core/services/article/article.service';
+import { APP_NAVIGATION_PATHS } from '../../core/constants/user-role';
 
 const CONFIGURACION_ESTADOS: Record<string, { icon: string, color: string, bgClass: string, nombreMostrar: string }> = {
   'Pendiente': {
@@ -78,6 +79,10 @@ export class ModeradorPage {
     });
 
     this.reportsTables.set(listaActual);
+  }
+
+  goBack(): void {
+    void this.router.navigateByUrl(APP_NAVIGATION_PATHS.administration);
   }
 
   cambiarEstadoUrl(estadoSeleccionado: string){

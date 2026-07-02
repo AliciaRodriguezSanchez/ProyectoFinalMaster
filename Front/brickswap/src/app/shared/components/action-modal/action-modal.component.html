@@ -31,16 +31,20 @@
         (valueChange)="onValueChange($event)"
       />
     } @else {
-      <ui-textarea
-        [label]="textareaLabel()"
-        [placeholder]="textareaPlaceholder()"
-        [required]="true"
-        [rows]="5"
-        [value]="value()"
-        [invalid]="isInvalid"
-        [errorMessage]="requiredError()"
-        (valueChange)="onValueChange($event)"
-      />
+      @if (fieldType() === 'none') {
+        <p class="action-modal__message">{{ textareaLabel() }}</p>
+      } @else {
+        <ui-textarea
+          [label]="textareaLabel()"
+          [placeholder]="textareaPlaceholder()"
+          [required]="true"
+          [rows]="5"
+          [value]="value()"
+          [invalid]="isInvalid"
+          [errorMessage]="requiredError()"
+          (valueChange)="onValueChange($event)"
+        />
+      }
     }
 
     <div class="action-modal__actions">

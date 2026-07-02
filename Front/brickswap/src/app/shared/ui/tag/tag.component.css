@@ -28,6 +28,18 @@
   color: var(--brick-color-white);
 }
 
+.tag--success {
+  background: #d8f8e1;
+  border-color: #d8f8e1;
+  color: #137a3d;
+}
+
+.tag--danger {
+  background: #ffe2e5;
+  border-color: #ffe2e5;
+  color: #b4232d;
+}
+
 .tag__icon {
   flex: 0 0 auto;
   line-height: 1;

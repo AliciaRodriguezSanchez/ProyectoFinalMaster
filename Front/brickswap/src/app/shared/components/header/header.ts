@@ -2,7 +2,7 @@ import { Component, HostListener, computed, inject, signal } from '@angular/core
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter } from 'rxjs';
-import { UserRole } from '../../../core/constants/user-role';
+import { APP_NAVIGATION_PATHS, UserRole } from '../../../core/constants/user-role';
 import { decodeJwtPayload } from '../../../core/utils/jwt';
 import { CatalogFiltersService } from '../../../core/services/catalog-filters/catalog-filters.service';
 import { UiLogoComponent } from '../../ui/logo/ui-logo.component';
@@ -37,12 +37,12 @@ export class Header {
   role = signal(this.getCurrentRole());
   currentUrl = signal(this.router.url);
   navItems = computed(() => this.getNavItemsByRole(this.role()));
-  profileRoute = computed(() => this.role() ? '/profile' : '/login');
+  profileRoute = computed(() => this.role() ? APP_NAVIGATION_PATHS.profile : APP_NAVIGATION_PATHS.login);
   profileLabel = computed(() => this.role() ? 'Perfil' : 'Iniciar sesion');
   userInitials = signal(this.getUserInitials());
   isMenuOpen = signal(false);
   showCatalogFiltersButton = computed(() => this.isCatalogRoute());
-  isProfileRoute = computed(() => this.currentUrl().split('?')[0] === '/profile');
+  isProfileRoute = computed(() => this.currentUrl().split('?')[0] === APP_NAVIGATION_PATHS.profile);
 
   toggleMenu(): void {
     this.isMenuOpen.update((isOpen) => !isOpen);
@@ -63,7 +63,7 @@ export class Header {
     localStorage.removeItem(TOKEN_KEY);
     this.refreshUserState();
     this.closeMenu();
-    this.router.navigate(['/home']);
+    this.router.navigate([APP_NAVIGATION_PATHS.home]);
   }
 
   openCatalogFilters(): void {
@@ -110,37 +110,37 @@ export class Header {
   private getNavItemsByRole(role: UserRole | null): HeaderNavItem[] {
     if (!role) {
       return [
-        { label: 'Buscar', route: '/categories', icon: 'search' },
+        { label: 'Buscar', route: APP_NAVIGATION_PATHS.categories, icon: 'search' },
       ];
     }
 
     const roleHomeRoutes: Record<UserRole, HeaderNavItem> = {
-      [UserRole.USER]: { label: 'Mi panel', route: '/my-panel', icon: 'home' },
-      [UserRole.MODERATOR]: { label: 'Panel moderacion', route: '/moderador', icon: 'home' },
-      [UserRole.ADMIN]: { label: 'Panel administracion', route: '/administration', icon: 'home' },
+      [UserRole.USER]: { label: 'Mi panel', route: APP_NAVIGATION_PATHS.myPanel, icon: 'home' },
+      [UserRole.MODERATOR]: { label: 'Panel moderacion', route: APP_NAVIGATION_PATHS.moderator, icon: 'home' },
+      [UserRole.ADMIN]: { label: 'Panel administracion', route: APP_NAVIGATION_PATHS.administration, icon: 'home' },
     };
 
     if (role === UserRole.USER) {
       return [
         roleHomeRoutes[role],
-        { label: 'Catalogo', route: '/catalog', icon: 'search' },
-        { label: 'Mensajes', route: '/messages', icon: 'messages' },
+        { label: 'Catalogo', route: APP_NAVIGATION_PATHS.catalog, icon: 'search' },
+        { label: 'Mensajes', route: APP_NAVIGATION_PATHS.messages, icon: 'messages' },
       ];
     }
 
     return [
       roleHomeRoutes[role],
-      { label: 'Catalogo', route: '/catalog', icon: 'search' },
-      { label: 'Mensajes', route: '/messages', icon: 'messages' },
+      { label: 'Catalogo', route: APP_NAVIGATION_PATHS.catalog, icon: 'search' },
+      { label: 'Mensajes', route: APP_NAVIGATION_PATHS.messages, icon: 'messages' },
     ];
   }
 
   private isHomeRoute(): boolean {
-    return this.currentUrl() === '/home' || this.currentUrl() === '/';
+    return this.currentUrl() === APP_NAVIGATION_PATHS.home || this.currentUrl() === '/';
   }
 
   private isCatalogRoute(): boolean {
     const url = this.currentUrl().split('?')[0];
-    return url === '/catalog' || url === '/categories';
+    return url === APP_NAVIGATION_PATHS.catalog || url === APP_NAVIGATION_PATHS.categories;
   }
 }

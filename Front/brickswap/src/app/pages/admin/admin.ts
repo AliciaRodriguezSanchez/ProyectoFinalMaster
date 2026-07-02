@@ -1,4 +1,5 @@
-import { Component, ElementRef, signal, ViewChild, ChangeDetectorRef} from '@angular/core';
+import { Component, ElementRef, signal, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { TitleComponent } from '../../shared/ui/titles/title.component';
 import { DescriptionsComponent } from '../../shared/ui/descriptions/descriptions.component';
 import { CardPanelComponent } from '../../shared/card-panel/card-panel.component';
@@ -10,8 +11,13 @@ import { ReportService } from '../../core/services/report/report.service';
 import { AdminPanelCardComponent } from '../../shared/components/admin-panel-card/admin-panel-card.component';
 import { IAdminPanelCard } from '../../interfaces/iadmin-panel-card.interface';
 import { IUsersTable } from '../../interfaces/iusers-table.interface';
-import { isActive, Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TableComponent } from '../../shared/table/table.component';
+import { APP_NAVIGATION_PATHS } from '../../core/constants/user-role';
+import { PillComponent } from '../../shared/ui/pill/pill.component';
+import { UiToastService } from '../../core/services/toast/ui-toast.service';
+import { MESSAGE_TEXT } from '../../core/constants/message-text';
+import { ActionModalComponent } from '../../shared/components/action-modal/action-modal.component';
 
 
 const CONFIGURACION_GLOBAL: Record<string, any> = {
@@ -51,10 +57,15 @@ const ORDEN_TARJETAS = [
 ];
 
 type AdminSection = 'users' | 'categories' | 'moderation';
+type UserStatusFilter = 'all' | 'active' | 'blocked';
+type UserRoleFilter = 'all' | 'users' | 'moderators' | 'admins';
+type UserSortOrder = 'newest' | 'oldest';
+type PendingStatusChange = { id: string; userName: string; isActive: boolean };
+type PendingRoleChange = { id: number; userName: string; currentRoleId: number; newRoleId: number };
 
 @Component({
   selector: 'app-admin',
-  imports: [TitleComponent, DescriptionsComponent, CardPanelComponent, AdminPanelCardComponent, TableComponent],
+  imports: [FormsModule, TitleComponent, DescriptionsComponent, CardPanelComponent, AdminPanelCardComponent, TableComponent, RouterLink, PillComponent, ActionModalComponent],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
@@ -62,7 +73,28 @@ export class AdminPage {
   totalStadistics = signal<IStat[]>([]);
   activeSection = signal<AdminSection | null>(null);
   users = signal<IUsersTable[]>([]);
+  usersSearchText = '';
+  activeUserStatusFilter: UserStatusFilter = 'all';
+  activeUserRoleFilter: UserRoleFilter = 'all';
+  showUserFilters = false;
+  userSortOrder: UserSortOrder = 'newest';
+  roleSelectResetKey = signal(0);
+  pendingStatusChange: PendingStatusChange | null = null;
+  pendingRoleChange: PendingRoleChange | null = null;
   @ViewChild('userListSection') userListSection!: ElementRef;
+
+  userStatusFilters: Array<{ label: string; value: UserStatusFilter }> = [
+    { label: 'Todos', value: 'all' },
+    { label: 'Activos', value: 'active' },
+    { label: 'Bloqueados', value: 'blocked' },
+  ];
+
+  userRoleFilters: Array<{ label: string; value: UserRoleFilter }> = [
+    { label: 'Todos los roles', value: 'all' },
+    { label: 'Usuarios', value: 'users' },
+    { label: 'Moderadores', value: 'moderators' },
+    { label: 'Admins', value: 'admins' },
+  ];
 
   adminCards: IAdminPanelCard[] = [
     {
@@ -93,21 +125,122 @@ export class AdminPage {
     private articleService: ArticleService,
     private userService: UserService,
     private reportService: ReportService,
-    private cdr: ChangeDetectorRef
+    private toastService: UiToastService
   ) {}
 
   ngOnInit(){
+    if (this.router.url === APP_NAVIGATION_PATHS.administrationUsers) {
+      this.activeSection.set('users');
+      this.cargarUsuarios();
+      return;
+    }
+
     this.obtenerEstadisticasGlobales();
   }
 
+  isUsersManagementPage(): boolean {
+    return this.router.url === APP_NAVIGATION_PATHS.administrationUsers;
+  }
+
+  get filteredUsers(): IUsersTable[] {
+    const normalizedSearch = this.usersSearchText.trim().toLowerCase();
+
+    return this.users().filter((user) => {
+      const name = user.name?.toLowerCase() || '';
+      const email = user.email?.toLowerCase() || '';
+      const role = user.role?.toLowerCase() || '';
+      const matchesSearch = !normalizedSearch ||
+        name.includes(normalizedSearch) ||
+        email.includes(normalizedSearch) ||
+        role.includes(normalizedSearch);
+
+      if (!matchesSearch) {
+        return false;
+      }
+
+      return this.matchesUserQuickFilter(user);
+    });
+  }
+
+  selectUserStatusFilter(filter: string): void {
+    this.activeUserStatusFilter = filter as UserStatusFilter;
+  }
+
+  selectUserRoleFilter(filter: string): void {
+    this.activeUserRoleFilter = filter as UserRoleFilter;
+    this.showUserFilters = false;
+  }
+
+  activeUserFilterLabel(): string {
+    const statusLabel = this.userStatusFilters.find((filter) => filter.value === this.activeUserStatusFilter)?.label || 'Todos';
+    const roleLabel = this.userRoleFilters.find((filter) => filter.value === this.activeUserRoleFilter)?.label || 'Todos los roles';
+
+    return `${statusLabel} · ${roleLabel}`;
+  }
+
+  toggleUserFilters(): void {
+    this.showUserFilters = !this.showUserFilters;
+  }
+
+  getUserSortLabel(): string {
+    return this.userSortOrder === 'newest' ? 'Más reciente' : 'Más antiguo';
+  }
+
+  ordenarUsuarios(): void {
+    this.userSortOrder = this.userSortOrder === 'newest' ? 'oldest' : 'newest';
+    this.users.update((users) => this.sortUsers(users));
+  }
+
+  private sortUsers(users: IUsersTable[]): IUsersTable[] {
+    return [...users].sort((firstUser, secondUser) => {
+      const firstId = Number(firstUser.id) || 0;
+      const secondId = Number(secondUser.id) || 0;
+
+      return this.userSortOrder === 'newest'
+        ? secondId - firstId
+        : firstId - secondId;
+    });
+  }
+
+  private matchesUserQuickFilter(user: IUsersTable): boolean {
+    const role = user.role?.toLowerCase() || '';
+
+    if (this.activeUserStatusFilter === 'active' && !user.isActive) {
+      return false;
+    }
+
+    if (this.activeUserStatusFilter === 'blocked' && user.isActive) {
+      return false;
+    }
+
+    if (this.activeUserRoleFilter === 'users') {
+      return role === 'usuario' || role === 'user';
+    }
+
+    if (this.activeUserRoleFilter === 'moderators') {
+      return role === 'moderador' || role === 'moderator';
+    }
+
+    if (this.activeUserRoleFilter === 'admins') {
+      return role === 'admin' || role === 'administrador';
+    }
+
+    return true;
+  }
+
   async seleccionarCard(card: IAdminPanelCard) {
+    if (card.id === 'users') {
+      this.router.navigate([APP_NAVIGATION_PATHS.administrationUsers]);
+      return;
+    }
+
     if (card.id === 'moderation') {
-      this.router.navigate(['/moderador']);
+      this.router.navigate([APP_NAVIGATION_PATHS.administrationModerator]);
       return;
     }
 
     if (card.id === 'categories') {
-      this.router.navigate(['/categorias']);
+      this.router.navigate([APP_NAVIGATION_PATHS.administrationCategories]);
       return;
     }
 
@@ -202,15 +335,50 @@ export class AdminPage {
         name: `${user.nombre} ${user.apellidos}`.trim(),
         email: user.email,
         role: user.nombre_rol,
+        roleId: this.getUserRoleId(user),
         isActive: user.estado_cuenta === 'Activo' 
       }));
 
-      this.users.set(usuariosMapeados);
+      this.users.set(this.sortUsers(usuariosMapeados));
 
     } catch (error) {
       console.error('Error al cargar usuarios:', error);
       this.users.set([]);
     }
+  }
+
+  private getUserRoleId(user: any): number {
+    const roleId = Number(user.rol_id);
+
+    if ([1, 2, 3].includes(roleId)) {
+      return roleId;
+    }
+
+    const normalizedRole = String(user.nombre_rol || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLowerCase();
+
+    if (normalizedRole === 'moderador' || normalizedRole === 'moderator') {
+      return 2;
+    }
+
+    if (normalizedRole === 'administrador' || normalizedRole === 'admin') {
+      return 3;
+    }
+
+    return 1;
+  }
+
+  private getRoleLabel(roleId: number): string {
+    const labels: Record<number, string> = {
+      1: 'Usuario',
+      2: 'Moderador',
+      3: 'Administrador',
+    };
+
+    return labels[roleId] || labels[1];
   }
 
   async eliminarUsuario(userId: number) {
@@ -224,36 +392,135 @@ export class AdminPage {
     }
   }
 
-  async toogleState(id:string){
-    try{
-      await this.userService.getStateChange(id);
+  toogleState(id:string){
+    const user = this.users().find((currentUser) => String(currentUser.id) === String(id));
 
-      this.users.update(usuario => usuario.map(user =>{
-        if(user.id === id){
-          return {...user, isActive:!user.isActive};
-        }
-        return user;
-      }))
+    if (!user) {
+      return;
+    }
+
+    this.pendingStatusChange = {
+      id: String(id),
+      userName: user.name,
+      isActive: user.isActive,
+    };
+  }
+
+  closeStatusChangeModal(): void {
+    this.pendingStatusChange = null;
+  }
+
+  getStatusChangeModalTitle(): string {
+    return MESSAGE_TEXT.admin.statusChangeModalTitle;
+  }
+
+  getStatusChangeModalDescription(): string {
+    if (!this.pendingStatusChange) {
+      return '';
+    }
+
+    const action = this.pendingStatusChange.isActive ? 'bloquear' : 'activar';
+
+    return `${MESSAGE_TEXT.admin.statusChangeModalMessage} Vas a ${action} a ${this.pendingStatusChange.userName}.`;
+  }
+
+  getStatusChangeModalSubmitLabel(): string {
+    return MESSAGE_TEXT.admin.statusChangeModalSubmit;
+  }
+
+  getStatusChangeModalCancelLabel(): string {
+    return MESSAGE_TEXT.admin.statusChangeModalCancel;
+  }
+
+  async confirmStatusChange(): Promise<void> {
+    if (!this.pendingStatusChange) {
+      return;
+    }
+
+    const statusChange = this.pendingStatusChange;
+
+    try{
+      await this.userService.getStateChange(statusChange.id);
+      await this.cargarUsuarios();
+
+      this.toastService.success(MESSAGE_TEXT.admin.statusChangeSuccess);
+      this.closeStatusChangeModal();
     }catch (error){
-      console.error('Error al cambiar el estado del perfil', error)
+      console.error('Error al cambiar el estado del perfil', error);
+      this.toastService.error(MESSAGE_TEXT.admin.statusChangeError);
     }
   }
 
   async cambiarRolUsuario(evento: { id: number, newRole: string }) {
-    try {
-      await this.userService.getRolChange(evento.id, evento.newRole);
+    const user = this.users().find((currentUser) => currentUser.id === evento.id);
+    const newRoleId = Number(evento.newRole);
 
-      this.users.update(usuariosActuales => 
-        usuariosActuales.map(user => {
-          if (user.id === evento.id) {
-            return { ...user, role: evento.newRole };
+    if (!user || user.roleId === newRoleId) {
+      return;
+    }
+
+    this.pendingRoleChange = {
+      id: evento.id,
+      userName: user.name,
+      currentRoleId: user.roleId,
+      newRoleId,
+    };
+  }
+
+  closeRoleChangeModal(): void {
+    this.pendingRoleChange = null;
+    this.roleSelectResetKey.update((value) => value + 1);
+  }
+
+  getRoleChangeModalTitle(): string {
+    return MESSAGE_TEXT.admin.roleChangeModalTitle;
+  }
+
+  getRoleChangeModalDescription(): string {
+    if (!this.pendingRoleChange) {
+      return '';
+    }
+
+    return `¿Seguro que quieres cambiar el rol de ${this.pendingRoleChange.userName}?`;
+  }
+
+  getRoleChangeModalSubmitLabel(): string {
+    return MESSAGE_TEXT.admin.roleChangeModalSubmit;
+  }
+
+  getRoleChangeModalCancelLabel(): string {
+    return MESSAGE_TEXT.admin.roleChangeModalCancel;
+  }
+
+  async confirmRoleChange(): Promise<void> {
+    if (!this.pendingRoleChange) {
+      return;
+    }
+
+    const roleChange = this.pendingRoleChange;
+
+    try {
+      await this.userService.getRolChange(roleChange.id, String(roleChange.newRoleId));
+      this.users.update((users) =>
+        users.map((user) => {
+          if (Number(user.id) !== Number(roleChange.id)) {
+            return user;
           }
-          return user;
+
+          return {
+            ...user,
+            role: this.getRoleLabel(roleChange.newRoleId),
+            roleId: roleChange.newRoleId,
+          };
         })
       );
-      
+      this.toastService.success(MESSAGE_TEXT.admin.roleChangeSuccess);
+      this.pendingRoleChange = null;
     } catch (error) {
       console.error('Error al cambiar el rol del usuario:', error);
+      this.toastService.error(MESSAGE_TEXT.admin.roleChangeError);
+      this.roleSelectResetKey.update((value) => value + 1);
+      this.pendingRoleChange = null;
     }
   }
 }

@@ -4,12 +4,12 @@
   [class.admin-card--active]="isActive()"
   (click)="cardSelected.emit(card())"
 >
-  <div class="rounded-4 text-center p-2 px-3" [ngClass]="card().colorClass">
+  <div class="admin-card__icon rounded-4 text-center p-2 px-3" [ngClass]="card().colorClass">
     <i class="fs-3" [ngClass]="card().icon"></i>
   </div>
 
-  <div class="col d-flex flex-column text-start">
-    <span class="fs-5 fw-semibold">{{ card().title }}</span>
-    <span class="opacity-75">{{ card().description }}</span>
+  <div class="admin-card__content col d-flex flex-column text-start">
+    <span class="admin-card__title fs-5 fw-semibold">{{ card().title }}</span>
+    <span class="admin-card__description opacity-75">{{ card().description }}</span>
   </div>
 </button>

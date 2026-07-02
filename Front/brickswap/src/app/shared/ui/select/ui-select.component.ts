@@ -1,4 +1,4 @@
-import { Component, forwardRef, input, signal } from '@angular/core';
+import { Component, effect, forwardRef, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export interface UiSelectOption {
@@ -28,6 +28,9 @@ export class UiSelectComponent implements ControlValueAccessor {
   required = input(false);
   invalid = input(false);
   errorMessage = input('');
+  selectedValue = input<string | number | null | undefined>(undefined);
+  resetKey = input(0);
+  valueChange = output<string>();
 
   value = signal('');
   disabled = signal(false);
@@ -35,8 +38,20 @@ export class UiSelectComponent implements ControlValueAccessor {
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
+  constructor() {
+    effect(() => {
+      this.resetKey();
+      this.options();
+      const selectedValue = this.selectedValue();
+
+      if (selectedValue !== undefined) {
+        this.writeValue(selectedValue);
+      }
+    });
+  }
+
   writeValue(value: string | number | null): void {
-    this.value.set(value === null || value === undefined ? '' : String(value));
+    this.value.set(this.toSelectValue(value));
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -56,9 +71,18 @@ export class UiSelectComponent implements ControlValueAccessor {
 
     this.value.set(value);
     this.onChange(value);
+    this.valueChange.emit(value);
   }
 
   onBlur(): void {
     this.onTouched();
+  }
+
+  isSelected(optionValue: string | number): boolean {
+    return this.toSelectValue(optionValue) === this.value();
+  }
+
+  private toSelectValue(value: string | number | null | undefined): string {
+    return value === null || value === undefined ? '' : String(value);
   }
 }
