@@ -34,34 +34,36 @@
     </section>
   }
 
-  <section class="home-section" aria-labelledby="home-latest-title">
-    <div class="home-section__header">
-      <h2 id="home-latest-title">Últimas novedades</h2>
-    </div>
+  @if (isLoadingLastProduct() || popularProducts().length > 0) {
+    <section class="home-section" aria-labelledby="home-latest-title">
+      <div class="home-section__header">
+        <h2 id="home-latest-title">Últimas novedades</h2>
+      </div>
 
-    <div class="home-carrousel-frame">
-      <ui-carrousel
-        [isLoading]="isLoadingLastProduct()"
-        [skeletonItems]="3"
-        skeletonVariant="product"
-      >
-        @for (product of popularProducts(); track product.id) {
-          <ui-product-card
-            [imageUrl]="product.foto"
-            [title]="product.titulo"
-            [price]="product.precio"
-            [location]="product.categoria_nombre || ''"
-            [publishedAt]="product.fecha_publicacion || ''"
-            [condition]="product.estado_articulo"
-            [showBadge]="true"
-            [badgeText]="product.estado_venta"
-            [detailRoute]="['/catalog']"
-            [queryParams]="{ search: product.titulo }"
-          ></ui-product-card>
-        }
-      </ui-carrousel>
-    </div>
-  </section>
+      <div class="home-carrousel-frame">
+        <ui-carrousel
+          [isLoading]="isLoadingLastProduct()"
+          [skeletonItems]="3"
+          skeletonVariant="product"
+        >
+          @for (product of popularProducts(); track product.id) {
+            <ui-product-card
+              [imageUrl]="product.foto"
+              [title]="product.titulo"
+              [price]="product.precio"
+              [location]="product.categoria_nombre || ''"
+              [publishedAt]="product.fecha_publicacion || ''"
+              [condition]="product.estado_articulo"
+              [showBadge]="true"
+              [badgeText]="product.estado_venta"
+              [detailRoute]="['/catalog']"
+              [queryParams]="{ search: product.titulo }"
+            ></ui-product-card>
+          }
+        </ui-carrousel>
+      </div>
+    </section>
+  }
 
   <section class="home-promo" [style.background-image]="'url(' + heroImageUrl + ')'">
     <div>

@@ -81,6 +81,10 @@ export class ModeradorPage {
     this.reportsTables.set(listaActual);
   }
 
+  get showAdminBackButton(): boolean {
+    return this.router.url.split('?')[0] === APP_NAVIGATION_PATHS.administrationModerator;
+  }
+
   goBack(): void {
     void this.router.navigateByUrl(APP_NAVIGATION_PATHS.administration);
   }

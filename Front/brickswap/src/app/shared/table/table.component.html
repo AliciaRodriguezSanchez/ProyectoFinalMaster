@@ -26,10 +26,12 @@
     <div
       class="list-group-item p-3 px-4 bg-white"
       [class.shared-table-list-item--users]="typeTable() === 'usuarios'"
+      [class.shared-table-list-item--promotions]="typeTable() === 'promotions'"
     >
       <div
         class="row align-items-center"
         [class.shared-table-user-row]="typeTable() === 'usuarios'"
+        [class.shared-table-promotion-row]="typeTable() === 'promotions'"
       >
 
         @switch (typeTable()) { 
@@ -147,6 +149,40 @@
               }
               {{ $any(item).isActive ? 'Bloquear' : 'Activar' }}
             </button>
+          </div>
+        }
+
+        @case ('promotions') {
+          <div class="shared-table-product-main">
+            <img
+              class="shared-table-product-image"
+              [src]="$any(item).foto"
+              [alt]="$any(item).titulo"
+            >
+
+            <div class="shared-table-product-title">
+              <strong>{{ $any(item).titulo }}</strong>
+              <span>#{{ $any(item).id }}</span>
+            </div>
+          </div>
+
+          <div class="shared-table-product-price">
+            {{ $any(item).precio }} €
+          </div>
+
+          <div class="shared-table-product-status">
+            <app-tag
+              [label]="$any(item).estado_revision"
+              variant="success"
+            />
+          </div>
+
+          <div class="shared-table-product-switch">
+            <ui-switch
+              [checked]="isArticleInPromotion($any(item).in_promotion)"
+              [ariaLabel]="'Cambiar promoción de ' + $any(item).titulo"
+              (checkedChange)="emitPromotionChange($any(item), $event)"
+            />
           </div>
         }
 

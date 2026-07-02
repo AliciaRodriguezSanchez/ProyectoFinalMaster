@@ -6,6 +6,9 @@ import { brickImage } from './storybook.data';
 const meta: Meta<UiProductCardComponent> = {
   title: 'Shared/Components/Product Card',
   component: UiProductCardComponent,
+  parameters: {
+    canvasWidth: '260px'
+  },
   args: {
     imageUrl: brickImage,
     title: 'Set LEGO City completo',

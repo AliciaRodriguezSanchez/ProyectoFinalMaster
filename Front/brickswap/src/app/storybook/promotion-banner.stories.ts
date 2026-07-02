@@ -6,6 +6,9 @@ import { bannerImage } from './storybook.data';
 const meta: Meta<PromotionBannerComponent> = {
   title: 'Shared/Components/Promotion Banner',
   component: PromotionBannerComponent,
+  parameters: {
+    canvasWidth: '980px'
+  },
   args: {
     title: 'Compra, vende e intercambia LEGO',
     description: 'Encuentra sets completos, piezas sueltas y minifiguras de otros fans de BrickSwap.',

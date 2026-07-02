@@ -157,6 +157,12 @@
   background: var(--brick-color-surface-muted);
 }
 
+.carrousel__control:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .carrousel__control:first-of-type:hover,
 .carrousel__control:last-of-type:hover {
   transform: translateY(calc(-50% - 1px));

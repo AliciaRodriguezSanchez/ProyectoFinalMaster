@@ -3,6 +3,7 @@
     type="button"
     class="carrousel__control"
     aria-label="Anterior"
+    [disabled]="!canScrollPrevious()"
     (click)="scrollBy(-1)"
   >
     <svg aria-hidden="true" viewBox="0 0 24 24">
@@ -13,6 +14,7 @@
   <div
     #track
     class="carrousel__track"
+    (scroll)="updateScrollControls()"
   >
     @if (isLoading()) {
       @for (item of skeletonPlaceholders(); track $index) {
@@ -38,6 +40,7 @@
     type="button"
     class="carrousel__control"
     aria-label="Siguiente"
+    [disabled]="!canScrollNext()"
     (click)="scrollBy(1)"
   >
     <svg aria-hidden="true" viewBox="0 0 24 24">

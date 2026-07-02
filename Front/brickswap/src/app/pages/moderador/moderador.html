@@ -1,8 +1,10 @@
 <section class="container">
-    <!-- <button type="button" class="moderador-back" (click)="goBack()">
+    @if (showAdminBackButton) {
+      <button type="button" class="moderador-back" (click)="goBack()">
       <span aria-hidden="true">←</span>
       Volver
-    </button> -->
+      </button>
+    }
 
     <app-title size="large" text="Panel de Moderación"></app-title> 
     <app-descriptions format="body" text="Hola Moderador, gestiona los reportes pendientes."></app-descriptions>

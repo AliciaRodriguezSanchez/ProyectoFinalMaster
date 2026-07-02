@@ -8,6 +8,9 @@ import { categoryItems } from './storybook.data';
 const meta: Meta<UiCarrouselComponent> = {
   title: 'Shared/Components/Carrousel',
   component: UiCarrouselComponent,
+  parameters: {
+    canvasWidth: '980px'
+  },
   decorators: [
     moduleMetadata({
       imports: [UiCategoryCardComponent],

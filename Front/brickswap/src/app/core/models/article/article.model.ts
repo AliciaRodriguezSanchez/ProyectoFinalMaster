@@ -15,6 +15,7 @@ export interface Article {
     vendedor_nombre?: string;
     vendedor_apellidos?: string;
     vendedor_nickname?: string;
+    in_promotion?: number | boolean;
 }
 
 // MODELO PARA CATEGORÍAS
@@ -22,4 +23,3 @@ export interface Category {
     id: number;
     nombre: string;
 }
-

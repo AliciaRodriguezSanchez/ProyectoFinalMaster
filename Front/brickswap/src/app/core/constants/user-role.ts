@@ -26,6 +26,7 @@ export const APP_ROUTE_PATHS = {
   administrationUsers: 'administration/users',
   administrationCategories: 'administration/categories',
   administrationModerator: 'administration/moderador',
+  administrationPromotions: 'administration/promotions',
 } as const;
 
 export const APP_NAVIGATION_PATHS = {
@@ -42,4 +43,5 @@ export const APP_NAVIGATION_PATHS = {
   administrationUsers: `/${APP_ROUTE_PATHS.administrationUsers}`,
   administrationCategories: `/${APP_ROUTE_PATHS.administrationCategories}`,
   administrationModerator: `/${APP_ROUTE_PATHS.administrationModerator}`,
+  administrationPromotions: `/${APP_ROUTE_PATHS.administrationPromotions}`,
 } as const;

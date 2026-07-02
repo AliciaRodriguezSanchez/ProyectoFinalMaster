@@ -6,7 +6,8 @@ const getAllArticles = async (filters) => {
     // QUERY SÓLO PUBLICADOS Y DISPONIBLES
     let sql = `
     SELECT id, titulo, descripcion, foto, precio, estado_revision,
-           estado_articulo, estado_venta, fecha_publicacion, perfil_id, categoria_id
+           estado_articulo, estado_venta, fecha_publicacion, perfil_id, categoria_id,
+           in_promotion
     FROM articulos
     WHERE estado_revision = 'Publicado' AND estado_venta = 'Disponible'
     `;
@@ -156,15 +157,32 @@ const getLastArticles = async () => {
 
 const getArticlesInPromotion = async () => {
     const [result] = await db.query(
-        `SELECT a.*
+        `SELECT a.*,
+            c.nombre AS categoria_nombre
         FROM articulos as a
+        LEFT JOIN categorias c ON a.categoria_id = c.id
         WHERE  a.in_promotion = 1
+            AND a.estado_revision = 'Publicado'
+            AND a.estado_venta = 'Disponible'
         ORDER BY a.fecha_publicacion DESC`
     );
 
     return result;
 
 }
+
+const updatePromotion = async (id, inPromotion) => {
+    const [result] = await db.query(
+        `UPDATE articulos
+        SET in_promotion = ?
+        WHERE id = ?
+          AND estado_revision = 'Publicado'
+          AND estado_venta = 'Disponible'`,
+        [inPromotion ? 1 : 0, id]
+    );
+
+    return result;
+};
 
 // OBTENER TODOS LOS ARTÍCULOS DE UN USUARIO
 const getArticlesByProfileId = async (profileId) => {
@@ -240,6 +258,7 @@ module.exports = {
     reserveArticle,
     getArticlesByProfileId,
     reserveArticle,
+    updatePromotion,
     reportStateRefresh,
     getArticlesNumber,
     getArticlesSoldNumber,

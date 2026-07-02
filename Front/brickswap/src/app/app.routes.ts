@@ -8,6 +8,7 @@ import { Home } from './interfaces/home';
 import { ModeradorPage } from './pages/moderador/moderador';
 import { AdminPage } from './pages/admin/admin';
 import { CategoryManagement } from './pages/category-management/category-management';
+import { PromotionManagement } from './pages/promotion-management/promotion-management';
 import { UserPanelPage } from './pages/user-panel/user-panel';
 import { ProfilePage } from './pages/profile/profile';
 import { roleGuard } from './core/guards/role.guard';
@@ -101,6 +102,12 @@ export const routes: Routes = [
         canActivate: [roleGuard],
         data: { roles: [UserRole.ADMIN, UserRole.MODERATOR] },
         component: ModeradorPage
+    },
+    {
+        path: APP_ROUTE_PATHS.administrationPromotions,
+        canActivate: [roleGuard],
+        data: { roles: [UserRole.ADMIN] },
+        component: PromotionManagement
     },
 
     // 13. RUTA COMÚN PARA REDIRIGIR

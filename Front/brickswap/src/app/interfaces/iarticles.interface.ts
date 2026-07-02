@@ -15,4 +15,5 @@ export interface IArticle {
     vendedor_nombre?: string;
     vendedor_apellidos?: string;
     vendedor_nickname?: string;
+    in_promotion?: number | boolean;
 }

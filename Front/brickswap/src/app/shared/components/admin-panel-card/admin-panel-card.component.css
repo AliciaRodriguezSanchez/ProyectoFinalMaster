@@ -10,6 +10,11 @@
   border-color: #ffc107;
 }
 
+.admin-card--success:hover,
+.admin-card--success.admin-card--active {
+  border-color: #2f9e44;
+}
+
 .admin-card__content {
   min-width: 0;
 }

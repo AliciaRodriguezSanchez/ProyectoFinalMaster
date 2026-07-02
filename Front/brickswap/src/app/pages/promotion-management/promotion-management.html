@@ -1,0 +1,72 @@
+<main class="admin-page">
+  <button
+    type="button"
+    class="admin-back-link"
+    (click)="goToAdminHome()"
+  >
+    <span aria-hidden="true">←</span>
+    Volver
+  </button>
+
+  <section class="admin-header">
+    <div>
+      <h1>{{ text.title }}</h1>
+
+      <p class="admin-description">
+        {{ text.description }}
+      </p>
+    </div>
+  </section>
+
+  @if (isLoading()) {
+    <p class="status-message">
+      {{ text.loading }}
+    </p>
+  } @else {
+    @if (articles().length === 0) {
+      <section class="empty-state">
+        <h2>{{ text.emptyTitle }}</h2>
+        <p>{{ text.emptyDescription }}</p>
+      </section>
+    } @else {
+      <section class="category-toolbar" aria-label="Filtros de artículos en promoción">
+        <label class="category-search">
+          <span class="visually-hidden">Buscar artículos</span>
+
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m16 16 4 4" />
+          </svg>
+
+          <input
+            type="search"
+            name="promotionSearch"
+            [placeholder]="text.searchPlaceholder"
+            autocomplete="off"
+            [ngModel]="searchText()"
+            (ngModelChange)="updateSearchText($event)"
+          >
+        </label>
+      </section>
+
+      <section class="promotion-filter-pills" aria-label="Filtro rápido de promoción">
+        @for (filter of promotionFilters; track filter.value) {
+          <app-pill
+            [label]="filter.label"
+            [value]="filter.value"
+            [active]="activePromotionFilter() === filter.value"
+            (selected)="selectPromotionFilter($event)"
+          />
+        }
+      </section>
+
+      <app-table
+        typeTable="promotions"
+        [data]="visibleArticles()"
+        [sortLabel]="getSortLabel()"
+        (ordenarEvent)="updateSortOrder()"
+        (promotionChange)="updatePromotion($event)"
+      />
+    }
+  }
+</main>

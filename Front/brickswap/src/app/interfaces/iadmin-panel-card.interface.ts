@@ -1,5 +1,5 @@
 export interface IAdminPanelCard {
-  id: 'users' | 'categories' | 'moderation';
+  id: 'users' | 'categories' | 'moderation' | 'promotions';
   icon: string;
   title: string;
   description: string;

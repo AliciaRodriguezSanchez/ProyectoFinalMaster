@@ -5,6 +5,9 @@ import { TagComponent } from '../shared/ui/tag/tag.component';
 const meta: Meta<TagComponent> = {
   title: 'Shared/UI/Tag',
   component: TagComponent,
+  parameters: {
+    canvasWidth: '260px'
+  },
   argTypes: {
     label: {
       control: 'text'
