@@ -67,6 +67,16 @@
   background: #fffdf5 !important;
 }
 
+.shared-table-list-item--promotions {
+  min-height: 64px;
+  padding: 12px 22px !important;
+  border-bottom: 1px solid #eceef2;
+}
+
+.shared-table-list-item--promotions:hover {
+  background: #fffdf5 !important;
+}
+
 .shared-table-user-row {
   display: grid !important;
   grid-template-columns:
@@ -79,6 +89,79 @@
   column-gap: 14px;
   row-gap: 12px;
   margin: 0;
+}
+
+.shared-table-promotion-row {
+  display: grid !important;
+  grid-template-columns: minmax(220px, 1fr) 140px 150px 64px;
+  align-items: center;
+  column-gap: 18px;
+  row-gap: 12px;
+  margin: 0;
+}
+
+.shared-table-product-main {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 12px;
+}
+
+.shared-table-product-image {
+  width: 52px;
+  height: 42px;
+  flex: 0 0 auto;
+  border: 1px solid #e4e7ec;
+  border-radius: 6px;
+  background: #f6f7f9;
+  object-fit: cover;
+}
+
+.shared-table-product-title {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.shared-table-product-title strong {
+  color: #151922;
+  font-size: 0.92rem;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shared-table-product-title span {
+  color: #697386;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.shared-table-product-price {
+  color: #151922;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.shared-table-product-status {
+  display: flex;
+  justify-content: center;
+}
+
+.shared-table-product-status ::ng-deep .tag {
+  min-height: 24px;
+  padding: 0 12px;
+  border: 0;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.shared-table-product-switch {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .shared-table-user-row > * {
@@ -254,6 +337,18 @@ width: 50%;
   .shared-table-user-row {
     grid-template-columns: 34px minmax(0, 1fr);
     gap: 10px 12px;
+  }
+
+  .shared-table-promotion-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .shared-table-product-main {
+    grid-column: 1 / -1;
+  }
+
+  .shared-table-product-price {
+    text-align: left;
   }
 
   .shared-table-user-email,

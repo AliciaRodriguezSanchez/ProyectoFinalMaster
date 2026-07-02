@@ -5,6 +5,9 @@ import { UiIconButtonComponent } from '../shared/ui/icon-button/ui-icon-button.c
 const meta: Meta<UiIconButtonComponent> = {
   title: 'Shared/UI/Icon Button',
   component: UiIconButtonComponent,
+  parameters: {
+    canvasWidth: '280px'
+  },
   argTypes: {
     label: {
       control: 'text'

@@ -106,6 +106,16 @@ export class ArticleService {
     );
   }
 
+  updatePromotion(id: number, inPromotion: boolean): Promise<any> {
+    return firstValueFrom(
+      this.http.put<any>(
+        `${API_URL}/${ARTICLES}/${id}/promotion`,
+        { in_promotion: inPromotion },
+        { headers: this.authHeaders() }
+      )
+    );
+  }
+
   getNumberArticles(): Promise<any>{
     return firstValueFrom(
       this.http.get<any>(`${API_URL}/articles/stadistic`)

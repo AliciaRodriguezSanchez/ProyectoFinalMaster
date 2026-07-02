@@ -5,6 +5,9 @@ import { UiSelectComponent } from '../shared/ui/select/ui-select.component';
 const meta: Meta<UiSelectComponent> = {
   title: 'Shared/UI/Select',
   component: UiSelectComponent,
+  parameters: {
+    canvasWidth: '360px'
+  },
   argTypes: {
     label: {
       control: 'text'

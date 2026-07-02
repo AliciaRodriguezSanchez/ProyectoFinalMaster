@@ -198,6 +198,28 @@ const updateState = async (req, res) => {
     }
 }
 
+const updatePromotion = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { in_promotion } = req.body;
+
+        if (typeof in_promotion !== 'boolean') {
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.common.requiredFields });
+        }
+
+        const result = await Article.updatePromotion(id, in_promotion);
+
+        if (result.affectedRows === 0) {
+            return res.status(400).json({ message: ERROR_MESSAGE_TEXT.article.notFound });
+        }
+
+        res.status(200).json({ message: 'Promoción actualizada correctamente' });
+    } catch (error) {
+        console.error('Error al actualizar la promoción:', error.message);
+        res.status(500).json({ message: ERROR_MESSAGE_TEXT.article.createError });
+    }
+}
+
 // Get number of articles per state
 
 const getNumberArticles = async (req, res) => {
@@ -265,6 +287,7 @@ module.exports = {
     buyArticle,
     reserveArticle,
     updateState,
+    updatePromotion,
     getNumberArticles,
     getNumberArticlesSold,
     getNumberArticlesReview,

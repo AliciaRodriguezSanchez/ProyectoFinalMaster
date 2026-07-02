@@ -5,6 +5,9 @@ import { UiCategoryCardComponent } from '../shared/components/category-card/cate
 const meta: Meta<UiCategoryCardComponent> = {
   title: 'Shared/Components/Category Card',
   component: UiCategoryCardComponent,
+  parameters: {
+    canvasWidth: '180px'
+  },
   args: {
     icon: 'CITY',
     color: '#0284c7',

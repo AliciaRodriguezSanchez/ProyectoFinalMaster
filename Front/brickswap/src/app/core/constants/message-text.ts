@@ -38,6 +38,17 @@ export const MESSAGE_TEXT = {
     deleteSuccess: 'Categoría eliminada correctamente',
     deleteError: 'No se ha podido eliminar la categoría',
   },
+  promotionManagement: {
+    title: 'Artículos en promoción',
+    description: 'Marca o quita artículos en promoción',
+    searchPlaceholder: 'Buscar artículos...',
+    loading: 'Cargando artículos...',
+    emptyTitle: 'No hay artículos disponibles',
+    emptyDescription: 'No se han encontrado productos publicados y disponibles.',
+    loadError: 'No se han podido cargar los artículos',
+    updateSuccess: 'Promoción actualizada correctamente',
+    updateError: 'No se ha podido actualizar la promoción',
+  },
   articleForm: {
     categoriesLoadError: 'No se han podido cargar las categorías',
     loginRequired: 'Necesitas haber iniciado sesión antes de querer hacer esta acción',

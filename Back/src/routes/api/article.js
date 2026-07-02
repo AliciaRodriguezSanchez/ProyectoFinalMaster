@@ -29,6 +29,7 @@ router.post('/', checkToken, articleController.createArticle);
 router.put('/:id/buy', checkToken, articleController.buyArticle);
 // RUTA BASE PARA RESERVAR ARTÍCULO PUT /api/articles/:id/reserve
 router.put('/:id/reserve', checkToken, articleController.reserveArticle);
+router.put('/:id/promotion', checkToken, articleController.updatePromotion);
 
 router.get(
   '/profile/:profileId',

@@ -5,6 +5,23 @@ import { UiButtonComponent } from '../shared/ui/button/ui-button.component';
 const meta: Meta<UiButtonComponent> = {
   title: 'Shared/UI/Button',
   component: UiButtonComponent,
+  parameters: {
+    canvasWidth: '240px'
+  },
+  render: (args) => ({
+    props: args,
+    template: `
+      <div style="width: 220px; max-width: 100%;">
+        <ui-button
+          [label]="label"
+          [variant]="variant"
+          [size]="size"
+          [disabled]="disabled"
+          [showArrow]="showArrow"
+        />
+      </div>
+    `
+  }),
   argTypes: {
     variant: {
       control: 'select',

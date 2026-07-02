@@ -5,6 +5,9 @@ import { ActionModalComponent } from '../shared/components/action-modal/action-m
 const meta: Meta<ActionModalComponent> = {
   title: 'Shared/Components/Action Modal',
   component: ActionModalComponent,
+  parameters: {
+    canvasWidth: '520px'
+  },
   argTypes: {
     title: {
       control: 'text'

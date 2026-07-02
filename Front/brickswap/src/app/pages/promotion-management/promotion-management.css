@@ -1,0 +1,150 @@
+:host {
+  display: block;
+}
+
+.admin-page {
+  box-sizing: border-box;
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 48px 0 96px;
+  color: #151922;
+}
+
+.admin-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  margin-bottom: 26px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #151922;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.admin-back-link span {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.admin-back-link:hover {
+  color: #000;
+}
+
+.admin-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.admin-description {
+  margin: 8px 0 0;
+  font-size: 1rem;
+  color: #656c78;
+}
+
+.category-toolbar {
+  margin-bottom: 18px;
+}
+
+.promotion-filter-pills {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 16px;
+}
+
+.category-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid #dfe3e8;
+  border-radius: 10px;
+  background: #fff;
+  color: #697386;
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
+}
+
+.category-search:focus-within {
+  border-color: #d5a900;
+  box-shadow: 0 0 0 3px rgba(255, 202, 10, 0.22);
+}
+
+.category-search svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.category-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #151922;
+  font: inherit;
+}
+
+.category-search input::placeholder {
+  color: #697386;
+}
+
+.status-message,
+.empty-state {
+  padding: 32px;
+  border: 1px dashed #ccd1d9;
+  border-radius: 16px;
+  text-align: center;
+  color: #5f6673;
+}
+
+.empty-state h2 {
+  margin: 0 0 8px;
+  color: #151922;
+  font-size: 1.35rem;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  .admin-page {
+    width: min(100% - 24px, 1180px);
+    padding-top: 32px;
+  }
+}

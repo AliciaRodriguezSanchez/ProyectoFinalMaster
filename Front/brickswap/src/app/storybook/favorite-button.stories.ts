@@ -5,6 +5,9 @@ import { UiFavoriteButtonComponent } from '../shared/ui/favorite-button/ui-favor
 const meta: Meta<UiFavoriteButtonComponent> = {
   title: 'Shared/UI/Favorite Button',
   component: UiFavoriteButtonComponent,
+  parameters: {
+    canvasWidth: '260px'
+  },
   argTypes: {
     label: {
       control: 'text'

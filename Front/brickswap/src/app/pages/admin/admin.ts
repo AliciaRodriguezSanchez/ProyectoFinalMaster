@@ -56,7 +56,7 @@ const ORDEN_TARJETAS = [
   'Reportes pendientes',
 ];
 
-type AdminSection = 'users' | 'categories' | 'moderation';
+type AdminSection = 'users' | 'categories' | 'moderation' | 'promotions';
 type UserStatusFilter = 'all' | 'active' | 'blocked';
 type UserRoleFilter = 'all' | 'users' | 'moderators' | 'admins';
 type UserSortOrder = 'newest' | 'oldest';
@@ -117,6 +117,13 @@ export class AdminPage {
       title: 'Panel de moderación',
       description: 'Revisar reportes',
       colorClass: 'bg-danger-subtle text-danger',
+    },
+    {
+      id: 'promotions',
+      icon: 'bi bi-star',
+      title: 'Artículos en promoción',
+      description: 'Marcar o quitar artículos en promoción',
+      colorClass: 'bg-success-subtle text-success',
     },
   ];
 
@@ -244,22 +251,17 @@ export class AdminPage {
       return;
     }
 
+    if (card.id === 'promotions') {
+      this.router.navigate([APP_NAVIGATION_PATHS.administrationPromotions]);
+      return;
+    }
+
     if (this.activeSection() === card.id) {
       this.activeSection.set(null);
       return;
     }
 
     this.activeSection.set(card.id);
-
-    if (card.id === 'users') {
-      this.cargarUsuarios();
-      setTimeout(() => {
-        this.userListSection?.nativeElement.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start' 
-        });
-      }, 100);
-    }
   }
 
   async obtenerEstadisticasGlobales() {
