@@ -1,8 +1,118 @@
+@if (isUsersManagementPage()) {
+  <section class="admin-users-page">
+    <a class="admin-back-link" routerLink="/administration">
+      <span aria-hidden="true">←</span>
+      Volver
+    </a>
 
+    <header class="admin-users-header">
+      <h1>Usuarios y roles</h1>
+      <p>Gestiona los usuarios y permisos de la plataforma</p>
+    </header>
 
+    <section class="admin-users-toolbar" aria-label="Filtros de usuarios">
+      <label class="admin-users-search">
+        <span class="visually-hidden">Buscar usuarios</span>
+
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7" />
+          <path d="m16 16 4 4" />
+        </svg>
+
+        <input
+          type="search"
+          name="usersSearch"
+          placeholder="Buscar usuarios..."
+          autocomplete="off"
+          [(ngModel)]="usersSearchText"
+        >
+      </label>
+
+      <div class="admin-users-filters">
+        <div class="admin-users-filters__pills" aria-label="Filtros rápidos de usuarios">
+          @for (filter of userStatusFilters; track filter.value) {
+            <app-pill
+              [label]="filter.label"
+              [value]="filter.value"
+              [active]="activeUserStatusFilter === filter.value"
+              (selected)="selectUserStatusFilter($event)"
+            />
+          }
+
+          <span class="admin-users-filters__divider" aria-hidden="true"></span>
+
+          @for (filter of userRoleFilters; track filter.value) {
+            <app-pill
+              [label]="filter.label"
+              [value]="filter.value"
+              [active]="activeUserRoleFilter === filter.value"
+              (selected)="selectUserRoleFilter($event)"
+            />
+          }
+        </div>
+
+        <div class="admin-users-filters__mobile">
+          <button
+            type="button"
+            class="admin-users-filter-button"
+            (click)="toggleUserFilters()"
+          >
+            <i class="bi bi-funnel" aria-hidden="true"></i>
+            {{ activeUserFilterLabel() }}
+          </button>
+
+          @if (showUserFilters) {
+            <div class="admin-users-filter-menu">
+              <span class="admin-users-filter-menu__label">Estado</span>
+              @for (filter of userStatusFilters; track filter.value) {
+                <button
+                  type="button"
+                  [class.admin-users-filter-menu__item--active]="activeUserStatusFilter === filter.value"
+                  (click)="selectUserStatusFilter(filter.value)"
+                >
+                  {{ filter.label }}
+                </button>
+              }
+
+              <span class="admin-users-filter-menu__label">Rol</span>
+              @for (filter of userRoleFilters; track filter.value) {
+                <button
+                  type="button"
+                  [class.admin-users-filter-menu__item--active]="activeUserRoleFilter === filter.value"
+                  (click)="selectUserRoleFilter(filter.value)"
+                >
+                  {{ filter.label }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-users-table" #userListSection>
+      <app-table
+        [typeTable]="'usuarios'"
+        [data]="filteredUsers"
+        [sortLabel]="getUserSortLabel()"
+        [roleSelectResetKey]="roleSelectResetKey()"
+        (ordenarEvent)="ordenarUsuarios()"
+        (actionClick)="toogleState($event)"
+        (roleChange)="cambiarRolUsuario($event)"
+        (deleteClick)="eliminarUsuario($event)">
+      </app-table>
+    </section>
+  </section>
+} @else {
 <section class="container">
     <app-title size="medium" text="Panel de Administración"></app-title>
-    <app-descriptions format="label" text="Hola Administrador, gestiona todos los aspectos del sistema."></app-descriptions>
+    <app-descriptions format="label" text="Gestión global de la plataforma BrickSwap"></app-descriptions>
+
+    <div class="admin-section-title d-flex align-items-center gap-2 mt-4 mb-3">
+      <i class="bi bi-bar-chart-line text-secondary" aria-hidden="true"></i>
+      <span class="fw-bold text-dark">Estadísticas globales</span>
+    </div>
+
     <div class="row row-cols-1 row-cols-lg-5 g-4 mt-4">
       @for(stadistic of totalStadistics(); track $index){
         <div class="col">
@@ -12,17 +122,24 @@
     </div>
     
 
-  <section class="row py-4">
-    <app-title class="py-4" size="small" text="Gestión"></app-title>
-    @for (card of adminCards; track card.id) {
-      <article class="col-12 col-md-6 col-lg-4 mb-4">
-        <app-admin-panel-card
-          [card]="card"
-          [isActive]="activeSection() === card.id"
-          (cardSelected)="seleccionarCard($event)"
-        ></app-admin-panel-card>
-      </article>
-    }
+  <section class="admin-actions-section py-4">
+    <div class="admin-section-title d-flex align-items-center gap-2 mb-3">
+      <i class="bi bi-grid text-secondary" aria-hidden="true"></i>
+      <span class="fw-bold text-dark">Gestión</span>
+    </div>
+
+    <div class="admin-actions-grid">
+      @for (card of adminCards; track card.id) {
+        <article class="admin-actions-grid__item">
+          <app-admin-panel-card
+            class="w-100 d-block h-100"
+            [card]="card"
+            [isActive]="activeSection() === card.id"
+            (cardSelected)="seleccionarCard($event)"
+          ></app-admin-panel-card>
+        </article>
+      }
+    </div>
   </section>
 
   @if (activeSection() === 'users') {
@@ -30,6 +147,9 @@
       <app-table 
         [typeTable]="'usuarios'" 
         [data]="users()" 
+        [sortLabel]="getUserSortLabel()"
+        [roleSelectResetKey]="roleSelectResetKey()"
+        (ordenarEvent)="ordenarUsuarios()"
         (actionClick)="toogleState($event)" 
         (roleChange)="cambiarRolUsuario($event)"
         (deleteClick)="eliminarUsuario($event)">
@@ -37,3 +157,28 @@
     </section>
   }
 </section>
+}
+
+@if (pendingStatusChange) {
+  <app-action-modal
+    [title]="getStatusChangeModalTitle()"
+    [textareaLabel]="getStatusChangeModalDescription()"
+    fieldType="none"
+    [submitLabel]="getStatusChangeModalSubmitLabel()"
+    [cancelLabel]="getStatusChangeModalCancelLabel()"
+    (canceled)="closeStatusChangeModal()"
+    (submitted)="confirmStatusChange()"
+  />
+}
+
+@if (pendingRoleChange) {
+  <app-action-modal
+    [title]="getRoleChangeModalTitle()"
+    [textareaLabel]="getRoleChangeModalDescription()"
+    fieldType="none"
+    [submitLabel]="getRoleChangeModalSubmitLabel()"
+    [cancelLabel]="getRoleChangeModalCancelLabel()"
+    (canceled)="closeRoleChangeModal()"
+    (submitted)="confirmRoleChange()"
+  />
+}

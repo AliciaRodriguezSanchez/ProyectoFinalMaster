@@ -2,6 +2,11 @@ const Category = require('../models/category.model');
 const { ERROR_CODES } = require('../constants/error-codes');
 const { ERROR_MESSAGE_TEXT } = require('../constants/error-message.text');
 
+const isCategoryInUseError = (error) =>
+    error.code === ERROR_CODES.rowIsReferenced ||
+    error.code === ERROR_CODES.rowIsReferencedLegacy ||
+    error.errno === ERROR_CODES.rowIsReferencedNumber;
+
 // GET /api/categories
 const getAllCategories = async (req, res) => {
     try {
@@ -125,14 +130,14 @@ const deleteCategory = async (req, res) => {
             message: 'Categoría eliminada correctamente'
         });
     } catch (error) {
-        console.error('Error al eliminar categoría:', error.message);
-
         // Ocurre si la categoría está siendo utilizada por artículos
-        if (error.code === ERROR_CODES.rowIsReferenced) {
+        if (isCategoryInUseError(error)) {
             return res.status(409).json({
                 message: ERROR_MESSAGE_TEXT.category.deleteInUse
             });
         }
+
+        console.error('Error al eliminar categoría:', error.code || error.message);
 
         res.status(500).json({
             message: ERROR_MESSAGE_TEXT.category.deleteError

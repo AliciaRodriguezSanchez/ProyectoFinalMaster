@@ -6,6 +6,30 @@
   padding: 32px;
 }
 
+.moderador-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 32px 0 18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #151922;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.moderador-back span {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.moderador-back:hover {
+  color: #000;
+}
+
 .moderador-page h1 {
   margin: 0;
   color: var(--brick-color-title);

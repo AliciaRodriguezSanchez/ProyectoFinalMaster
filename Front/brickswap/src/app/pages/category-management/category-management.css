@@ -3,18 +3,46 @@
 }
 
 .admin-page {
+  box-sizing: border-box;
   width: min(1180px, calc(100% - 40px));
   margin: 0 auto;
-  padding: 64px 0 96px;
+  padding: 48px 0 96px;
   color: #151922;
 }
 
+.admin-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  margin-bottom: 26px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #151922;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.admin-back-link span {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.admin-back-link:hover {
+  color: #000;
+}
+
 .admin-header {
+  flex-shrink: 0;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 32px;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
 .admin-header > .primary-button {
@@ -150,10 +178,70 @@ button:disabled {
 }
 
 .message {
+  flex-shrink: 0;
   margin: 18px 0;
   padding: 13px 16px;
   border-radius: 10px;
   font-weight: 700;
+}
+
+.category-toolbar {
+  flex-shrink: 0;
+  margin-bottom: 18px;
+}
+
+.category-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid #dfe3e8;
+  border-radius: 10px;
+  background: #fff;
+  color: #697386;
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
+}
+
+.category-search:focus-within {
+  border-color: #d5a900;
+  box-shadow: 0 0 0 3px rgba(255, 202, 10, 0.22);
+}
+
+.category-search svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.category-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #151922;
+  font: inherit;
+}
+
+.category-search input::placeholder {
+  color: #697386;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .success-message {
@@ -369,20 +457,56 @@ button:disabled {
 }
 
 .category-table-header {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   min-height: 58px;
-  padding: 0 22px;
+  padding: 16px 24px;
   border-bottom: 1px solid #e5e8ed;
-  background: #fafafa;
+  background: #fff;
 }
 
-.category-counter {
-  display: flex;
+.category-table-header__title {
+  display: inline-flex;
   align-items: center;
-  gap: 9px;
-  color: #252a33;
-  font-size: 0.95rem;
+  gap: 10px;
+  min-width: 0;
+  color: #4f5663;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.category-table-header__icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.category-table-header__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+
+.category-table-header__sort:hover {
+  color: #151922;
 }
 
 /* Filas */
@@ -391,9 +515,9 @@ button:disabled {
 }
 
 .category-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px;
   align-items: center;
-  justify-content: space-between;
   gap: 28px;
   min-height: 78px;
   padding: 16px 22px;
@@ -452,8 +576,8 @@ button:disabled {
 .category-actions {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 14px;
-  flex-shrink: 0;
 }
 
 .edit-button {
@@ -495,6 +619,13 @@ button:disabled {
   color: #a91515;
 }
 
+.empty-filter-message {
+  margin: 0;
+  padding: 28px 22px;
+  color: #666d79;
+  text-align: center;
+}
+
 @media (max-width: 720px) {
   .admin-header {
     align-items: stretch;
@@ -505,9 +636,14 @@ button:disabled {
     width: 100%;
   }
 
-  .category-row {
+  .category-table-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .category-row {
+    align-items: flex-start;
+    grid-template-columns: 1fr;
   }
 
   .category-actions {
@@ -537,7 +673,7 @@ button:disabled {
 
   .admin-page {
     width: min(100% - 28px, 1180px);
-    padding-top: 36px;
+    padding-top: 28px;
   }
 
   .admin-header,

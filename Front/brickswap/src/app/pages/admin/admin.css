@@ -2,6 +2,206 @@
   display: block;
 }
 
+.admin-users-page {
+  box-sizing: border-box;
+  padding: 48px 0 96px;
+  color: #151922;
+}
+
+.admin-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 26px;
+  color: #151922;
+  font-size: 1rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.admin-back-link span {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.admin-back-link:hover {
+  color: #000;
+}
+
+.admin-users-header {
+  flex-shrink: 0;
+  margin-bottom: 32px;
+}
+
+.admin-users-header h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.admin-users-header p {
+  margin: 8px 0 0;
+  color: #656c78;
+  font-size: 1rem;
+}
+
+.admin-users-toolbar {
+  display: grid;
+  gap: 14px;
+  flex-shrink: 0;
+  margin-bottom: 18px;
+}
+
+.admin-users-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid #dfe3e8;
+  border-radius: 10px;
+  background: #fff;
+  color: #697386;
+  box-shadow: 0 2px 8px rgba(16, 24, 40, 0.04);
+}
+
+.admin-users-search:focus-within {
+  border-color: #d5a900;
+  box-shadow: 0 0 0 3px rgba(255, 202, 10, 0.22);
+}
+
+.admin-users-search svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.admin-users-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #151922;
+  font: inherit;
+}
+
+.admin-users-search input::placeholder {
+  color: #697386;
+}
+
+.admin-users-filters {
+  position: relative;
+}
+
+.admin-users-filters__pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-users-filters__divider {
+  width: 1px;
+  height: 24px;
+  margin: 0 8px;
+  background: #dfe3e8;
+}
+
+.admin-users-filters__mobile {
+  display: none;
+  position: relative;
+}
+
+.admin-users-filter-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid #dfe3e8;
+  border-radius: 999px;
+  background: #151922;
+  color: #fff;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-users-filter-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 20;
+  display: grid;
+  min-width: 190px;
+  padding: 8px;
+  border: 1px solid #e5e8ed;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(16, 24, 40, 0.14);
+}
+
+.admin-users-filter-menu button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #4f5663;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-users-filter-menu__label {
+  padding: 8px 12px 4px;
+  color: #697386;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.admin-users-filter-menu button:hover,
+.admin-users-filter-menu__item--active {
+  background: #f3f4f6 !important;
+  color: #151922 !important;
+}
+
+.admin-users-table {
+  display: block;
+}
+
+.admin-users-table ::ng-deep > .container.card {
+  width: 100%;
+  max-width: none;
+  margin: 0 !important;
+}
+
+.admin-users-table ::ng-deep .list-group {
+  overflow: visible;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .admin-page {
   width: min(1180px, calc(100% - 40px));
   margin: 0 auto;
@@ -44,6 +244,46 @@
   font-size: 1.05rem;
   line-height: 1.6;
   color: #515866;
+}
+
+.admin-section-title {
+  font-size: 1.12rem;
+}
+
+.admin-section-title i {
+  font-size: 1.05rem;
+}
+
+.admin-actions-section {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  align-items: end;
+  gap: 24px;
+}
+
+.admin-actions-grid__item {
+  display: flex;
+  min-width: 0;
+  height: 100%;
+}
+
+.admin-actions-grid__item app-admin-panel-card {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .admin-users-filters__pills {
+    display: none;
+  }
+
+  .admin-users-filters__mobile {
+    display: inline-block;
+  }
 }
 
 .primary-button,

@@ -63,7 +63,7 @@ const numberUsers = async () => {
 
 const getAllUsers = async () => {
     const [result] = await db.query(`
-        SELECT p.id, p.nombre, p.apellidos, p.email, r.nombre_rol, p.estado_cuenta
+        SELECT p.id, p.nombre, p.apellidos, p.email, p.rol_id, r.nombre_rol, p.estado_cuenta
         FROM perfiles AS p 
         JOIN roles AS r ON p.rol_id=r.id
         `);
@@ -80,11 +80,16 @@ const changeState = async (id) => {
 }
 
 const changeRole = async (userId, newRole) => {
+  const roleId = Number(newRole);
+  const roleCondition = Number.isInteger(roleId)
+    ? 'id = ?'
+    : 'LOWER(nombre_rol) = LOWER(?)';
+
   const [result] = await db.query(`
     UPDATE perfiles 
-    SET rol_id = (SELECT id FROM roles WHERE nombre_rol = ?)
+    SET rol_id = (SELECT id FROM roles WHERE ${roleCondition} LIMIT 1)
     WHERE id = ?
-  `, [newRole, parseInt(userId)]);
+  `, [Number.isInteger(roleId) ? roleId : newRole, parseInt(userId)]);
   
   return result;
 }

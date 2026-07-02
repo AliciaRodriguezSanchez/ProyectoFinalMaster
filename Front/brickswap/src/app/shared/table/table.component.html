@@ -1,41 +1,36 @@
-<div class="container card shadow-sm border border-light-subtle rounded-4 overflow-hidden my-4" >
+<div class="shared-table container card shadow-sm border border-light-subtle rounded-4 overflow-hidden my-4">
 
-  <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center p-3 px-4 pt-4">
-    <div class="d-flex align-items-center gap-2 fw-bold" [ngClass]="{
-       'text-warning': typeTable() === 'Pendiente',
-       'text-success': typeTable() === 'Revisado_Mantenido',
-       'text-danger': typeTable() === 'Revisado_Retirado'
-     }">
+  <div class="shared-table-header">
+    <div class="shared-table-header__title">
+      <span class="shared-table-header__icon" aria-hidden="true">
+        <i class="bi" [ngClass]="headerIcon()"></i>
+      </span>
 
-      @if (typeTable() === 'Pendiente') {
-      <i class="bi bi-exclamation-triangle fs-5"></i>
-      <span class="h5 mb-0 fw-bold">Pendientes</span>
-      }@else if (typeTable() === 'Revisado_Mantenido') {
-      <i class="bi bi-check-circle-fill fs-5"></i>
-      <span class="h5 mb-0 fw-bold">Aceptados</span>
-      }@else if (typeTable() === 'Revisado_Retirado') {
-      <i class="bi bi-x-circle-fill fs-5"></i>
-      <span class="h5 mb-0 fw-bold">Retirados</span>
-      } @else if (typeTable() === 'usuarios') {
-      <i class="bi bi-people fs-5"></i>
-      <span class="h5 mb-0 fw-bold">{{ data().length }} usuarios</span>
-      }
-
+      <span>{{ headerTitle() }}</span>
     </div>
 
-    <div class="text-secondary small d-flex align-items-center gap-1 cursor-pointer" style="font-size: 0.85rem; cursor:pointer; user-select: none;" (click)="emitirOrden()">
-      @if (typeTable()) {
-      <i class="bi bi-arrow-down-up"></i> Más reciente
-      }
-    </div>
+    <button
+      type="button"
+      class="shared-table-header__sort"
+      (click)="emitirOrden()"
+    >
+      <i class="bi bi-arrow-down-up" aria-hidden="true"></i>
+      {{ sortLabel() }}
+    </button>
   </div>
 
   <div class="list-group list-group-flush border-top border-light-subtle">
 
     @for (item of data(); track item.id || $index; let isFirst = $first) {
 
-    <div class="list-group-item p-3 px-4 bg-white ">
-      <div class="row align-items-center">
+    <div
+      class="list-group-item p-3 px-4 bg-white"
+      [class.shared-table-list-item--users]="typeTable() === 'usuarios'"
+    >
+      <div
+        class="row align-items-center"
+        [class.shared-table-user-row]="typeTable() === 'usuarios'"
+      >
 
         @switch (typeTable()) { 
 
@@ -107,48 +102,52 @@
         }
 
         @case ('usuarios') {
-        <div class="col-auto">
-          <div
-            class="bg-warning-subtle text-dark rounded-circle d-flex align-items-center justify-content-center fw-bold"
-            style="width: 35px; height: 35px;">
+          <div class="shared-table-user-avatar" aria-hidden="true">
             {{ $any(item).name?.charAt(0) }}
           </div>
-        </div>
-        <div class="col-md-3 col-12 my-1 fw-semibold text-dark">
-          {{ $any(item).name }}
-        </div>
-        <div class="col-md-3 col-12 text-secondary my-1">
-          {{ $any(item).email }}
-        </div>
-        <div class="col-md-2 col-12 my-1">
-          <span class="badge rounded-pill px-2 py-1 fw-medium text-bg-success-subtle text-success">
-            {{ $any(item).role || 'Usuario' }}
-          </span>
-          <span class="badge rounded-pill px-2"
-            [ngClass]="$any(item).isActive ? 'text-bg-success-subtle text-success' : 'text-bg-danger-subtle text-danger'">
-            {{ $any(item).isActive ? 'Activo' : 'Bloqueado' }}
-          </span>
-        </div>
-        <div class="col-md-3 col-12 text-end ms-auto my-1">
-          <select 
-            class="form-select form-select-sm border mx-1 bg-light text-secondary" 
-            style="width: 120px; height: 35px; display: inline-block; padding: 0.25rem 0.5rem;"
-            [value]="$any(item).role"
-            (change)="roleChange.emit({ id: $any(item).id, newRole: $any($event.target).value })">
-            <option value="admin">Admin</option>
-            <option value="moderador">Moderador</option>
-            <option value="usuario">Usuario</option>
-          </select>
-          <button class="btn btn-sm mx-1" [ngClass]="$any(item).isActive ? 'btn-danger' : 'btn-outline-secondary'" (click)="actionClick.emit(item.id)" style="width: 120px; height: 35px;">
-            {{ $any(item).isActive ? 'Bloquear' : 'Activar' }}
-          </button>
-          <button 
-            class="btn btn-sm btn-outline-danger" 
-            style="width: 40px; height: 35px;"
-            (click)="deleteClick.emit(item.id)">
-            <i class="bi bi-trash"></i>
-          </button>
-        </div>
+
+          <div class="shared-table-user-name">
+            {{ $any(item).name }}
+          </div>
+
+          <div class="shared-table-user-email">
+            {{ $any(item).email }}
+          </div>
+
+          <div class="shared-table-user-badges">
+            <app-tag
+              [label]="getRoleLabel($any(item).roleId)"
+              variant="success"
+            />
+
+            <app-tag
+              [label]="$any(item).isActive ? 'Activo' : 'Bloqueado'"
+              [variant]="$any(item).isActive ? 'success' : 'danger'"
+            />
+          </div>
+
+          <div class="shared-table-user-actions">
+            <ui-select
+              class="shared-table-role-select"
+              label="Rol"
+              [options]="roleOptions"
+              [selectedValue]="getRoleSelectValue($any(item).roleId)"
+              [resetKey]="roleSelectResetKey()"
+              (valueChange)="roleChange.emit({ id: $any(item).id, newRole: $event })"
+            />
+
+            <button
+              type="button"
+              class="shared-table-block-button"
+              [class.shared-table-block-button--inactive]="!$any(item).isActive"
+              (click)="actionClick.emit(item.id)"
+            >
+              @if ($any(item).isActive) {
+                <i class="bi bi-slash-circle" aria-hidden="true"></i>
+              }
+              {{ $any(item).isActive ? 'Bloquear' : 'Activar' }}
+            </button>
+          </div>
         }
 
         }

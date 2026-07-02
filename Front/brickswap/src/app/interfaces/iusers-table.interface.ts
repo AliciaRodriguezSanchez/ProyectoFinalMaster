@@ -3,5 +3,6 @@ export interface IUsersTable {
     name: string;
     email:string;
     role: string;
+    roleId: number;
     isActive: boolean;
 }

@@ -2,7 +2,7 @@
 
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { UserRole } from '../constants/user-role';
+import { APP_NAVIGATION_PATHS, UserRole } from '../constants/user-role';
 import { decodeJwtPayload } from '../utils/jwt';
 import { TOKEN_KEY } from '../constants/auth';
 
@@ -12,7 +12,7 @@ export const roleGuard: CanActivateFn = (route) => {
   const token = localStorage.getItem(TOKEN_KEY);
 
   if (!token) {
-    return router.createUrlTree(['/login']);
+    return router.createUrlTree([APP_NAVIGATION_PATHS.login]);
   }
 
   try {
@@ -21,17 +21,12 @@ export const roleGuard: CanActivateFn = (route) => {
     const userRole = Number(payload.role) as UserRole;
     const allowedRoles = route.data['roles'] as UserRole[];
 
-    const ADMIN_ROLE_ID = 3;
-    if (userRole === ADMIN_ROLE_ID) {
-      return true;
-    }
-
     if (!allowedRoles.includes(userRole)) {
-      return router.createUrlTree(['/home']);
+      return router.createUrlTree([APP_NAVIGATION_PATHS.home]);
     }
 
     return true;
   } catch {
-    return router.createUrlTree(['/login']);
+    return router.createUrlTree([APP_NAVIGATION_PATHS.login]);
   }
 };

@@ -2,9 +2,60 @@
   border: 1px solid #e9ecef;
   background: #fff;
   cursor: pointer;
+  min-height: 132px;
 }
 
 .admin-card:hover,
 .admin-card--active {
   border-color: #ffc107;
+}
+
+.admin-card__content {
+  min-width: 0;
+}
+
+.admin-card__title {
+  line-height: 1.2;
+}
+
+.admin-card__description {
+  line-height: 1.35;
+}
+
+.admin-card__title,
+.admin-card__description {
+  overflow-wrap: break-word;
+}
+
+.admin-card__icon {
+  min-width: 56px;
+}
+
+@media (max-width: 575.98px) {
+  .admin-card {
+    align-items: center !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    min-height: 154px;
+    text-align: center;
+  }
+
+  .admin-card__content {
+    align-items: center;
+    text-align: center !important;
+  }
+
+}
+
+@media (min-width: 576px) {
+  .admin-card {
+    flex-direction: row !important;
+    text-align: left;
+  }
+
+  .admin-card__content {
+    align-items: flex-start;
+    text-align: left !important;
+  }
 }

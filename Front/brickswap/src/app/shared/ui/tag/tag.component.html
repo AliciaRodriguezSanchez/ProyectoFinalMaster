@@ -2,6 +2,8 @@
   class="tag"
   [class.tag--brand]="variant() === 'brand'"
   [class.tag--dark]="variant() === 'dark'"
+  [class.tag--success]="variant() === 'success'"
+  [class.tag--danger]="variant() === 'danger'"
 >
   @if (icon()) {
     <span class="tag__icon" aria-hidden="true">{{ icon() }}</span>
