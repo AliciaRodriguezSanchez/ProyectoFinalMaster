@@ -49,9 +49,9 @@
         </div>
 
         <ui-favorite-button
-          [label]="text.favoriteLabel"
+          [label]="isFavorite() ? 'Quitar de favoritos' : text.favoriteLabel"
           [selected]="isFavorite()"
-          (clicked)="addToFavorites()"
+          (clicked)="toggleFavorite()"
         />
       </div>
 
@@ -66,10 +66,10 @@
             />
           } @else {
             <ui-button
-              [label]="text.buyNowLabel"
+              [label]="isActionLoading() ? 'Procesando...' : text.buyNowLabel"
               variant="primary"
               size="md"
-              [disabled]="article.estado_venta !== saleStatus.available"
+              [disabled]="article.estado_venta !== saleStatus.available || isActionLoading()"
               (clicked)="buyArticle()"
             />
           }
@@ -79,7 +79,7 @@
           <ui-icon-button
             [label]="text.reserveLabel"
             icon="reserve"
-            [disabled]="article.estado_venta !== saleStatus.available"
+            [disabled]="article.estado_venta !== saleStatus.available || isActionLoading()"
             (clicked)="reserveArticle()"
           />
 

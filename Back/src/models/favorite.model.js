@@ -66,8 +66,16 @@ const getFavoritesByProfileId = async (perfil_id) => {
   return rows;
 };
 
+// ELIMINAR ARTÍCULO DE FAVORITOS
+const deleteFavorite = async (perfil_id, articulo_id) => {
+    const sql = "DELETE FROM favoritos WHERE perfil_id = ? AND articulo_id = ?";
+    const [result] = await db.query(sql, [perfil_id, articulo_id]);
+    return result;
+};
+
 module.exports = {
   checkFavorite,
   addFavorite,
-  getFavoritesByProfileId
+  getFavoritesByProfileId,
+  deleteFavorite
 };
