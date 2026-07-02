@@ -6,6 +6,8 @@ import { RegisterForm } from './components/register-form/register-form';
 import { RegisterService } from '../../core/services/register/register.service';
 import { Iuser } from '../../interfaces/iuser.interfaces';
 import { AuthService } from '../../core/services/auth/auth.service';
+import { UiToastService } from '../../core/services/toast/ui-toast.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -16,6 +18,7 @@ import { AuthService } from '../../core/services/auth/auth.service';
 export class Register {
   registerService = inject(RegisterService)
   authService = inject(AuthService)
+  toastService = inject(UiToastService)
 
 
   heroStats: AuthHeroStat[] = [
@@ -88,10 +91,30 @@ export class Register {
 
         await this.authService.handleAuthSuccess(result.token);
 
+        this.toastService.success('¡Registro completado con éxito!');
+
     } catch (error: any) {
         console.error('Error al registrar:', error);
+        this.toastService.error(this.getErrorMessage(error));
     }
+  }
+    ////Función auxiliar
 
+  private getErrorMessage(error: unknown, fallback = 'No se pudo completar el registro'): string {
+    if (error instanceof HttpErrorResponse  ) {
+      if (error.status === 0) {
+        return 'No se pudo conectar con el servidor. Comprueba tu conexión.';
+      }
+
+      if (typeof error.error?.message === 'string') {
+        return error.error.message;
+      }
+
+      return fallback;
+  }
+
+  return fallback;
 }
+
 
 }
