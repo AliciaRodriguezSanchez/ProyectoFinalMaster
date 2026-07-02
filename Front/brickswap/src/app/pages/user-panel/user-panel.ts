@@ -5,13 +5,15 @@ import { RouterLink } from '@angular/router';
 import { ArticleService } from '../../core/services/article/article.service';
 import { AuthService } from '../../core/services/auth/auth.service';
 import type { IArticle } from '../../interfaces/iarticles.interface';
+import { TitleComponent } from '../../shared/ui/titles/title.component';
+import { DescriptionsComponent } from '../../shared/ui/descriptions/descriptions.component';
 
 type ManagementTab = 'selling' | 'sold' | 'favorites' | 'drafts';
 
 @Component({
   selector: 'app-user-panel',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TitleComponent, DescriptionsComponent],
   templateUrl: './user-panel.html',
   styleUrl: './user-panel.css',
 })
